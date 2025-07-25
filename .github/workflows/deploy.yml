@@ -34,6 +34,11 @@ jobs:
           echo "  appId: '${{ secrets.VITE_FIREBASE_APP_ID }}'" >> firebase-config.js
           echo "};" >> firebase-config.js
 
+      # 2.1. Elimina temporalmente firebase-config.js del .gitignore para que pueda ser desplegado.
+      # Esto solo afecta al runner de la Action, no a tu repositorio.
+      - name: Allow firebase-config.js to be deployed 📄
+        run: sed -i '/firebase-config.js/d' ./.gitignore
+
       # 3. Despliega los archivos a la rama gh-pages
       - name: Deploy 🚀
         uses: peaceiris/actions-gh-pages@v3
