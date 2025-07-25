@@ -1,0 +1,42 @@
+# Nombre del Workflow
+name: Deploy to GitHub Pages
+
+# Se ejecuta cada vez que haces un push a la rama 'main'
+on:
+  push:
+    branches:
+      - main
+
+# Permisos necesarios para que el workflow pueda escribir en la rama gh-pages
+permissions:
+  contents: write
+
+# Define el trabajo a realizar
+jobs:
+  build-and-deploy:
+    # El tipo de máquina virtual en la que se ejecutará el trabajo
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Clona tu repositorio en la máquina virtual
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      # 2. Crea el archivo firebase-config.js usando los secrets
+      - name: Create Firebase Config File 🤫
+        run: |
+          echo "export const firebaseConfig = {" > firebase-config.js
+          echo "  apiKey: '${{ secrets.VITE_FIREBASE_API_KEY }}'," >> firebase-config.js
+          echo "  authDomain: '${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}'," >> firebase-config.js
+          echo "  projectId: '${{ secrets.VITE_FIREBASE_PROJECT_ID }}'," >> firebase-config.js
+          echo "  storageBucket: '${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}'," >> firebase-config.js
+          echo "  messagingSenderId: '${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}'," >> firebase-config.js
+          echo "  appId: '${{ secrets.VITE_FIREBASE_APP_ID }}'" >> firebase-config.js
+          echo "};" >> firebase-config.js
+
+      # 3. Despliega los archivos a la rama gh-pages
+      - name: Deploy 🚀
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./

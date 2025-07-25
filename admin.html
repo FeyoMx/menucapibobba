@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Añadir un icono para la pestaña del navegador -->
+    <link rel="icon" type="image/png" href="https://i.imgur.com/llR0NN0.png">
+    <title>Admin Panel - Capibobba</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Mensaje para usuarios no autenticados -->
+    <div id="auth-message" class="login-container" style="display: none;">
+        <div class="login-box">
+            <img src="https://i.imgur.com/llR0NN0.png" alt="Capibobba Admin" width="80" height="80">
+            <h2>Acceso de Administrador</h2>
+            <p>Para gestionar el menú, por favor, inicia sesión en tu cuenta de Firebase y luego refresca esta página.</p>
+            <a href="https://console.firebase.google.com/" target="_blank" class="admin-btn login-btn">Ir a Firebase</a>
+        </div>
+    </div>
+
+    <!-- Header del Admin Panel -->
+    <header class="admin-header" style="display: flex;">
+        <div class="admin-logo">
+            <img src="https://i.imgur.com/llR0NN0.png" alt="Capibobba Admin" width="60" height="60">
+            <h1>Panel de Administración Capibobba</h1>
+        </div>
+        <div class="admin-actions">
+            <!-- Botones de exportar e importar se mantendrán por ahora, pero la lógica cambiará -->
+            <button id="exportDataBtn" class="admin-btn export">📤 Exportar Datos (Local)</button>
+            <button id="importDataBtn" class="admin-btn import">📥 Importar Datos (Local)</button>
+            <input type="file" id="importFileInput" accept=".json" style="display: none;">
+            <a href="index.html" class="admin-btn view-menu">👀 Ver Menú</a>
+            <button id="logoutBtn" class="admin-btn logout">🚪 Cerrar Sesión</button>
+        </div>
+    </header>
+
+    <!-- Contenedor principal del panel -->
+    <div class="admin-container" style="display: block;">
+        <!-- Navegación de categorías -->
+        <nav class="category-nav">
+            <button class="category-btn active" data-category="waterFrappes">Frappés Agua</button>
+            <button class="category-btn" data-category="milkFrappes">Frappés Leche</button>
+            <button class="category-btn" data-category="hotDrinks">Bebidas Calientes</button>
+            <button class="category-btn" data-category="toppings">Toppings</button>
+            <button class="category-btn" data-category="promotions">Promociones</button>
+        </nav>
+
+        <!-- Sección de productos -->
+        <section class="products-section">
+            <header class="section-header">
+                <h2 id="currentCategoryTitle">Frappés Base Agua</h2>
+                <button id="addProductBtn" class="admin-btn add">➕ Añadir Nuevo Producto</button>
+            </header>
+            <div id="productsGrid" class="products-grid">
+                <!-- Los productos se cargarán aquí dinámicamente -->
+                <p class="loading-message">Cargando productos...</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal de edición/adición de producto -->
+    <div id="productModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-content">
+            <button class="close-modal-button" aria-label="Cerrar modal">✖</button>
+            <h3 id="modalTitle">Añadir Nuevo Producto</h3>
+            <form id="productForm">
+                <div class="form-group">
+                    <label for="productName">Nombre:</label>
+                    <input type="text" id="productName" required>
+                </div>
+                <div class="form-group">
+                    <label for="productDisplayName">Nombre para Mostrar (opcional):</label>
+                    <input type="text" id="productDisplayName">
+                </div>
+                <div class="form-group">
+                    <label for="productDescription">Descripción:</label>
+                    <textarea id="productDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="productPrice">Precio:</label>
+                    <input type="number" id="productPrice" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="productImage">URL de la Imagen:</label>
+                    <input type="url" id="productImage" placeholder="https://ejemplo.com/imagen.jpg">
+                    <div class="image-preview" id="imagePreview"></div>
+                </div>
+
+                <div class="form-group form-group-toggle">
+                    <label for="productIsActive">Producto Activo:</label>
+                    <input type="checkbox" id="productIsActive" class="toggle-switch">
+                    <span class="toggle-label">El producto se mostrará en el menú.</span>
+                </div>
+
+                <div class="form-group" id="categorySpecificFields">
+                    <!-- Campos específicos por categoría se añadirán aquí -->
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="cancelBtn" class="admin-btn cancel">Cancelar</button>
+                    <button type="submit" class="admin-btn save">💾 Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para eliminar -->
+    <div id="confirmModal" class="modal-overlay" role="alertdialog" aria-modal="true" aria-labelledby="confirmModalTitle" aria-describedby="confirmMessage">
+        <div class="modal-content confirm-modal">
+            <h3 id="confirmModalTitle">¿Confirmar eliminación?</h3>
+            <p id="confirmMessage">¿Estás seguro de que quieres eliminar este producto?</p>
+            <div class="form-actions">
+                <button id="confirmCancel" class="admin-btn cancel">Cancelar</button>
+                <button id="confirmDelete" class="admin-btn delete">🗑️ Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Alerta Personalizado (Reemplaza alert()) -->
+    <div id="customAlertModal" class="modal-overlay" role="alertdialog" aria-modal="true" aria-labelledby="customAlertTitle" aria-describedby="customAlertMessage">
+        <div class="modal-content custom-alert-modal">
+            <h3 id="customAlertTitle"></h3>
+            <p id="customAlertMessage"></p>
+            <button id="customAlertCloseBtn" class="admin-btn">Aceptar</button>
+        </div>
+    </div>
+
+    <!-- Toast para notificaciones -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Plantilla para la tarjeta de producto -->
+    <template id="productCardTemplate">
+        <div class="product-card">
+            <img data-src="" alt="" class="product-image lazy-load" onerror="this.onerror=null;this.src='https://placehold.co/100x100/ADD8E6/000000?text=No+Image';">
+            <h4 class="product-name"></h4>
+            <p class="product-description"></p>
+            <p class="product-price"></p>
+            <div class="product-status">
+                <label class="switch">
+                    <input type="checkbox" class="status-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="product-actions">
+                <button class="admin-btn edit-btn">✏️ Editar</button>
+                <button class="admin-btn delete-btn">🗑️ Eliminar</button>
+            </div>
+        </div>
+    </template>
+
+    <!-- Carga de admin-script.js como un MÓDULO -->
+    <script src="admin-script.js" type="module"></script>
+
+    <!-- Carga de Firebase SDK y lógica de inicialización -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { firebaseConfig } from './firebase-config.js'; // Importar configuración centralizada
+
+        // Función para mostrar el modal de alerta personalizado
+        window.showCustomAlert = function(title, message) {
+            document.getElementById('customAlertTitle').textContent = title;
+            document.getElementById('customAlertMessage').textContent = message;
+            if (window.openModal) window.openModal(document.getElementById('customAlertModal'));
+        };
+
+        // Event listener para cerrar el modal de alerta
+        document.getElementById('customAlertCloseBtn').addEventListener('click', () => {
+            if (window.closeModal) window.closeModal(document.getElementById('customAlertModal'));
+        });
+
+        // Inicializar Firebase y autenticar
+        async function initializeFirebase() {
+            // Validar que firebaseConfig no esté vacío
+            if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+                console.error("Firebase config is incomplete. Please update firebaseConfig with your actual Firebase project details.");
+                window.showCustomAlert('Error de Configuración', 'La configuración de Firebase está incompleta. Por favor, edita index.html y admin.html con los detalles de tu proyecto Firebase.');
+                return; // Detener la inicialización
+            }
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+                const auth = getAuth(app);
+                const appId = firebaseConfig.projectId; // Usamos projectId como appId para Firestore
+                
+                // --- Referencias a elementos del DOM (actualizadas) ---
+                const authMessage = document.getElementById('auth-message');
+                const adminHeader = document.querySelector('.admin-header');
+                const adminContainer = document.querySelector('.admin-container');
+                const logoutBtn = document.getElementById('logoutBtn');
+
+                // --- Lógica de Autenticación ---
+
+                // 1. Escuchar cambios en el estado de autenticación
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        // Usuario está autenticado
+                        const userId = user.uid;
+
+                        console.log("Usuario autenticado:", userId);
+
+                        // Ocultar login y mostrar panel de admin
+                        authMessage.style.display = 'none';
+                        adminHeader.style.display = 'flex';
+                        adminContainer.style.display = 'block'; // Asegurarse que sea block
+
+                        // Iniciar la lógica del panel de administración
+                        if (typeof window.initAdminPanel === 'function') {
+                            window.initAdminPanel(db, userId, appId);
+                        } else {
+                            console.error("Error: window.initAdminPanel no es una función. Asegúrate de que admin-script.js se cargue correctamente como un módulo.");
+                            window.showCustomAlert('Error Interno', 'No se pudo iniciar el panel de administración. Por favor, contacta a soporte.');
+                        }
+                    } else {
+                        // Usuario no está autenticado
+                        console.log("Usuario no autenticado.");
+                        
+                        // Mostrar mensaje de autenticación y ocultar panel de admin
+                        authMessage.style.display = 'flex';
+                        adminHeader.style.display = 'none';
+                        adminContainer.style.display = 'none';
+                    }
+                });
+
+                // 3. Manejar el cierre de sesión
+                logoutBtn.addEventListener('click', async () => {
+                    try {
+                        await signOut(auth);
+                        // onAuthStateChanged se encargará de mostrar la pantalla de login
+                    } catch (error) {
+                        console.error("Error al cerrar sesión:", error);
+                        window.showCustomAlert('Error', 'No se pudo cerrar la sesión.');
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error al inicializar Firebase o autenticar:", error);
+                window.showCustomAlert('Error de Inicialización', 'No se pudo conectar con el servidor de administración. Por favor, inténtalo de nuevo más tarde. Verifica tu configuración de Firebase.');
+            }
+        };
+
+        // Asegurarse de que el DOM esté completamente cargado antes de inicializar Firebase
+        document.addEventListener('DOMContentLoaded', initializeFirebase);
+    </script>
+</body>
+</html>
