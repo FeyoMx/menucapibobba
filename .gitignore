@@ -1,0 +1,5 @@
+# Ignorar el archivo de configuración de Firebase que contiene las claves secretas
+firebase-config.js
+
+# Ignorar dependencias de Node.js si se añaden en el futuro
+/node_modules

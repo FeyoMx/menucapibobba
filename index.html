@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Añadir un icono para la pestaña del navegador -->
+    <link rel="icon" type="image/png" href="https://i.imgur.com/llR0NN0.png">
+    <title>MENÚ CAPIBOBBA</title>
+    
+    <!-- Enlace al archivo CSS externo -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts: Preconnect para mejorar la velocidad de descarga -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Google Fonts: Precarga y estilos para Nunito y Balsamiq Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Global Site Tag (gtag.js) - Google Analytics -->
+    <!-- Reemplaza 'G-2YW39XNM9K' con tu ID de Medición de Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2YW39XNM9K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-2YW39XNM9K');
+    </script>
+    
+</head>
+<body>
+    <!-- Burbujas de fondo animadas (elementos puramente decorativos) -->
+    <div class="bubbles-background" aria-hidden="true">
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+    </div>
+
+    <!-- Contenedor principal de decoraciones kawaii flotantes -->
+    <!--<div class="kawaii-decorations-wrapper" aria-hidden="true">
+     <!--   <!-- Añadido onerror para ocultar la imagen si no carga -->
+      <!--  <img src="https://i.imgur.com/llR0NN0.png" alt="Capibobba Flotante" class="kawaii-deco capibobba-deco" onerror="this.style.display='none';">
+      <!--  <img src="https://i.imgur.com/8X1X3YJ.png" alt="Burbuja de té flotante" class="kawaii-deco bubble-tea-deco" onerror="this.style.display='none';">
+     <!--   <img src="https://i.imgur.com/R0yFvRj.png" alt="Corazón flotante" class="kawaii-deco heart-deco" onerror="this.style.display='none';">
+    </div>
+
+    <!-- Header del menú -->
+    <header class="menu-header">
+        <div class="logo-container">
+            <!-- Añadido onerror para ocultar la imagen si no carga -->
+            <img src="https://i.imgur.com/g1iRrOw.png" alt="Logo Capibobba" class="logo-light" id="logoLight" onerror="this.style.display='none';">
+            <img src="https://i.imgur.com/llR0NN0.png" alt="Logo Capibobba Oscuro" class="logo-dark" id="logoDark" onerror="this.style.display='none';">
+        </div>
+        <h1 class="menu-title">MENÚ <span class="title-part-1">CAPI</span><span class="title-part-2">BOBBA</span></h1>
+        <p class="menu-subtitle">¡Tu dosis diaria de felicidad y sabor!</p>
+    </header>
+
+    <!-- Contenedor principal del menú -->
+    <main class="menu-container">
+        <!-- Sección de Frappés Base Agua -->
+        <section class="menu-section animate-on-scroll" data-animation="fade-in-up">
+            <header class="section-header">
+                <h2 class="section-title">Frappés Base Agua 💧</h2>
+                <p class="section-description">Refrescantes y llenos de sabor frutal.</p>
+            </header>
+            <div id="waterFrappesGrid" class="products-grid">
+                <!-- Los frappés base agua se cargarán aquí dinámicamente por JS -->
+                <p class="loading-message">Cargando frappés base agua...</p>
+            </div>
+        </section>
+
+        <!-- Sección de Frappés Base Leche -->
+        <section class="menu-section animate-on-scroll" data-animation="fade-in-up">
+            <header class="section-header">
+                <h2 class="section-title">Frappés Base Leche 🥛</h2>
+                <p class="section-description">Cremosos y deliciosos, perfectos para consentirte.</p>
+            </header>
+            <div id="milkFrappesGrid" class="products-grid">
+                <!-- Los frappés base leche se cargarán aquí dinámicamente por JS -->
+                <p class="loading-message">Cargando frappés base leche...</p>
+            </div>
+        </section>
+
+        <!-- Sección de Bebidas Calientes -->
+        <section class="menu-section animate-on-scroll" data-animation="fade-in-up">
+            <header class="section-header">
+                <h2 class="section-title">Bebidas Calientes ☕</h2>
+                <p class="section-description">Para esos días que necesitas un abrazo cálido.</p>
+            </header>
+            <div id="hotDrinksGrid" class="products-grid">
+                <!-- Las bebidas calientes se cargarán aquí dinámicamente por JS -->
+                <p class="loading-message">Cargando bebidas calientes...</p>
+            </div>
+        </section>
+
+        <!-- Sección de Promociones y Novedades -->
+        <section class="menu-section promotions-section animate-on-scroll" data-animation="fade-in-up">
+            <header class="section-header">
+                <h2 class="section-title">✨ Promociones y Novedades ✨</h2>
+                <p class="section-description">¡No te pierdas nuestras ofertas especiales!</p>
+            </header>
+            <div id="promotionsGrid" class="promotions-grid">
+                <!-- Las promociones se cargarán aquí dinámicamente por JS -->
+                <p class="loading-message">Cargando promociones...</p>
+            </div>
+        </section>
+
+        <!-- Sección de Toppings -->
+        <section class="menu-section animate-on-scroll" data-animation="fade-in-up">
+            <header class="section-header">
+                <h2 class="section-title">Toppings Extra 🍡</h2>
+                <p class="section-description">¡Añade un toque extra de diversión a tu bebida!</p>
+            </header>
+            <div id="toppingsGrid" class="products-grid toppings-grid">
+                <!-- Los toppings se cargarán aquí dinámicamente por JS -->
+                <p class="loading-message">Cargando toppings...</p>
+            </div>
+        </section>
+
+        <!-- Sección CÓMO ORDENAR -->
+        <section class="menu-section order-section animate-on-scroll" data-animation="fade-in-up">
+            <header class="section-header">
+                <h2 class="section-title">¿Cómo Ordenar? 📝</h2>
+                <p class="section-description">Es fácil y rápido, ¡pide por WhatsApp!</p>
+            </header>
+            <div class="order-steps">
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <h3>Elige tus Favoritos</h3>
+                    <p>Explora nuestro menú y selecciona las bebidas y toppings que más te gusten.</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <h3>Añade al Carrito</h3>
+                    <p>Usa el botón "Añadir al Carrito" en cada producto.</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <h3>Envía tu Pedido</h3>
+                    <p>Haz clic en el botón de WhatsApp para enviarnos tu pedido. ¡Así de fácil!</p>
+                </div>
+            </div>
+            <div class="social-links">
+                <a href="#" id="whatsappOrderBtn" class="whatsapp-button" aria-label="Ordenar por WhatsApp">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp Icon">
+                    Ordenar por WhatsApp
+                </a>
+                <a href="https://www.facebook.com/share/1C1ciA6mn6/" target="_blank" rel="noopener noreferrer" class="facebook-link" aria-label="Visita nuestra página de Facebook">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="Facebook Icon">
+                    Síguenos en Facebook
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer del menú -->
+    <footer class="menu-footer" id="footer">
+        <div class="footer-content">
+            <div class="footer-section about">
+                <h3 class="footer-logo-text"><span>Capi</span>bobba</h3>
+                <p>
+                    Tu dosis diaria de felicidad y sabor. ¡Te esperamos con una sonrisa y un vaso lleno de felicidad! 💖🌟.
+                </p>
+                <div class="contact">
+                    <span><i class="fas fa-phone"></i> &nbsp; 771-183-1526</span>
+                    <span><i class="fas fa-envelope"></i> &nbsp; capibobba@gmail.com</span>
+                </div>
+                <div class="socials">
+                    <a href="https://www.facebook.com/share/1C1ciA6mn6/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/capibobba?igsh=MWxjM2psMW1xM3IzYg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://vm.tiktok.com/ZSHgd5FEJ4Fdo-l8jb9/" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+    
+            <div class="footer-section links">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="#waterFrappesGrid">Frappés Agua</a></li>
+                    <li><a href="#milkFrappesGrid">Frappés Leche</a></li>
+                    <li><a href="#hotDrinksGrid">Bebidas Calientes</a></li>
+                    <li><a href="#promotionsGrid">Promociones</a></li>
+                </ul>
+            </div>
+    
+            <div class="footer-section hours">
+                <h3>Horario de Atención</h3>
+                <p>Lunes - Viernes: 6:00 PM - 10:00 PM</p>
+                <p>Sábado - Domingo: 12:00 PM - 10:00 PM</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 Capibobba | Todos los derechos reservados | Hecho con 💖 y burbujas.
+        </div>
+    </footer>
+
+    <!-- Carrito de compras flotante -->
+    <div id="cartButton" class="cart-button" role="button" aria-label="Ver carrito de compras" tabindex="0">
+        🛒 <span id="cartItemCount" class="cart-item-count">0</span>
+    </div>
+
+    <!-- Modal del Carrito de Compras -->
+    <div id="cartModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cartModalTitle">
+        <div class="modal-content cart-modal-content">
+            <button class="close-modal-button" aria-label="Cerrar carrito">✖</button>
+            <h2 id="cartModalTitle" class="modal-title">Tu Carrito 🛒</h2>
+            <div id="cartItems" class="cart-items">
+                <!-- Los ítems del carrito se cargarán aquí -->
+                <p class="empty-cart-message">Tu carrito está vacío.</p>
+            </div>
+            <div class="cart-summary">
+                <p>Total: <span id="cartTotal">$0.00</span></p>
+            </div>
+            <div class="cart-actions">
+                <button id="clearCartBtn" class="clear-cart-btn" aria-label="Vaciar carrito">Vaciar Carrito 🗑️</button>
+                <a id="checkoutBtn" class="checkout-btn" href="#" target="_blank" rel="noopener noreferrer" aria-label="Proceder al pago">Ordenar por WhatsApp ✅</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Visualización de Imagen de Sabor -->
+    <div id="flavorImageModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="flavorImageTitle">
+        <div class="modal-content flavor-image-content">
+            <button class="close-modal-button" aria-label="Cerrar vista de imagen">✖</button>
+            <h3 id="flavorImageTitle"></h3>
+            <img id="flavorImageDisplay" src="" alt="Imagen de Sabor" class="flavor-image-display">
+        </div>
+    </div>
+
+    <!-- Modal de Selección de Toppings -->
+    <div id="toppingSelectionModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="toppingModalTitle">
+        <div class="modal-content topping-modal-content">
+            <button class="close-modal-button" aria-label="Cerrar selección de toppings">✖</button>
+            <h3 id="toppingModalTitle" class="modal-title">Añadir Toppings a <span id="toppingModalProductName"></span></h3>
+            <div id="availableToppingsGrid" class="toppings-modal-grid">
+                <!-- Los toppings disponibles se cargarán aquí dinámicamente -->
+            </div>
+            <div class="topping-modal-actions">
+                <button id="confirmToppingsButton" aria-label="Confirmar toppings">Confirmar Toppings ✅</button>
+                <button id="cancelToppingsButton" aria-label="Cancelar toppings">Cancelar ❌</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NUEVO: Modal de Personalización de Chamoyada -->
+    <div id="chamoyadaCustomizationOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="chamoyadaModalTitle">
+        <div class="modal-content chamoyada-modal-content">
+            <header class="section-header">
+                <h2 id="chamoyadaModalTitle" class="section-title">¡Personaliza tu Chamoyada!</h2>
+                <p class="section-description">Elige tu sabor base y añade toppings.</p>
+            </header>
+
+            <div class="chamoyada-flavor-selection">
+                <h3 class="flavor-selection-title">Escoge tu sabor base (Base Agua)</h3>
+                <div id="chamoyadaBaseFlavorGrid" class="flavor-grid-small">
+                    <!-- Los sabores base agua se cargarán aquí dinámicamente por JS -->
+                </div>
+            </div>
+
+            <div class="chamoyada-topping-selection">
+                <h3 class="topping-selection-title">Añade Toppings (Opcional)</h3>
+                <div id="chamoyadaToppingsGrid" class="toppings-modal-grid">
+                    <!-- Los toppings existentes se cargarán aquí dinámicamente por JS -->
+                </div>
+            </div>
+
+            <div class="topping-modal-actions">
+                <button id="confirmChamoyadaButton" aria-label="Confirmar Chamoyada">Confirmar Chamoyada ✅</button>
+                <button id="cancelChamoyadaButton" aria-label="Cancelar Chamoyada">Cancelar ❌</button>
+            </div>
+            <button class="close-modal-button" aria-label="Cerrar personalización de Chamoyada">✖</button>
+        </div>
+    </div>
+    <!-- FIN NUEVO: Modal de Personalización de Chamoyada -->
+
+    <!-- Modal de Alerta Personalizado (Reemplaza alert()) -->
+    <div id="customAlertModal" class="modal-overlay" role="alertdialog" aria-modal="true" aria-labelledby="customAlertTitle" aria-describedby="customAlertMessage">
+        <div class="modal-content custom-alert-modal">
+            <h3 id="customAlertTitle"></h3>
+            <p id="customAlertMessage"></p>
+            <button id="customAlertCloseBtn" class="checkout-btn">Aceptar</button>
+        </div>
+    </div>
+
+    <!-- Plantillas para Renderizado Dinámico -->
+    <template id="productCardTemplate">
+        <article class="product-card" tabindex="0" role="button">
+            <div class="product-info">
+                <h3 class="product-name"></h3>
+                <p class="product-description"></p>
+                <p class="product-price"></p>
+            </div>
+            <button class="add-to-cart-btn" aria-label="Añadir al carrito">Añadir ➕</button>
+        </article>
+    </template>
+
+    <template id="promotionCardTemplate">
+        <article class="promotion-card" tabindex="0" role="button">
+            <div class="promotion-info">
+                <h3 class="promotion-name"></h3>
+                <p class="promotion-description"></p>
+                <p class="promotion-price"></p>
+            </div>
+            <button class="add-to-cart-btn" aria-label="Añadir promoción al carrito">Añadir ➕</button>
+        </article>
+    </template>
+
+    <!-- Carga de script.js como un MÓDULO -->
+    <script src="script.js" type="module" defer></script>
+
+    <!-- Carga de Firebase SDK y lógica de inicialización -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        // import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"; // Auth no es necesario para el menú público
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { firebaseConfig } from './firebase-config.js'; // Importar configuración centralizada
+
+        // Función para mostrar el modal de alerta personalizado
+        window.showCustomAlert = function(title, message) {
+            document.getElementById('customAlertTitle').textContent = title;
+            document.getElementById('customAlertMessage').textContent = message;
+            if (window.openModal) window.openModal(document.getElementById('customAlertModal'));
+        };
+
+        // Event listener para cerrar el modal de alerta
+        document.getElementById('customAlertCloseBtn').addEventListener('click', () => {
+            if (window.closeModal) window.closeModal(document.getElementById('customAlertModal'));
+        });
+
+        // Inicializar Firebase y autenticar
+        async function initializeFirebase() {
+            // Validar que firebaseConfig no esté vacío
+            if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+                console.error("Firebase config is incomplete. Please update firebaseConfig with your actual Firebase project details.");
+                window.showCustomAlert('Error de Configuración', 'La configuración de Firebase está incompleta. Por favor, edita index.html y admin.html con los detalles de tu proyecto Firebase.');
+                return;
+            }
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+                // const auth = getAuth(app); // No se necesita autenticación para leer el menú
+                const appId = firebaseConfig.projectId; // Usamos projectId como appId para Firestore
+
+                // --- LÓGICA SIMPLIFICADA ---
+                // Ya que las reglas de Firestore permiten la lectura pública de los datos del admin,
+                // no necesitamos iniciar sesión. Esto evita conflictos con la sesión del admin en otra pestaña.
+                
+                // Define un identificador único para el menú. Este NO es una credencial.
+                // Usaremos este ID para construir la ruta a los productos en Firestore.
+                const menuId = 'menu-capibobba'; // Puedes usar el ID del proyecto o un nombre único.
+
+                // Iniciar la lógica del menú directamente, sin autenticación.
+                if (typeof window.initMenu === 'function') {
+                    window.initMenu(db, menuId, appId);
+                } else {
+                    console.error("Error: window.initMenu no es una función. Asegúrate de que script.js se cargue correctamente como un módulo.");
+                    window.showCustomAlert('Error Interno', 'No se pudo iniciar el menú. Por favor, contacta a soporte.');
+                }
+
+            } catch (error) {
+                console.error("Error al inicializar Firebase o autenticar en el menú:", error);
+                window.showCustomAlert('Error de Conexión', 'No se pudo cargar el menú dinámicamente. Por favor, inténtalo de nuevo más tarde.');
+            }
+        }
+
+        // Asegurarse de que el DOM esté completamente cargado antes de inicializar Firebase
+        document.addEventListener('DOMContentLoaded', initializeFirebase);
+    </script>
+</body>
+</html>

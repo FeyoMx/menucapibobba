@@ -1,0 +1,1392 @@
+/* Importa las fuentes Nunito y Balsamiq Sans de Google Fonts */
+/* Se utiliza @import aquí, pero para producción, considera usar <link rel="stylesheet"> directo en el HTML */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Balsamiq+Sans:wght@700&display=swap');
+
+/* Reseteo básico de CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilos generales del cuerpo de la página */
+body {
+    font-family: 'Nunito', sans-serif;
+    width: 100%; /* Asegura que ocupe todo el ancho disponible */
+    max-width: 1080px; /* Ancho máximo para el contenido principal */
+    height: auto;
+    margin: 0 auto; /* Centra el contenido */
+    /* Degradado de fondo para un toque kawaii (Modo Claro por defecto) */
+    background: linear-gradient(180deg, #FFE1E6 0%, #F3E8FF 25%, #E0F2FE 50%, #FFF9E6 75%, #FFE1E6 100%);
+    position: relative;
+    overflow-x: hidden; /* Previene el scroll horizontal */
+    line-height: 1.6; /* Ligeramente más espaciado para mejor legibilidad */
+    color: #343A40; /* Color de texto oscuro por defecto */
+    transition: background-color 0.5s ease, color 0.5s ease; /* Transición suave para el modo oscuro */
+}
+
+/* Modo Oscuro */
+body.dark-mode {
+    background: linear-gradient(180deg, #2C3E50 0%, #34495E 25%, #4A607C 50%, #34495E 75%, #2C3E50 100%);
+    color: #F8F9FA; /* Color de texto claro en modo oscuro */
+}
+
+/* Animaciones de burbujas de fondo */
+.bubbles-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* Asegura que estén detrás del contenido */
+}
+
+.bubble {
+    position: absolute;
+    bottom: -100px; /* Empieza fuera de la pantalla */
+    background-color: rgba(255, 255, 255, 0.3); /* Burbujas semitransparentes */
+    border-radius: 50%;
+    opacity: 0.7;
+    animation: bubble-float 15s infinite ease-in-out; /* Animación de flotación */
+}
+
+/* Tamaños y posiciones aleatorias para las burbujas */
+.bubble:nth-child(1) { width: 40px; height: 40px; left: 10%; animation-duration: 12s; animation-delay: 0s; }
+.bubble:nth-child(2) { width: 60px; height: 60px; left: 20%; animation-duration: 15s; animation-delay: 2s; }
+.bubble:nth-child(3) { width: 30px; height: 30px; left: 30%; animation-duration: 10s; animation-delay: 4s; }
+.bubble:nth-child(4) { width: 70px; height: 70px; left: 40%; animation-duration: 18s; animation-delay: 1s; }
+.bubble:nth-child(5) { width: 50px; height: 50px; left: 50%; animation-duration: 13s; animation-delay: 3s; }
+.bubble:nth-child(6) { width: 80px; height: 80px; left: 60%; animation-duration: 16s; animation-delay: 5s; }
+.bubble:nth-child(7) { width: 45px; height: 45px; left: 70%; animation-duration: 11s; animation-delay: 0.5s; }
+.bubble:nth-child(8) { width: 65px; height: 65px; left: 80%; animation-duration: 14s; animation-delay: 2.5s; }
+.bubble:nth-child(9) { width: 35px; height: 35px; left: 90%; animation-duration: 9s; animation-delay: 4.5s; }
+.bubble:nth-child(10) { width: 55px; height: 55px; left: 5%; animation-duration: 17s; animation-delay: 1.5s; }
+
+@keyframes bubble-float {
+    0% { transform: translateY(0) translateX(0); opacity: 0.7; }
+    50% { transform: translateY(-500px) translateX(20px); opacity: 0.5; }
+    100% { transform: translateY(-1000px) translateX(-20px); opacity: 0; }
+}
+
+/* Decoraciones Kawaii flotantes */
+.kawaii-decorations-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Permite hacer clic a través de ellas */
+    z-index: 0; /* Detrás del contenido, pero encima de las burbujas */
+}
+
+.kawaii-deco {
+    position: absolute;
+    animation: float-and-fade 20s infinite ease-in-out;
+    opacity: 0.8;
+}
+
+.capibobba-deco {
+    width: 80px;
+    height: 80px;
+    top: 5%;
+    left: 5%;
+    animation-duration: 22s;
+    animation-delay: 1s;
+}
+
+.bubble-tea-deco {
+    width: 60px;
+    height: 60px;
+    top: 15%;
+    right: 10%;
+    animation-duration: 18s;
+    animation-delay: 3s;
+}
+
+.heart-deco {
+    width: 40px;
+    height: 40px;
+    bottom: 10%;
+    left: 20%;
+    animation-duration: 15s;
+    animation-delay: 5s;
+}
+
+@keyframes float-and-fade {
+    0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0.8; }
+    25% { transform: translateY(-20px) translateX(10px) rotate(5deg); opacity: 0.7; }
+    50% { transform: translateY(0) translateX(-10px) rotate(0deg); opacity: 0.8; }
+    75% { transform: translateY(20px) translateX(10px) rotate(-5deg); opacity: 0.7; }
+    100% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0.8; }
+}
+
+
+/* Estilos del Header del Menú */
+.menu-header {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: rgba(255, 255, 255, 0.8); /* Fondo semitransparente */
+    border-bottom-left-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 10; /* Asegura que esté por encima de las decoraciones */
+}
+
+.logo-container {
+    margin-bottom: 1rem;
+}
+
+.logo-light, .logo-dark {
+    max-width: 120px;
+    height: auto;
+    transition: opacity 0.5s ease;
+}
+
+/* Por defecto, muestra el logo claro. El JS maneja la visibilidad del oscuro. */
+body.dark-mode .logo-light {
+    display: none;
+}
+body.dark-mode .logo-dark {
+    display: inline-block;
+}
+body:not(.dark-mode) .logo-dark {
+    display: none;
+}
+
+
+.menu-title {
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 2.8rem;
+    color: #FF69B4; /* Color por defecto para "MENÚ" */
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.menu-title .title-part-1 {
+    color: #9370DB; /* Morado Secundario, igual que en el footer */
+}
+
+.menu-title .title-part-2 {
+    color: #FF69B4; /* Rosa Primario, igual que en el footer */
+}
+
+/* Colores del título en Modo Oscuro para que coincidan con el footer. */
+/* La palabra "MENÚ" mantiene su color rosa y "CAPI" su color morado. */
+body.dark-mode .menu-title .title-part-2 {
+    color: #87CEEB; /* Azul acento */
+}
+
+.menu-subtitle {
+    font-size: 1.2rem;
+    color: #9370DB; /* Morado Secundario */
+    font-weight: 600;
+}
+
+/* Contenedor principal del menú */
+.menu-container {
+    padding: 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem; /* Espacio entre secciones */
+}
+
+/* Estilos de las secciones del menú */
+.menu-section {
+    background: rgba(255, 255, 255, 0.9); /* Fondo ligeramente más opaco */
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 0.3rem 0.8rem rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden; /* Para contener las animaciones de los productos */
+}
+
+.menu-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.15);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 2.2rem;
+    color: #FF69B4; /* Rosa Primario */
+    position: relative; /* Necesario para el pseudo-elemento ::after */
+    padding-bottom: 12px; /* Espacio para el subrayado */
+    margin-bottom: 1rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%); /* Centra el subrayado */
+    width: 80px; /* Ancho del subrayado */
+    height: 4px; /* Grosor del subrayado */
+    
+    /* ¡Usa los colores de tu marca! Este es un ejemplo. */
+    background: linear-gradient(90deg, #ff85a2, #a2d2ff); 
+    
+    border-radius: 2px;
+}
+.section-description {
+    font-size: 1rem;
+    color: #6C757D; /* Gris oscuro */
+}
+
+/* Estilos de la cuadrícula de productos */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Columnas responsivas */
+    gap: 1rem; /* Espacio entre tarjetas */
+    justify-content: center; /* Centra los elementos en la cuadrícula */
+}
+
+/* Estilos de las tarjetas de producto */
+.product-card, .promotion-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 1rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer; /* Indica que es clickeable */
+    overflow: hidden; /* Asegura que la imagen no se salga de los bordes redondeados */
+}
+
+.product-card:hover, .promotion-card:hover {
+    transform: translateY(-8px); /* La tarjeta se eleva ligeramente */
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.product-card.info-only {
+    cursor: default; /* Cambia el cursor para indicar que no es clickeable */
+}
+
+.product-card.info-only:hover {
+    transform: none; /* Elimina el efecto de "levantarse" al pasar el cursor */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Mantiene la sombra base */
+}
+
+.product-image, .promotion-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    margin-bottom: 0.8rem;
+    border: 2px solid #FFC0CB; /* Borde rosa claro */
+}
+
+.product-name, .promotion-name {
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 1.2rem;
+    color: #FF69B4;
+    margin-bottom: 0.4rem;
+    word-break: break-word; /* Rompe palabras largas */
+}
+
+.product-description, .promotion-description {
+    font-size: 0.9rem;
+    color: #6C757D;
+    margin-bottom: 0.6rem;
+    flex-grow: 1; /* Permite que la descripción ocupe espacio si es más larga */
+}
+
+.product-price, .promotion-price {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #9370DB;
+    margin-top: auto; /* Empuja el precio hacia abajo */
+    margin-bottom: 0.8rem;
+}
+
+/* Botón Añadir al Carrito */
+.add-to-cart-btn {
+    background: linear-gradient(45deg, #87CEEB, #25D366); /* Azul claro a Verde */
+    color: white;
+    border: none;
+    border-radius: 0.7rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.15);
+    width: 100%; /* Ocupa todo el ancho de la tarjeta */
+    margin-top: 0.5rem;
+}
+
+.add-to-cart-btn:hover {
+    transform: scale(1.05); /* El botón se hace un poco más grande */
+    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+    background: linear-gradient(45deg, #25D366, #87CEEB); /* Invierte el gradiente al pasar el mouse */
+}
+
+.add-to-cart-btn.added {
+    background: #25D366; /* Verde de éxito */
+    animation: bounce-in 0.5s forwards;
+}
+
+@keyframes bounce-in {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+/* Estilos específicos para la sección de promociones */
+.promotions-section .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Tarjetas de promoción un poco más grandes */
+}
+
+/* Estilos para el mensaje de "No hay productos" */
+.no-products-message {
+    text-align: center;
+    color: #6C757D;
+    font-style: italic;
+    padding: 2rem;
+    width: 100%;
+}
+
+/* Sección de Cómo Ordenar */
+.order-section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.order-steps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.step {
+    flex: 1 1 250px; /* Permite que los pasos se ajusten */
+    background: #F8F9FA;
+    border-radius: 1rem;
+    padding: 1.2rem;
+    box-shadow: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.05);
+    border: 1px dashed #FFC0CB; /* Borde punteado kawaii */
+}
+
+.step-number {
+    display: inline-block;
+    background: #FF69B4;
+    color: white;
+    font-family: 'Balsamiq Sans', cursive;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.step h3 {
+    font-family: 'Balsamiq Sans', cursive;
+    color: #9370DB;
+    margin-bottom: 0.5rem;
+}
+
+.step p {
+    font-size: 0.95rem;
+    color: #6C757D;
+}
+
+.social-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.whatsapp-button, .facebook-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 2rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 0.3rem 0.8rem rgba(0, 0, 0, 0.2);
+}
+
+.whatsapp-button {
+    background: linear-gradient(45deg, #25D366, #128C7E); /* Verde WhatsApp */
+    color: white;
+    border: 2px solid white;
+}
+
+.whatsapp-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.3);
+    background: linear-gradient(45deg, #128C7E, #25D366);
+}
+
+.whatsapp-button img, .facebook-link img {
+    width: 24px;
+    height: 24px;
+}
+
+.facebook-link {
+    background: linear-gradient(45deg, #3B5998, #8B9DC3); /* Azul Facebook */
+    color: white;
+    border: 2px solid white;
+}
+
+.facebook-link:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.3);
+    background: linear-gradient(45deg, #8B9DC3, #3B5998);
+}
+
+/* Footer */
+.menu-footer {
+    background: rgba(255, 255, 255, 0.8);
+    color: #343A40;
+    padding: 2rem 1rem;
+    margin-top: 3rem;
+    border-top-left-radius: 2rem;
+    border-top-right-radius: 2rem;
+    box-shadow: 0 -0.3rem 0.8rem rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 10;
+}
+
+body.dark-mode .menu-footer {
+    background: rgba(44, 62, 80, 0.8); /* Color oscuro semitransparente */
+    color: #F8F9FA;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 2rem;
+}
+
+.footer-section h3 {
+    font-family: 'Balsamiq Sans', cursive;
+    color: var(--primary-pink, #FF69B4);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+body.dark-mode .footer-section h3 {
+    color: var(--accent-blue, #87CEEB);
+}
+
+.footer-logo-text span {
+    color: var(--secondary-purple, #9370DB);
+}
+
+.footer-section p, .footer-section li {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    margin-bottom: 0.5rem;
+}
+
+.footer-section .contact span {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.footer-section .socials a {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 50%;
+    background-color: var(--primary-pink, #FF69B4);
+    color: white;
+    margin-right: 0.5rem;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.footer-section .socials a:hover {
+    background-color: var(--secondary-purple, #9370DB);
+    transform: translateY(-3px);
+}
+
+.footer-section.links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section.links a {
+    text-decoration: none;
+    color: #6C757D;
+    transition: color 0.3s ease, padding-left 0.3s ease;
+}
+
+body.dark-mode .footer-section.links a {
+    color: #adb5bd;
+}
+
+.footer-section.links a:hover {
+    color: var(--primary-pink, #FF69B4);
+    padding-left: 5px;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    font-size: 0.9rem;
+    color: #6C757D;
+}
+
+body.dark-mode .footer-bottom {
+    border-top-color: #495057;
+    color: #adb5bd;
+}
+
+/* Carrito de compras flotante */
+.cart-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(45deg, #FF69B4, #9370DB); /* Rosa a Morado */
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 100; /* Asegura que esté por encima de todo */
+    border: 3px solid white;
+}
+
+/* Animación para cuando se añade un item al carrito */
+.cart-button.item-added-animation {
+    animation: cart-bounce 0.6s ease;
+}
+
+@keyframes cart-bounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.25);
+    }
+}
+.cart-button:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.35);
+}
+
+.cart-item-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #FFC0CB; /* Rosa claro */
+    color: #FF69B4; /* Rosa Primario */
+    font-size: 0.9rem;
+    font-weight: 800;
+    border-radius: 50%;
+    padding: 0.2rem 0.5rem;
+    min-width: 25px;
+    text-align: center;
+    border: 1px solid white;
+}
+
+/* Modales (Base para todos los pop-ups) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Fondo oscuro semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Por encima de todo */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s 0.3s; /* Transición suave */
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.3);
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto; /* Permite scroll si el contenido es muy largo */
+}
+
+.modal-overlay.active .modal-content {
+    animation: slide-up-fade-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes slide-up-fade-in {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close-modal-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: #6C757D;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+    z-index: 10;
+}
+
+.close-modal-button:hover {
+    transform: rotate(90deg);
+    color: #FF6347; /* Rojo peligro */
+}
+
+.modal-title {
+    font-family: 'Balsamiq Sans', cursive;
+    color: #FF69B4;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* Estilos específicos del modal del carrito */
+.cart-modal-content {
+    width: 450px;
+}
+
+.cart-items {
+    max-height: 300px; /* Altura máxima para el scroll del carrito */
+    overflow-y: auto;
+    margin-bottom: 1.5rem;
+    border-top: 1px solid #E9ECEF;
+    border-bottom: 1px solid #E9ECEF;
+    padding: 1rem 0;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed #DEE2E6; /* Línea punteada entre ítems */
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.cart-item-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    border: 1px solid #FFC0CB;
+}
+
+.cart-item-info {
+    flex-grow: 1;
+}
+
+.cart-item-name {
+    font-weight: 700;
+    color: #343A40;
+    display: block;
+    font-size: 1.1rem;
+}
+
+.cart-item-toppings {
+    font-size: 0.85rem;
+    color: #6C757D;
+    margin-top: 0.2rem;
+}
+
+.cart-item-price {
+    font-size: 0.9rem;
+    color: #9370DB;
+}
+
+.cart-item-quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.quantity-btn {
+    background: #FFC0CB; /* Rosa claro */
+    color: #FF69B4;
+    border: none;
+    border-radius: 0.5rem;
+    width: 30px;
+    height: 30px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background-color: #FF9EB0; /* Rosa un poco más oscuro */
+    transform: scale(1.05);
+}
+
+.cart-item-quantity {
+    font-weight: 700;
+    color: #343A40;
+    min-width: 20px;
+    text-align: center;
+}
+
+.cart-item-total {
+    font-weight: 900;
+    color: #FF69B4;
+    font-size: 1.2rem;
+    margin-left: 1rem;
+}
+
+.cart-summary {
+    text-align: right;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #343A40;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid #9370DB; /* Línea morada para el total */
+}
+
+.cart-summary span {
+    color: #FF69B4;
+}
+
+.cart-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.clear-cart-btn, .checkout-btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 0.7rem;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.15);
+    flex: 1;
+    text-align: center;
+}
+
+.clear-cart-btn {
+    background: #FF6347; /* Rojo peligro */
+    color: white;
+    border: 2px solid white;
+}
+
+.clear-cart-btn:hover {
+    background: #E0523C;
+    transform: translateY(-2px);
+    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+}
+
+.checkout-btn {
+    background: linear-gradient(45deg, #25D366, #128C7E); /* Verde WhatsApp */
+    color: white;
+    border: 2px solid white;
+}
+
+.checkout-btn:hover {
+    background: linear-gradient(45deg, #128C7E, #25D366);
+    transform: translateY(-2px);
+    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos del modal de imagen de sabor */
+.flavor-image-content {
+    width: 400px;
+    text-align: center;
+}
+
+.flavor-image-display {
+    max-width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    margin-top: 1rem;
+    border: 3px solid #FFC0CB;
+}
+
+#flavorImageTitle {
+    font-size: 1.8rem;
+    color: #9370DB;
+}
+
+/* Estilos del modal de selección de toppings */
+.topping-modal-content, .chamoyada-modal-content {
+    width: 500px;
+}
+
+.toppings-modal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border: 1px dashed #DDA0DD; /* Borde punteado morado claro */
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    max-height: 250px; /* Limita la altura del grid de toppings */
+    overflow-y: auto; /* Añade scroll si los toppings exceden el espacio */
+}
+
+.topping-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: #F8F9FA;
+    border-radius: 0.8rem;
+    padding: 0.8rem;
+    box-shadow: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.topping-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+.topping-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #9370DB;
+    border-radius: 0.3rem;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.topping-item input[type="checkbox"]:checked {
+    background-color: #9370DB;
+    border-color: #9370DB;
+}
+
+.topping-item input[type="checkbox"]:checked::after {
+    content: '✔';
+    color: white;
+    font-size: 14px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.topping-item label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    cursor: pointer;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.topping-name {
+    font-weight: 600;
+    color: #343A40;
+    text-align: left;
+    word-break: break-word;
+}
+
+.topping-price {
+    font-size: 0.9rem;
+    color: #9370DB;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.topping-modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.topping-modal-actions button {
+    flex: 1;
+    padding: 0.8rem 1.5rem;
+    border-radius: 0.7rem;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.15);
+}
+
+#confirmToppingsButton, #confirmChamoyadaButton {
+    background: linear-gradient(45deg, #25D366, #128C7E); /* Verde para confirmar */
+    color: white;
+    border: 2px solid white;
+}
+
+#confirmToppingsButton:hover, #confirmChamoyadaButton:hover {
+    background: linear-gradient(45deg, #128C7E, #25D366);
+    transform: translateY(-2px);
+    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+}
+
+#cancelToppingsButton, #cancelChamoyadaButton {
+    background: #FF6347; /* Rojo para cancelar */
+    color: white;
+    border: 2px solid white;
+}
+
+#cancelToppingsButton:hover, #cancelChamoyadaButton:hover {
+    background: #E0523C;
+    transform: translateY(-2px);
+    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos específicos para el modal de Chamoyada */
+.chamoyada-modal-content {
+    width: 550px;
+}
+
+.chamoyada-flavor-selection, .chamoyada-topping-selection {
+    margin-bottom: 1.5rem;
+}
+
+.flavor-selection-title, .topping-selection-title {
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 1.4rem;
+    color: #9370DB;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.flavor-grid-small {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.8rem;
+    padding: 1rem;
+    border: 1px dashed #FFC0CB; /* Borde punteado rosa claro */
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.flavor-item {
+    background: #F8F9FA;
+    border-radius: 0.8rem;
+    padding: 0.5rem;
+    box-shadow: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease;
+    border: 2px solid transparent; /* Borde inicial para evitar saltos de layout */
+    cursor: pointer; /* Indicar que toda la tarjeta es clickeable */
+    text-align: center;
+}
+
+.flavor-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+.flavor-item.selected {
+    border-color: #FF69B4;
+    box-shadow: 0 0.3rem 0.8rem rgba(255, 105, 180, 0.3);
+    animation: flavor-selected-pop 0.4s ease-out forwards; /* Animación de "pop" */
+}
+
+.flavor-item input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #FF69B4;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-bottom: 0.5rem;
+}
+
+.flavor-item input[type="radio"]:checked {
+    background-color: #FF69B4;
+    border-color: #FF69B4;
+}
+
+.flavor-item input[type="radio"]:checked::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.flavor-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    margin-bottom: 0.3rem;
+    border: 1px solid #E0F2FE;
+}
+
+.flavor-name {
+    font-weight: 600;
+    color: #343A40;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* Estilos para el modal de alerta personalizado */
+.custom-alert-modal {
+    width: 350px;
+    text-align: center;
+    padding: 2rem;
+}
+
+#customAlertTitle {
+    font-family: 'Balsamiq Sans', cursive;
+    color: #FF69B4;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+#customAlertMessage {
+    font-size: 1rem;
+    color: #6C757D;
+    margin-bottom: 1.5rem;
+}
+
+#customAlertCloseBtn {
+    background: linear-gradient(45deg, #9370DB, #FF69B4);
+    color: white;
+    border: none;
+    border-radius: 0.7rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.15);
+}
+
+#customAlertCloseBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+}
+
+/* Keyframes para la animación de selección de sabor */
+@keyframes flavor-selected-pop {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-5px) scale(1.1) rotate(-3deg);
+    }
+    100% {
+        transform: translateY(-2px) scale(1.03) rotate(0deg);
+    }
+}
+
+
+/* Animaciones al scroll */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Disable interaction with add buttons while initial data is loading */
+body.data-loading .add-to-cart-btn {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: wait;
+}
+
+/* Mensajes de carga */
+.loading-message {
+    text-align: center;
+    color: #9370DB;
+    font-style: italic;
+    padding: 2rem;
+    width: 100%;
+    font-size: 1.1rem;
+}
+
+/* Responsive Design */
+
+/* NUEVO: Punto de quiebre para Tabletas (hasta 1024px) */
+@media (max-width: 1024px) {
+    .menu-title {
+        font-size: 2.5rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    /* Ajustar la cuadrícula de productos para que no sea tan ancha en tabletas */
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1.2rem;
+    }
+
+    /* Las promociones pueden tener 2 columnas en tabletas */
+    .promotions-section .products-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .menu-container {
+        gap: 2.2rem;
+    }
+
+    /* Ajustar el ancho de los modales para que no sean tan grandes */
+    .cart-modal-content, .topping-modal-content, .chamoyada-modal-content {
+        width: 80vw;
+        max-width: 550px;
+    }
+}
+
+@media (max-width: 768px) {
+    .menu-title {
+        font-size: 2.2rem;
+    }
+
+    .menu-subtitle {
+        font-size: 1rem;
+    }
+
+    .menu-container {
+        padding: 0.8rem;
+        gap: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 0.8rem;
+    }
+
+    .product-card, .promotion-card {
+        padding: 1rem; /* Mantener un padding generoso para el área de toque */
+    }
+
+    .product-image, .promotion-image {
+        width: 80px;
+        height: 80px;
+    }
+
+    .product-name, .promotion-name {
+        font-size: 1rem;
+    }
+
+    .product-description, .promotion-description {
+        font-size: 0.875rem; /* Ligeramente más grande para legibilidad */
+    }
+
+    .product-price, .promotion-price {
+        font-size: 1rem;
+    }
+
+    .add-to-cart-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .promotions-section .products-grid {
+        grid-template-columns: 1fr; /* Una columna en móviles para promociones */
+    }
+
+    .order-steps {
+        flex-direction: column;
+    }
+
+    .step {
+        flex: none; /* Elimina el flex-basis */
+        width: 100%; /* Ocupa todo el ancho disponible */
+    }
+
+    .social-links {
+        flex-direction: column;
+    }
+
+    .whatsapp-button, .facebook-link {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .footer-content {
+        text-align: center; /* Centrar el contenido del footer en móvil */
+    }
+
+    .cart-button {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .modal-content {
+        padding: 1.5rem;
+        max-width: 95%;
+    }
+
+    .cart-modal-content, .topping-modal-content, .chamoyada-modal-content, .flavor-image-content, .custom-alert-modal {
+        width: 95%; /* Ajusta el ancho para móviles */
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+    }
+
+    .close-modal-button {
+        font-size: 1.5rem;
+    }
+
+    .cart-item-image {
+        width: 40px;
+        height: 40px;
+    }
+
+    .cart-item-name {
+        font-size: 1rem;
+    }
+
+    .cart-item-price {
+        font-size: 0.8rem;
+    }
+
+    .cart-item-quantity-controls {
+        gap: 0.8rem; /* Aumentar el espacio para facilitar el toque */
+    }
+
+    .quantity-btn {
+        width: 30px; /* Aumentar tamaño del botón para mejor toque */
+        height: 30px;
+        font-size: 1.2rem;
+    }
+
+    .cart-item-quantity {
+        font-size: 0.9rem;
+    }
+
+    .cart-item-total {
+        font-size: 1.1rem;
+    }
+
+    .clear-cart-btn, .checkout-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* --- Mejoras de Responsividad para Modales en Móviles --- */
+
+    .toppings-modal-grid, .flavor-grid-small {
+        /* Para toppings, una sola columna es más fácil de usar en móviles */
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+        padding: 0.8rem;
+        max-height: 280px; /* Limitar altura para que no ocupe toda la pantalla */
+    }
+
+    /* Los sabores de la chamoyada pueden seguir en un grid más compacto */
+    .flavor-grid-small {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    .topping-item, .flavor-item {
+        padding: 0.8rem; /* Aumentar el padding para un área de toque más grande */
+    }
+
+    .topping-item input[type="checkbox"], .flavor-item input[type="radio"] {
+        width: 18px;
+        height: 18px;
+    }
+
+    .topping-name, .flavor-name {
+        font-size: 0.8rem;
+    }
+
+    .topping-price {
+        font-size: 0.75rem;
+    }
+
+    .flavor-image {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Apilar los botones de acción en los modales para mejor usabilidad */
+    .topping-modal-actions {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .topping-modal-actions button {
+        width: 100%;
+    }
+}
