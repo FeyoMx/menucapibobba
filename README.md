@@ -52,9 +52,8 @@ La principal característica es su capacidad de **actualización en tiempo real*
     - Copia el objeto de configuración `firebaseConfig`.
 
 4.  **Configurar el Proyecto Localmente:**
-    - En la raíz de tu proyecto, encontrarás un archivo llamado `firebase-config.example.js`.
-    - **Renombra** ese archivo a `firebase-config.js`.
-    - Abre el nuevo `firebase-config.js` y pega el objeto `firebaseConfig` que copiaste de tu consola de Firebase.
+    - Para el desarrollo local, crea un archivo `firebase-config.js` en la raíz del proyecto.
+    - Pega el objeto `firebaseConfig` que copiaste de tu consola de Firebase. **Importante:** Este archivo está en el `.gitignore` y no debe subirse al repositorio.
     ```javascript
     // firebase-config.js
     export const firebaseConfig = {
@@ -63,14 +62,11 @@ La principal característica es su capacidad de **actualización en tiempo real*
         // ... y el resto de tus claves
     };
     ```
+    - **Para el despliegue en producción**, no necesitas este archivo. En su lugar, añade las claves de Firebase como "Secrets" en la configuración de tu repositorio de GitHub (en `Settings > Secrets and variables > Actions`). El workflow de GitHub Actions (`.github/workflows/deploy.yml`) usará estos secretos para generar el archivo de configuración automáticamente durante el despliegue.
 
 5.  **Ejecutar el Proyecto:**
     - Debido al uso de Módulos de JavaScript (`import`/`export`), no puedes abrir los archivos `index.html` y `admin.html` directamente en el navegador desde el sistema de archivos (`file://...`).
     - Debes servirlos a través de un servidor local. La forma más fácil es usar la extensión **Live Server** en Visual Studio Code. Haz clic derecho en `index.html` o `admin.html` y selecciona "Open with Live Server".
-
-6.  **Acceder al Panel de Administración:**
-    - Navega a `admin.html`. Se te pedirá que inicies sesión en la consola de Firebase primero.
-    - Una vez que hayas iniciado sesión en Firebase en tu navegador, refresca la página `admin.html` y tendrás acceso al panel.
 
 ---
 
@@ -86,7 +82,8 @@ La principal característica es su capacidad de **actualización en tiempo real*
 ├── admin-script.js         # Lógica del panel (CRUD con Firestore, auth).
 ├── admin-styles.css        # Estilos para el panel de administración.
 |
-└── firebase-config.js      # Configuración centralizada de Firebase (¡IMPORTANTE!).
+├── .github/workflows/deploy.yml # Workflow para el despliegue automático en GitHub Pages.
+└── .gitignore              # Asegura que los archivos sensibles no se suban.
 ```
 
 ---
