@@ -571,6 +571,96 @@ importDataBtn.addEventListener('click', () => {
 importFileInput.addEventListener('change', handleImportFile);
 
 /**
+ * Muestra un modal de confirmación antes de ejecutar la importación destructiva.
+ * @param {object} importedData - Los datos del archivo JSON listos para ser importados.
+ */
+function showImportConfirmation(importedData) {
+    const confirmTitle = document.getElementById('confirmModalTitle');
+    const confirmMessage = document.getElementById('confirmMessage');
+    const confirmActionBtn = document.getElementById('confirmDelete'); // Reutilizamos el botón de acción
+    const cancelBtn = document.getElementById('confirmCancel');
+
+    // Guardar el estado original del botón para restaurarlo después
+    const originalBtnText = confirmActionBtn.innerHTML;
+    const originalBtnClasses = confirmActionBtn.className;
+
+    // Personalizar el modal para la confirmación de importación
+    confirmTitle.textContent = '¿Confirmar Importación?';
+    confirmMessage.innerHTML = '<strong>¡Atención!</strong> Estás a punto de <strong>borrar todo el menú actual</strong> y reemplazarlo con los datos del archivo. <br><br>Esta acción no se puede deshacer. ¿Estás seguro?';
+    confirmActionBtn.innerHTML = '✔️ Sí, Importar';
+    confirmActionBtn.className = 'admin-btn import'; // Aplicar estilo de importación
+
+    const restoreButton = () => {
+        confirmActionBtn.innerHTML = originalBtnText;
+        confirmActionBtn.className = originalBtnClasses;
+    };
+
+    const onConfirm = async () => {
+        restoreButton();
+        confirmActionBtn.removeEventListener('click', onConfirm);
+        cancelBtn.removeEventListener('click', onCancel);
+        await performImport(importedData);
+    };
+
+    const onCancel = () => {
+        restoreButton();
+        confirmActionBtn.removeEventListener('click', onConfirm);
+        cancelBtn.removeEventListener('click', onCancel);
+        window.closeModal(confirmModal);
+    };
+
+    confirmActionBtn.addEventListener('click', onConfirm, { once: true });
+    cancelBtn.addEventListener('click', onCancel, { once: true });
+
+    window.openModal(confirmModal);
+}
+
+/**
+ * Realiza la importación de datos a Firestore después de la confirmación del usuario.
+ * @param {object} importedData - Los datos a importar.
+ */
+async function performImport(importedData) {
+    window.closeModal(confirmModal);
+    await importDataToFirestore(importedData);
+}
+
+/**
+ * Lógica central para borrar los datos existentes y añadir los nuevos.
+ * @param {object} importedData - Los datos a importar.
+ */
+async function importDataToFirestore(importedData) {
+    showLoading(true);
+    try {
+        const productsCollectionRef = collection(db, `artifacts/${appId}/menus/${menuId}/products`);
+
+        // 1. Eliminar todos los documentos existentes
+        const existingDocs = await getDocs(productsCollectionRef);
+        const deletePromises = existingDocs.docs.map(doc => deleteDoc(doc.ref));
+        await Promise.all(deletePromises);
+
+        // 2. Añadir los nuevos documentos
+        const addPromises = [];
+        for (const categoryKey in importedData) {
+            if (importedData.hasOwnProperty(categoryKey)) {
+                const productsInCategory = importedData[categoryKey];
+                productsInCategory.forEach(product => {
+                    const productWithType = { ...product, type: categoryKey };
+                    addPromises.push(addDoc(productsCollectionRef, productWithType));
+                });
+            }
+        }
+        await Promise.all(addPromises);
+
+        showToast('Datos importados exitosamente a Firestore', 'success');
+    } catch (error) {
+        console.error('Error durante la importación a Firestore:', error);
+        window.showCustomAlert('Error de Importación', 'Ocurrió un error durante la importación a Firestore.');
+    } finally {
+        showLoading(false);
+    }
+}
+
+/**
  * Maneja la importación de un archivo JSON.
  * @param {Event} event - El evento de cambio del input de archivo.
  */
@@ -585,47 +675,17 @@ function handleImportFile(event) {
         try {
             const importedData = JSON.parse(e.target.result);
             if (validateDataStructure(importedData)) {
-                // Importar datos a Firestore
-                showLoading(true);
-                // Asegurarse de que db, userId, appId estén definidos
-                if (!db || !userId || !appId) {
-                    window.showCustomAlert('Error de Importación', 'Firebase no está inicializado. Por favor, recarga la página y asegúrate de iniciar sesión.');
-                    showLoading(false);
-                    return;
-                }
-
-                const productsCollectionRef = collection(db, `artifacts/${appId}/menus/${menuId}/products`);
-
-                // Eliminar todos los documentos existentes en la colección 'products' antes de añadir los nuevos
-                const existingDocs = await getDocs(productsCollectionRef);
-                const deletePromises = existingDocs.docs.map(doc => deleteDoc(doc.ref));
-                await Promise.all(deletePromises);
-
-                // Añadir los nuevos documentos, asegurándose de que cada uno tenga el campo 'type'
-                const addPromises = [];
-                for (const categoryKey in importedData) {
-                    const productsInCategory = importedData[categoryKey];
-                    productsInCategory.forEach(product => {
-                        // Asegurarse de que el producto tiene el tipo correcto antes de añadirlo
-                        const productWithType = { ...product, type: categoryKey }; // Usar categoryKey como el tipo
-                        addPromises.push(addDoc(productsCollectionRef, productWithType));
-                    });
-                }
-                await Promise.all(addPromises);
-
-                showToast('Datos importados exitosamente a Firestore', 'success');
+                showImportConfirmation(importedData); // Mostrar confirmación en lugar de importar directamente
             } else {
                 window.showCustomAlert('Error de Importación', 'Formato de archivo JSON inválido. Asegúrate de que contenga las categorías correctas (waterFrappes, milkFrappes, etc.).');
             }
         } catch (error) {
             console.error('Error al leer o importar el archivo:', error);
             window.showCustomAlert('Error de Importación', 'Error al leer o procesar el archivo. Asegúrate de que sea un JSON válido.');
-        } finally {
-            showLoading(false);
         }
     };
     reader.readAsText(file);
-    event.target.value = ''; // Limpiar input de archivo
+    event.target.value = ''; // Limpiar el input para permitir importar el mismo archivo de nuevo
 }
 
 /**

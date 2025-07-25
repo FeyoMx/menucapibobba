@@ -225,8 +225,10 @@
                         let errorMessage = "Correo o contraseña incorrectos. Inténtalo de nuevo.";
                         if (error.code === 'auth/invalid-email') {
                             errorMessage = "El formato del correo no es válido.";
-                        } else if (error.code === 'auth/invalid-credential') {
+                        } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
                             errorMessage = "Las credenciales son incorrectas. Verifica tu correo y contraseña.";
+                        } else {
+                            errorMessage = "Ocurrió un error inesperado. Revisa la consola para más detalles.";
                         }
                         loginError.textContent = errorMessage;
                         loginError.style.display = 'block';
