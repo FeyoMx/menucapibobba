@@ -2,10 +2,10 @@
 name: Deploy to GitHub Pages
 
 # Se ejecuta cada vez que haces un push a la rama 'main'
-on:
+on: 
   push:
     branches:
-      - main
+      - main # Cambia a 'master' si esa es tu rama principal
 
 # Permisos necesarios para que el workflow pueda escribir en la rama gh-pages
 permissions:
@@ -14,7 +14,7 @@ permissions:
 # Define el trabajo a realizar
 jobs:
   build-and-deploy:
-    # El tipo de máquina virtual en la que se ejecutará el trabajo
+    # El tipo de máquina virtual en la que se ejecutará el trabajo (runner)
     runs-on: ubuntu-latest
 
     steps:
@@ -34,14 +34,9 @@ jobs:
           echo "  appId: '${{ secrets.FIREBASE_APP_ID }}'" >> firebase-config.js
           echo "};" >> firebase-config.js
 
-      # 2.1. Elimina temporalmente firebase-config.js del .gitignore para que pueda ser desplegado.
-      # Esto solo afecta al runner de la Action, no a tu repositorio.
-      - name: Allow firebase-config.js to be deployed 📄
-        run: sed -i '/firebase-config.js/d' ./.gitignore
-
       # 3. Despliega los archivos a la rama gh-pages
       - name: Deploy 🚀
-        uses: peaceiris/actions-gh-pages@v3
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
+          branch: gh-pages # La rama donde se desplegará
+          folder: . # La carpeta a desplegar (la raíz del proyecto)
