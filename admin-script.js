@@ -305,43 +305,19 @@ function updateCategorySpecificFields() {
         imageGroup.style.display = 'flex'; // Mostrar campo de imagen para otras categorías
     }
 
-    // Lógica específica para Chamoyadas en la categoría de Promociones
-    if (currentCategory === 'promotions' && editingProduct && editingProduct.name.toLowerCase().includes('chamoyada')) {
-        
-        // --- Selector de Sabor Base ---
-        const flavorContainer = document.createElement('div');
-        flavorContainer.className = 'form-group';
-        const flavorLabel = document.createElement('label');
-        flavorLabel.setAttribute('for', 'chamoyadaFlavor');
-        flavorLabel.textContent = 'Sabor Base (Frappé Agua):';
-        const flavorSelect = document.createElement('select');
-        flavorSelect.id = 'chamoyadaFlavor';
-        flavorSelect.name = 'chamoyadaFlavor';
+    // Lógica específica para productos personalizables (Chamoyada, Yogurtada) en la categoría de Promociones
+    const isCustomizablePromo = currentCategory === 'promotions' &&
+                                editingProduct &&
+                                (editingProduct.name.toLowerCase().includes('chamoyada') || editingProduct.name.toLowerCase().includes('yogurtada'));
 
-        const waterFrappes = productsData.waterFrappes || [];
-        if (waterFrappes.length > 0) {
-            waterFrappes.forEach(frappe => {
-                const option = document.createElement('option');
-                option.value = frappe.name;
-                option.textContent = frappe.displayName || frappe.name;
-                if (editingProduct.chamoyadaFlavor === frappe.name) {
-                    option.selected = true;
-                }
-                flavorSelect.appendChild(option);
-            });
-        } else {
-            flavorSelect.innerHTML = '<option value="">-- Primero añade Frappés Base Agua --</option>';
-            flavorSelect.disabled = true;
-        }
-        flavorContainer.appendChild(flavorLabel);
-        flavorContainer.appendChild(flavorSelect);
-        specificFields.appendChild(flavorContainer);
+    if (isCustomizablePromo) {
+        const productName = editingProduct.name.toLowerCase().includes('chamoyada') ? 'esta Chamoyada' : 'esta Yogurtada';
 
         // --- Selector de Toppings Permitidos ---
         const toppingsContainer = document.createElement('div');
         toppingsContainer.className = 'form-group';
         const toppingsLabel = document.createElement('label');
-        toppingsLabel.textContent = 'Toppings Permitidos para esta Chamoyada:';
+        toppingsLabel.textContent = `Toppings Permitidos para ${productName}:`;
         toppingsContainer.appendChild(toppingsLabel);
 
         const allToppings = productsData.toppings || [];
@@ -350,10 +326,12 @@ function updateCategorySpecificFields() {
         if (allToppings.length > 0) {
             allToppings.forEach(topping => {
                 const isChecked = savedToppings.includes(topping.name);
+                const toppingId = `promo-topping-check-${topping.id}`;
                 const checkboxWrapper = document.createElement('div');
+                // Usar un nombre genérico para los checkboxes
                 checkboxWrapper.innerHTML = `
-                    <input type="checkbox" id="topping-check-${topping.id}" name="chamoyadaTopping" value="${topping.name}" ${isChecked ? 'checked' : ''}>
-                    <label for="topping-check-${topping.id}">${topping.displayName || topping.name}</label>
+                    <input type="checkbox" id="${toppingId}" name="allowedTopping" value="${topping.name}" ${isChecked ? 'checked' : ''}>
+                    <label for="${toppingId}">${topping.displayName || topping.name}</label>
                 `;
                 toppingsContainer.appendChild(checkboxWrapper);
             });
@@ -450,14 +428,13 @@ productForm.addEventListener('submit', async (event) => {
         isActive: document.getElementById('productIsActive').checked
     };
 
-    // Añadir datos específicos de la chamoyada si aplica
-    if (product.type === 'promotions' && product.name.toLowerCase().includes('chamoyada')) {
-        const flavorSelect = document.getElementById('chamoyadaFlavor');
-        if (flavorSelect) {
-            product.chamoyadaFlavor = flavorSelect.value;
-        }
+    // Añadir datos específicos de productos personalizables (Chamoyada, Yogurtada) si aplica
+    const isCustomizablePromo = product.type === 'promotions' &&
+                                (product.name.toLowerCase().includes('chamoyada') || product.name.toLowerCase().includes('yogurtada'));
 
-        const selectedToppings = Array.from(document.querySelectorAll('input[name="chamoyadaTopping"]:checked'))
+    if (isCustomizablePromo) {
+        // Guardar la lista de nombres de toppings permitidos
+        const selectedToppings = Array.from(document.querySelectorAll('input[name="allowedTopping"]:checked'))
                                       .map(cb => cb.value);
         product.toppings = selectedToppings;
     }

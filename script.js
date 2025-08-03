@@ -771,13 +771,22 @@ function openYogurtadaCustomizationModal(yogurtadaProduct) {
     yogurtadaBaseFlavor = null; // Resetear selección de sabor base
     yogurtadaSelectedToppings = []; // Resetear selección de toppings
 
-    // Renderizar sabores base (solo frappés base leche)
+    // Lista de nombres de sabores permitidos para la Yogurtada (en minúsculas para comparación)
+    const allowedYogurtadaFlavorNames = [
+        'mango', 'fresa', 'blueberry', 'cereza', 'banana', 'piña colada', 'pay de limon'
+    ];
+
+    // Renderizar sabores base, filtrando los frappés base leche por la lista permitida
     yogurtadaBaseFlavorGrid.innerHTML = '';
-    const milkFrappes = productsData.milkFrappes;
-    if (milkFrappes.length === 0) {
-        yogurtadaBaseFlavorGrid.innerHTML = '<p class="no-products-message">No hay sabores base disponibles.</p>';
+    const allMilkFrappes = productsData.milkFrappes;
+    const flavorsToShow = allMilkFrappes.filter(flavor =>
+        allowedYogurtadaFlavorNames.includes((flavor.name || '').toLowerCase())
+    );
+
+    if (flavorsToShow.length === 0) {
+        yogurtadaBaseFlavorGrid.innerHTML = '<p class="no-products-message">No hay sabores base disponibles para la Yogurtada en este momento.</p>';
     } else {
-        milkFrappes.forEach(flavor => {
+        flavorsToShow.forEach(flavor => {
             const flavorItemLabel = document.createElement('label');
             flavorItemLabel.className = 'flavor-item';
             flavorItemLabel.setAttribute('for', `yogurtada-flavor-${flavor.id}`);
