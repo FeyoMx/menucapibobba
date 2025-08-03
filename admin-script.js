@@ -42,6 +42,7 @@ const categoryMap = {
     'milkFrappes': { title: 'Frappés Base Leche', type: 'milkFrappes' },
     'hotDrinks': { title: 'Bebidas Calientes', type: 'hotDrinks' },
     'toppings': { title: 'Toppings', type: 'toppings' },
+    'specialties': { title: 'Especialidades', type: 'specialties' }, // NUEVO
     'promotions': { title: 'Promociones', type: 'promotions' }
 };
 
@@ -52,7 +53,8 @@ const firestoreProductTypeMap = {
     "water-based-frappe": "waterFrappes",
     "milk-based-frappe": "milkFrappes",
     "hot-drink": "hotDrinks",
-    "chamoyada": "promotions", // Chamoyada se mapea a la categoría "promotions"
+    "yogurtada": "specialties", // Mapeo antiguo a la nueva categoría
+    "chamoyada": "specialties", // Mapeo antiguo a la nueva categoría
     "promotion": "promotions", // Otros elementos con tipo "promotion" (singular)
     "promotions": "promotions", // Mapeo para el tipo "promotions" (plural)
     "toppings": "toppings",
@@ -62,7 +64,8 @@ const firestoreProductTypeMap = {
     "milkFrappes": "milkFrappes",
     "hotDrinks": "hotDrinks",
     // "toppings" ya está arriba
-    // "promotions" ya está arriba
+    "specialties": "specialties"
+    // "promotions" ya está arriba,
 };
 
 // --- Funciones de Utilidad ---
@@ -129,6 +132,7 @@ async function loadProductsAndSetupListeners() {
             milkFrappes: [],
             hotDrinks: [],
             toppings: [],
+            specialties: [],
             promotions: []
         };
 
@@ -305,13 +309,13 @@ function updateCategorySpecificFields() {
         imageGroup.style.display = 'flex'; // Mostrar campo de imagen para otras categorías
     }
 
-    // Lógica específica para productos personalizables (Chamoyada, Yogurtada) en la categoría de Promociones
-    const isCustomizablePromo = currentCategory === 'promotions' &&
+    // Lógica específica para productos personalizables (Chamoyada, Yogurtada) en la categoría de ESPECIALIDADES
+    const isCustomizableSpecialty = currentCategory === 'specialties' &&
                                 editingProduct &&
                                 (editingProduct.name.toLowerCase().includes('chamoyada') || editingProduct.name.toLowerCase().includes('yogurtada'));
 
-    if (isCustomizablePromo) {
-        const productName = editingProduct.name.toLowerCase().includes('chamoyada') ? 'esta Chamoyada' : 'esta Yogurtada';
+    if (isCustomizableSpecialty) {
+        const productName = editingProduct.name.toLowerCase().includes('chamoyada') ? 'esta Especialidad' : 'esta Especialidad';
 
         // --- Selector de Toppings Permitidos ---
         const toppingsContainer = document.createElement('div');
@@ -428,11 +432,11 @@ productForm.addEventListener('submit', async (event) => {
         isActive: document.getElementById('productIsActive').checked
     };
 
-    // Añadir datos específicos de productos personalizables (Chamoyada, Yogurtada) si aplica
-    const isCustomizablePromo = product.type === 'promotions' &&
+    // Añadir datos específicos de productos personalizables (Chamoyada, Yogurtada) si es una especialidad
+    const isCustomizableSpecialty = product.type === 'specialties' &&
                                 (product.name.toLowerCase().includes('chamoyada') || product.name.toLowerCase().includes('yogurtada'));
 
-    if (isCustomizablePromo) {
+    if (isCustomizableSpecialty) {
         // Guardar la lista de nombres de toppings permitidos
         const selectedToppings = Array.from(document.querySelectorAll('input[name="allowedTopping"]:checked'))
                                       .map(cb => cb.value);
@@ -671,9 +675,10 @@ function handleImportFile(event) {
  * @returns {boolean} - True si la estructura es válida, false en caso contrario.
  */
 function validateDataStructure(data) {
-    const requiredKeys = ['waterFrappes', 'milkFrappes', 'hotDrinks', 'toppings', 'promotions'];
+    const requiredKeys = ['waterFrappes', 'milkFrappes', 'hotDrinks', 'toppings', 'specialties', 'promotions'];
     if (typeof data !== 'object' || data === null) return false;
     for (const key of requiredKeys) {
+        // Permitir que las nuevas categorías no existan en archivos de exportación antiguos
         if (!Array.isArray(data[key])) return false;
     }
     return true;
