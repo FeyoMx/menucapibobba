@@ -457,6 +457,131 @@ function renderProducts(products, container) {
     container.style.display = 'grid'; // Mostrar el grid una vez cargado
 }
 
+// --- Lógica del Carrito ---
+
+/**
+ * Añade un producto al carrito o incrementa su cantidad.
+ * @param {Object} product - El objeto del producto a añadir.
+ * @param {Array} [selectedToppings=[]] - Array de toppings seleccionados para el producto.
+ */
+function addToCart(product, selectedToppings = []) {
+    const existingItemIndex = cart.findIndex(item =>
+        item.id === product.id &&
+        JSON.stringify(item.selectedToppings || []) === JSON.stringify(selectedToppings)
+    );
+
+    if (existingItemIndex > -1) {
+        cart[existingItemIndex].quantity++;
+    } else {
+        cart.push({
+            ...product,
+            quantity: 1,
+            selectedToppings: selectedToppings // Guardar los toppings seleccionados
+        });
+    }
+
+    // Animar el botón del carrito
+    const cartButton = document.getElementById('cartButton');
+    if (cartButton) {
+        cartButton.classList.add('item-added-animation');
+        // Quita la clase después de que la animación termine para poder volver a usarla
+        setTimeout(() => {
+            cartButton.classList.remove('item-added-animation');
+        }, 600); // 600ms es la duración de la animación en styles.css
+    }
+
+    updateCartDisplay();
+}
+
+/**
+ * Elimina un producto del carrito o decrementa su cantidad.
+ * @param {string} productId - El ID del producto a eliminar.
+ * @param {Array} [selectedToppings=[]] - Array de toppings del producto a eliminar (para ítems personalizados).
+ */
+function removeFromCart(productId, selectedToppings = []) {
+    const itemIndex = cart.findIndex(item =>
+        item.id === productId &&
+        JSON.stringify(item.selectedToppings || []) === JSON.stringify(selectedToppings)
+    );
+
+    if (itemIndex > -1) {
+        if (cart[itemIndex].quantity > 1) {
+            cart[itemIndex].quantity--;
+        } else {
+            cart.splice(itemIndex, 1);
+        }
+        updateCartDisplay();
+    }
+}
+
+/**
+ * Actualiza la visualización del carrito (contador, lista de ítems, total).
+ */
+function updateCartDisplay() {
+    // Actualiza los enlaces de WhatsApp cada vez que cambia el carrito.
+    updateWhatsAppLinks();
+
+    cartItemCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+    cartItemsContainer.innerHTML = ''; // Limpiar la lista
+    let total = 0;
+
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p class="empty-cart-message">Tu carrito está vacío.</p>';
+    } else {
+        cart.forEach(item => {
+            const itemPrice = item.price;
+            const toppingsCost = item.selectedToppings ? item.selectedToppings.reduce((sum, t) => sum + t.price, 0) : 0;
+            const itemSubtotal = (itemPrice + toppingsCost) * item.quantity;
+            total += itemSubtotal;
+
+            const cartItemDiv = document.createElement('div');
+            cartItemDiv.className = 'cart-item';
+            cartItemDiv.innerHTML = `
+                <img data-src="${item.imageUrl || 'https://placehold.co/50x50/ADD8E6/000000?text=No+Image'}" alt="${item.displayName || item.name}" class="cart-item-image lazy-load">
+                <div class="cart-item-info">
+                    <span class="cart-item-name">${item.displayName || item.name}</span>
+                    ${item.selectedToppings && item.selectedToppings.length > 0 ?
+                        `<div class="cart-item-toppings">(${item.selectedToppings.map(t => t.name).join(', ')})</div>` : ''}
+                    <span class="cart-item-price">$${item.price ? item.price.toFixed(2) : '0.00'} c/u</span>
+                </div>
+                <div class="cart-item-quantity-controls">
+                    <button class="quantity-btn decrease-quantity" data-product-id="${item.id}" data-toppings='${JSON.stringify(item.selectedToppings || [])}'>-</button>
+                    <span class="cart-item-quantity">${item.quantity}</span>
+                    <button class="quantity-btn increase-quantity" data-product-id="${item.id}" data-toppings='${JSON.stringify(item.selectedToppings || [])}'>+</button>
+                </div>
+                <span class="cart-item-total">$${itemSubtotal.toFixed(2)}</span>
+            `;
+            cartItemsContainer.appendChild(cartItemDiv);
+        });
+    }
+
+    cartTotalSpan.textContent = `$${total.toFixed(2)}`;
+
+    // Observar las nuevas imágenes del carrito para lazy loading
+    cartItemsContainer.querySelectorAll('.lazy-load').forEach(img => lazyLoadObserver.observe(img));
+
+    // Añadir event listeners a los botones de cantidad
+    cartItemsContainer.querySelectorAll('.increase-quantity').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const productId = event.target.dataset.productId;
+            const toppings = JSON.parse(event.target.dataset.toppings);
+            // Buscar el producto original en productsData
+            const product = Object.values(productsData).flat().find(p => p.id === productId);
+            if (product) {
+                addToCart(product, toppings);
+            }
+        });
+    });
+
+    cartItemsContainer.querySelectorAll('.decrease-quantity').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const productId = event.target.dataset.productId;
+            const toppings = JSON.parse(event.target.dataset.toppings);
+            removeFromCart(productId, toppings);
+        });
+    });
+}
+
 /**
  * Genera el mensaje de WhatsApp con el contenido del carrito.
  * @returns {string} El mensaje formateado para WhatsApp.
@@ -549,35 +674,6 @@ function openToppingSelectionModal(product) {
 }
 
 // --- NUEVO: Manejo del Modal de Personalización de Chamoyada ---
-
-/**
- * Abre el modal de selección de toppings para un producto dado.
- * @param {Object} product - El producto al que se le añadirán toppings.
- */
-function openToppingSelectionModal(product) {
-    currentProductForToppings = product;
-    toppingModalProductName.textContent = product.displayName || product.name;
-    availableToppingsGrid.innerHTML = ''; // Limpiar toppings previos
-
-    if (availableToppings.length === 0) {
-        availableToppingsGrid.innerHTML = '<p class="no-products-message">No hay toppings disponibles.</p>';
-    } else {
-        availableToppings.forEach(topping => {
-            const toppingItem = document.createElement('div');
-            toppingItem.className = 'topping-item';
-            toppingItem.innerHTML = `
-                <input type="checkbox" id="topping-${topping.id}" value="${topping.id}" data-price="${topping.price}">
-                <label for="topping-${topping.id}">
-                    <span class="topping-name">${topping.name}</span>
-                    <span class="topping-price">($${topping.price ? topping.price.toFixed(2) : '0.00'})</span>
-                </label>
-            `;
-            availableToppingsGrid.appendChild(toppingItem);
-        });
-    }
-
-    window.openModal(toppingSelectionModal);
-}
 
 /**
  * Abre el modal de personalización de Chamoyada.
@@ -867,6 +963,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     closeToppingSelectionModalBtn.addEventListener('click', () => {
+        window.closeModal(toppingSelectionModal);
+        currentProductForToppings = null;
+    });
+
+    confirmToppingsButton.addEventListener('click', () => {
+        const selectedToppings = [];
+        availableToppingsGrid.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            const toppingId = checkbox.value;
+            const topping = availableToppings.find(t => t.id === toppingId);
+            if (topping) {
+                selectedToppings.push(topping);
+            }
+        });
+
+        if (currentProductForToppings) {
+            addToCart(currentProductForToppings, selectedToppings);
+            const message = selectedToppings.length > 0
+                ? `"${currentProductForToppings.displayName || currentProductForToppings.name}" con toppings añadido al carrito.`
+                : `"${currentProductForToppings.displayName || currentProductForToppings.name}" añadido al carrito sin toppings.`;
+            window.showCustomAlert('Producto Añadido', message);
+        }
+        window.closeModal(toppingSelectionModal);
+        currentProductForToppings = null;
+    });
+
+    cancelToppingsButton.addEventListener('click', () => {
         window.closeModal(toppingSelectionModal);
         currentProductForToppings = null;
     });
