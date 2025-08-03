@@ -779,8 +779,11 @@ function openYogurtadaCustomizationModal(yogurtadaProduct) {
     // Renderizar sabores base, filtrando los frappés base leche por la lista permitida
     yogurtadaBaseFlavorGrid.innerHTML = '';
     const allMilkFrappes = productsData.milkFrappes;
-    const flavorsToShow = allMilkFrappes.filter(flavor =>
-        allowedYogurtadaFlavorNames.includes((flavor.name || '').toLowerCase())
+    // Filtrar sabores cuyo nombre (en minúsculas) contenga alguna de las palabras clave permitidas.
+    // Esto es más flexible que una coincidencia exacta.
+    const flavorsToShow = allMilkFrappes.filter(flavor => 
+        allowedYogurtadaFlavorNames.some(allowedName => 
+            (flavor.name || '').toLowerCase().includes(allowedName))
     );
 
     if (flavorsToShow.length === 0) {
