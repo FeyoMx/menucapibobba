@@ -776,12 +776,12 @@ function openYogurtadaCustomizationModal(yogurtadaProduct) {
         'mango', 'fresa', 'blueberry', 'cereza', 'banana', 'piña colada', 'pay de limon'
     ];
 
-    // Renderizar sabores base, filtrando los frappés base leche por la lista permitida
+    // Renderizar sabores base, filtrando los frappés base AGUA por la lista permitida (sabores frutales)
     yogurtadaBaseFlavorGrid.innerHTML = '';
-    const allMilkFrappes = productsData.milkFrappes;
+    const allWaterFrappes = productsData.waterFrappes;
     // Filtrar sabores cuyo nombre (en minúsculas) contenga alguna de las palabras clave permitidas.
     // Esto es más flexible que una coincidencia exacta.
-    const flavorsToShow = allMilkFrappes.filter(flavor => 
+    const flavorsToShow = allWaterFrappes.filter(flavor => 
         allowedYogurtadaFlavorNames.some(allowedName => 
             (flavor.name || '').toLowerCase().includes(allowedName))
     );
@@ -867,7 +867,7 @@ yogurtadaBaseFlavorGrid.addEventListener('change', (event) => {
         const selectedFlavorId = event.target.value;
 
         // Find the full flavor object from our data source.
-        const selectedFlavorObject = productsData.milkFrappes.find(f => f.id === selectedFlavorId);
+        const selectedFlavorObject = productsData.waterFrappes.find(f => f.id === selectedFlavorId);
 
         if (selectedFlavorObject) {
             yogurtadaBaseFlavor = selectedFlavorObject;
@@ -884,7 +884,7 @@ yogurtadaBaseFlavorGrid.addEventListener('change', (event) => {
                 parentLabel.classList.add('selected');
             }
         } else {
-            console.error(`Could not find flavor with ID: ${selectedFlavorId} in productsData.milkFrappes`);
+            console.error(`Could not find flavor with ID: ${selectedFlavorId} in productsData.waterFrappes`);
             yogurtadaBaseFlavor = null; // Ensure it's null if not found
         }
     }
