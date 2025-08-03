@@ -776,12 +776,12 @@ function openYogurtadaCustomizationModal(yogurtadaProduct) {
         'mango', 'fresa', 'blueberry', 'cereza', 'banana', 'piña colada', 'pay de limon'
     ];
 
-    // Renderizar sabores base, filtrando los frappés base AGUA por la lista permitida (sabores frutales)
+    // Renderizar sabores base, buscando en AMBAS categorías (agua y leche) y filtrando por la lista permitida.
     yogurtadaBaseFlavorGrid.innerHTML = '';
-    const allWaterFrappes = productsData.waterFrappes;
+    const allFrappes = [...productsData.waterFrappes, ...productsData.milkFrappes]; // Combinar ambas listas
     // Filtrar sabores cuyo nombre (en minúsculas) contenga alguna de las palabras clave permitidas.
     // Esto es más flexible que una coincidencia exacta.
-    const flavorsToShow = allWaterFrappes.filter(flavor => 
+    const flavorsToShow = allFrappes.filter(flavor => 
         allowedYogurtadaFlavorNames.some(allowedName => 
             (flavor.name || '').toLowerCase().includes(allowedName))
     );
@@ -866,8 +866,9 @@ yogurtadaBaseFlavorGrid.addEventListener('change', (event) => {
     if (event.target.name === 'yogurtadaBaseFlavor') {
         const selectedFlavorId = event.target.value;
 
-        // Find the full flavor object from our data source.
-        const selectedFlavorObject = productsData.waterFrappes.find(f => f.id === selectedFlavorId);
+        // Buscar el sabor en AMBAS listas de frappés.
+        const allFrappes = [...productsData.waterFrappes, ...productsData.milkFrappes];
+        const selectedFlavorObject = allFrappes.find(f => f.id === selectedFlavorId);
 
         if (selectedFlavorObject) {
             yogurtadaBaseFlavor = selectedFlavorObject;
@@ -884,7 +885,7 @@ yogurtadaBaseFlavorGrid.addEventListener('change', (event) => {
                 parentLabel.classList.add('selected');
             }
         } else {
-            console.error(`Could not find flavor with ID: ${selectedFlavorId} in productsData.waterFrappes`);
+            console.error(`Could not find flavor with ID: ${selectedFlavorId} in all frappes`);
             yogurtadaBaseFlavor = null; // Ensure it's null if not found
         }
     }
