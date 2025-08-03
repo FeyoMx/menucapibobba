@@ -25,10 +25,15 @@ let cart = []; // Carrito de compras
 let lastClickedAddButton = null; // Para el feedback visual del botón "Añadir"
 let chamoyadaBaseFlavor = null; // Almacena el sabor base seleccionado para la chamoyada
 let isInitialDataLoaded = false; // Flag to track initial data load
-let chamoyadaSelectedToppings = []; // Almacena los toppings seleccionados para la chamoyada
 let lazyLoadObserver; // Observer para lazy loading de imágenes
 let currentProductForToppings = null; // Almacena el producto al que se le están añadiendo toppings
+
+// Variables para personalización de productos
+let chamoyadaSelectedToppings = []; // Almacena los toppings seleccionados para la chamoyada
 let currentChamoyadaProduct = null; // Almacena el producto Chamoyada original al abrir el modal
+let yogurtadaBaseFlavor = null; // Almacena el sabor base seleccionado para la yogurtada
+let yogurtadaSelectedToppings = []; // Almacena los toppings seleccionados para la yogurtada
+let currentYogurtadaProduct = null; // Almacena el producto Yogurtada original al abrir el modal
 
 // --- Mapeo de tipos de producto de Firestore a las claves de productsData ---
 // Esto es crucial para que los productos se asignen a la categoría correcta
@@ -38,6 +43,7 @@ const productTypeMap = {
     "water-based-frappe": "waterFrappes",
     "milk-based-frappe": "milkFrappes",
     "hot-drink": "hotDrinks",
+    "yogurtada": "promotions", // Nuevo tipo para Yogurtada
     "chamoyada": "promotions", // Tipo antiguo, se mantiene por retrocompatibilidad
     "promotion": "promotions", // Otros elementos de promoción (singular)
     "promotions": "promotions", // Mapeo para el tipo "promotions" (plural)
@@ -81,6 +87,12 @@ const chamoyadaToppingsGrid = document.getElementById('chamoyadaToppingsGrid');
 const confirmChamoyadaButton = document.getElementById('confirmChamoyadaButton');
 const cancelChamoyadaButton = document.getElementById('cancelChamoyadaButton');
 const closeChamoyadaModalBtn = chamoyadaCustomizationOverlay.querySelector('.close-modal-button');
+const yogurtadaCustomizationOverlay = document.getElementById('yogurtadaCustomizationOverlay');
+const yogurtadaBaseFlavorGrid = document.getElementById('yogurtadaBaseFlavorGrid');
+const yogurtadaToppingsGrid = document.getElementById('yogurtadaToppingsGrid');
+const confirmYogurtadaButton = document.getElementById('confirmYogurtadaButton');
+const cancelYogurtadaButton = document.getElementById('cancelYogurtadaButton');
+const closeYogurtadaModalBtn = yogurtadaCustomizationOverlay.querySelector('.close-modal-button');
 const loadingMessages = document.querySelectorAll('.loading-message');
 
 // --- Funciones de Utilidad ---
@@ -414,6 +426,9 @@ function renderPromotions(promotions, container) {
                 if (product.name.toLowerCase().includes('chamoyada')) {
                     // Abre el modal de personalización para cualquier producto con "chamoyada" en el nombre
                     openChamoyadaCustomizationModal(product);
+                } else if (product.name.toLowerCase().includes('yogurtada')) {
+                    // Abre el modal de personalización para Yogurtada
+                    openYogurtadaCustomizationModal(product);
                 } else if (product.price < 0) { // Si es un descuento (precio negativo)
                     addToCart(product); // Añadir directamente al carrito
                     window.showCustomAlert('Descuento Añadido', `"${product.displayName || product.name}" ha sido añadido a tu carrito.`);
@@ -746,6 +761,63 @@ function openChamoyadaCustomizationModal(chamoyadaProduct) {
     window.openModal(chamoyadaCustomizationOverlay);
 }
 
+// --- NUEVO: Manejo del Modal de Personalización de Yogurtada ---
+/**
+ * Abre el modal de personalización de Yogurtada.
+ * @param {Object} yogurtadaProduct - El objeto del producto Yogurtada.
+ */
+function openYogurtadaCustomizationModal(yogurtadaProduct) {
+    currentYogurtadaProduct = yogurtadaProduct; // Guardar el contexto del producto original
+    yogurtadaBaseFlavor = null; // Resetear selección de sabor base
+    yogurtadaSelectedToppings = []; // Resetear selección de toppings
+
+    // Renderizar sabores base (solo frappés base leche)
+    yogurtadaBaseFlavorGrid.innerHTML = '';
+    const milkFrappes = productsData.milkFrappes;
+    if (milkFrappes.length === 0) {
+        yogurtadaBaseFlavorGrid.innerHTML = '<p class="no-products-message">No hay sabores base disponibles.</p>';
+    } else {
+        milkFrappes.forEach(flavor => {
+            const flavorItemLabel = document.createElement('label');
+            flavorItemLabel.className = 'flavor-item';
+            flavorItemLabel.setAttribute('for', `yogurtada-flavor-${flavor.id}`);
+            flavorItemLabel.innerHTML = `
+                <input type="radio" id="yogurtada-flavor-${flavor.id}" name="yogurtadaBaseFlavor" value="${flavor.id}">
+                <img data-src="${flavor.imageUrl || 'https://placehold.co/50x50/ADD8E6/000000?text=No+Image'}" alt="${flavor.displayName || flavor.name}" class="flavor-image lazy-load" onerror="this.onerror=null;this.src='https://placehold.co/50x50/ADD8E6/000000?text=No+Image';">
+                <span class="flavor-name">${flavor.displayName || flavor.name}</span>
+            `;
+            yogurtadaBaseFlavorGrid.appendChild(flavorItemLabel);
+        });
+    }
+
+    // Renderizar toppings disponibles, filtrando por los permitidos para esta yogurtada específica
+    yogurtadaToppingsGrid.innerHTML = '';
+    const allowedToppingNames = yogurtadaProduct.toppings || [];
+    const toppingsToShow = availableToppings.filter(topping => allowedToppingNames.includes(topping.name));
+
+    if (toppingsToShow.length === 0) {
+        yogurtadaToppingsGrid.innerHTML = '<p class="no-products-message">No hay toppings adicionales para esta promoción.</p>';
+    } else {
+        toppingsToShow.forEach(topping => {
+            const toppingItem = document.createElement('div');
+            toppingItem.className = 'topping-item';
+            toppingItem.innerHTML = `
+                <input type="checkbox" id="yogurtada-topping-${topping.id}" value="${topping.id}" data-price="${topping.price}">
+                <label for="yogurtada-topping-${topping.id}">
+                    <span class="topping-name">${topping.displayName || topping.name}</span>
+                    <span class="topping-price">($${topping.price ? topping.price.toFixed(2) : '0.00'})</span>
+                </label>
+            `;
+            yogurtadaToppingsGrid.appendChild(toppingItem);
+        });
+    }
+
+    // Observar las nuevas imágenes de sabores para lazy loading
+    yogurtadaBaseFlavorGrid.querySelectorAll('.lazy-load').forEach(img => lazyLoadObserver.observe(img));
+
+    window.openModal(yogurtadaCustomizationOverlay);
+}
+
 // Event listener for flavor selection in the Chamoyada modal using event delegation.
 // This is more efficient and reliable than attaching a listener to each item.
 chamoyadaBaseFlavorGrid.addEventListener('change', (event) => {
@@ -776,6 +848,37 @@ chamoyadaBaseFlavorGrid.addEventListener('change', (event) => {
         }
     }
 });
+
+// Event listener for flavor selection in the Yogurtada modal using event delegation.
+yogurtadaBaseFlavorGrid.addEventListener('change', (event) => {
+    if (event.target.name === 'yogurtadaBaseFlavor') {
+        const selectedFlavorId = event.target.value;
+
+        // Find the full flavor object from our data source.
+        const selectedFlavorObject = productsData.milkFrappes.find(f => f.id === selectedFlavorId);
+
+        if (selectedFlavorObject) {
+            yogurtadaBaseFlavor = selectedFlavorObject;
+
+            // Update visual feedback
+            // 1. Remove 'selected' class from all items
+            yogurtadaBaseFlavorGrid.querySelectorAll('.flavor-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            // 2. Add 'selected' class to the parent label of the checked radio button
+            const parentLabel = event.target.closest('.flavor-item');
+            if (parentLabel) {
+                parentLabel.classList.add('selected');
+            }
+        } else {
+            console.error(`Could not find flavor with ID: ${selectedFlavorId} in productsData.milkFrappes`);
+            yogurtadaBaseFlavor = null; // Ensure it's null if not found
+        }
+    }
+});
+
+
 
 // --- Animaciones al Scroll (Intersection Observer) ---
 
@@ -928,6 +1031,56 @@ document.addEventListener('DOMContentLoaded', () => {
     closeChamoyadaModalBtn.addEventListener('click', () => {
         window.closeModal(chamoyadaCustomizationOverlay);
         currentChamoyadaProduct = null; // Limpiar el contexto
+    });
+
+    // --- Manejo de Eventos del Modal de Yogurtada ---
+    confirmYogurtadaButton.addEventListener('click', () => {
+        if (!currentYogurtadaProduct) {
+            console.error("Error: No se encontró el producto Yogurtada original para calcular el precio.");
+            window.closeModal(yogurtadaCustomizationOverlay);
+            return;
+        }
+
+        if (!yogurtadaBaseFlavor) {
+            window.showCustomAlert('Selección Requerida', 'Por favor, elige un sabor base para tu Yogurtada.');
+            return;
+        }
+
+        yogurtadaSelectedToppings = [];
+        yogurtadaToppingsGrid.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            const toppingId = checkbox.value;
+            const topping = availableToppings.find(t => t.id === toppingId);
+            if (topping) {
+                yogurtadaSelectedToppings.push(topping);
+            }
+        });
+
+        const customYogurtada = {
+            id: `yogurtada-${yogurtadaBaseFlavor.id}-${Date.now()}`,
+            name: `Yogurtada de ${yogurtadaBaseFlavor.displayName || yogurtadaBaseFlavor.name}`,
+            displayName: `Yogurtada de ${yogurtadaBaseFlavor.displayName || yogurtadaBaseFlavor.name}`,
+            description: `Con sabor a ${yogurtadaBaseFlavor.displayName || yogurtadaBaseFlavor.name} y toppings seleccionados.`,
+            price: currentYogurtadaProduct.price,
+            imageUrl: yogurtadaBaseFlavor.imageUrl,
+            type: "yogurtada",
+            baseFlavor: yogurtadaBaseFlavor,
+            selectedToppings: yogurtadaSelectedToppings
+        };
+
+        addToCart(customYogurtada, yogurtadaSelectedToppings);
+        window.showCustomAlert('Yogurtada Añadida', `¡Tu Yogurtada de ${yogurtadaBaseFlavor.displayName || yogurtadaBaseFlavor.name} ha sido añadida al carrito!`);
+        window.closeModal(yogurtadaCustomizationOverlay);
+        currentYogurtadaProduct = null;
+    });
+
+    cancelYogurtadaButton.addEventListener('click', () => {
+        window.closeModal(yogurtadaCustomizationOverlay);
+        currentYogurtadaProduct = null;
+    });
+
+    closeYogurtadaModalBtn.addEventListener('click', () => {
+        window.closeModal(yogurtadaCustomizationOverlay);
+        currentYogurtadaProduct = null;
     });
 
     // Lógica para el modo claro/oscuro
