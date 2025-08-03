@@ -283,6 +283,37 @@
     </div>
     <!-- FIN NUEVO: Modal de Personalización de Chamoyada -->
 
+    <!-- NUEVO: Modal de Personalización de Yogurtada -->
+    <div id="yogurtadaCustomizationOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="yogurtadaModalTitle">
+        <div class="modal-content yogurtada-modal-content">
+            <header class="section-header">
+                <h2 id="yogurtadaModalTitle" class="section-title">¡Personaliza tu Yogurtada!</h2>
+                <p class="section-description">Elige tu sabor base y añade toppings.</p>
+            </header>
+
+            <div class="yogurtada-flavor-selection">
+                <h3 class="flavor-selection-title">Escoge tu sabor base (Base Leche)</h3>
+                <div id="yogurtadaBaseFlavorGrid" class="flavor-grid-small">
+                    <!-- Los sabores base leche se cargarán aquí dinámicamente por JS -->
+                </div>
+            </div>
+
+            <div class="yogurtada-topping-selection">
+                <h3 class="topping-selection-title">Añade Toppings (Opcional)</h3>
+                <div id="yogurtadaToppingsGrid" class="toppings-modal-grid">
+                    <!-- Los toppings existentes se cargarán aquí dinámicamente por JS -->
+                </div>
+            </div>
+
+            <div class="topping-modal-actions">
+                <button id="confirmYogurtadaButton" aria-label="Confirmar Yogurtada">Confirmar Yogurtada ✅</button>
+                <button id="cancelYogurtadaButton" aria-label="Cancelar Yogurtada">Cancelar ❌</button>
+            </div>
+            <button class="close-modal-button" aria-label="Cerrar personalización de Yogurtada">✖</button>
+        </div>
+    </div>
+    <!-- FIN NUEVO: Modal de Personalización de Yogurtada -->
+
     <!-- Modal de Alerta Personalizado (Reemplaza alert()) -->
     <div id="customAlertModal" class="modal-overlay" role="alertdialog" aria-modal="true" aria-labelledby="customAlertTitle" aria-describedby="customAlertMessage">
         <div class="modal-content custom-alert-modal">
