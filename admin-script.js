@@ -346,11 +346,28 @@ function updateCategorySpecificFields() {
     }
 }
 
+/**
+ * Popula el menú desplegable de categorías en el modal de producto.
+ */
+function populateCategoryDropdown() {
+    const categorySelect = document.getElementById('productCategory');
+    if (!categorySelect) return;
+    categorySelect.innerHTML = '';
+    for (const key in categoryMap) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = categoryMap[key].title;
+        categorySelect.appendChild(option);
+    }
+}
+
 // --- Manejo del Modal de Producto (Añadir/Editar) ---
 addProductBtn.addEventListener('click', () => {
     editingProduct = null;
     modalTitle.textContent = 'Añadir Nuevo Producto';
     productForm.reset(); // Limpiar el formulario
+    populateCategoryDropdown(); // Poblar el dropdown de categorías
+    document.getElementById('productCategory').value = currentCategory; // Seleccionar la categoría actual
     imagePreview.innerHTML = ''; // Limpiar la vista previa de la imagen
     window.openModal(productModal);
     updateCategorySpecificFields(); // Asegurarse de que los campos específicos estén correctos
@@ -384,6 +401,8 @@ function openEditProductModal(event) {
 
     if (editingProduct) {
         modalTitle.textContent = 'Editar Producto';
+        populateCategoryDropdown(); // Poblar el dropdown de categorías
+        document.getElementById('productCategory').value = editingProduct.type; // Seleccionar la categoría guardada del producto
         document.getElementById('productName').value = editingProduct.name || '';
         document.getElementById('productDisplayName').value = editingProduct.displayName || '';
         document.getElementById('productDescription').value = editingProduct.description || '';
@@ -422,13 +441,14 @@ productForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     showLoading(true);
 
+    const selectedCategory = document.getElementById('productCategory').value;
     const product = {
         name: document.getElementById('productName').value.trim(),
         displayName: document.getElementById('productDisplayName').value.trim() || document.getElementById('productName').value.trim(),
         description: document.getElementById('productDescription').value.trim(),
         price: parseFloat(document.getElementById('productPrice').value),
         imageUrl: document.getElementById('productImage').value.trim() || '', // Usar imageUrl
-        type: categoryMap[currentCategory].type, // Asignar el tipo de categoría (el nuevo nombre)
+        type: categoryMap[selectedCategory].type, // Asignar el tipo desde el dropdown
         isActive: document.getElementById('productIsActive').checked
     };
 
@@ -712,6 +732,7 @@ function initializeLazyLoader() {
 // Inicializar la vista al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
     updateCategoryTitle(currentCategory);
+    populateCategoryDropdown(); // Poblar el dropdown una vez al inicio
     updateCategorySpecificFields();
     initializeLazyLoader();
     // La función de inicialización de Firebase será llamada por el script de tipo módulo en admin.html
