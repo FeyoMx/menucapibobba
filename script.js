@@ -98,6 +98,19 @@ const loadingMessages = document.querySelectorAll('.loading-message');
 // --- Funciones de Utilidad ---
 
 /**
+ * Elimina acentos y convierte a minúsculas para una comparación de texto robusta.
+ * @param {string} text - El texto a normalizar.
+ * @returns {string} - El texto normalizado.
+ */
+function normalizeText(text) {
+    if (typeof text !== 'string') return '';
+    return text
+        .normalize("NFD") // Separa los caracteres base de sus diacríticos
+        .replace(/[\u0300-\u036f]/g, "") // Elimina los diacríticos
+        .toLowerCase(); // Convierte a minúsculas
+}
+
+/**
  * Muestra el modal de alerta personalizado.
  * @param {string} title - Título del modal.
  * @param {string} message - Mensaje del modal.
@@ -780,11 +793,11 @@ function openYogurtadaCustomizationModal(yogurtadaProduct) {
     yogurtadaBaseFlavorGrid.innerHTML = '';
     const allFrappes = [...productsData.waterFrappes, ...productsData.milkFrappes]; // Combinar ambas listas
     // Filtrar sabores cuyo nombre (en minúsculas) contenga alguna de las palabras clave permitidas.
-    // Esto es más flexible que una coincidencia exacta.
-    const flavorsToShow = allFrappes.filter(flavor => 
-        allowedYogurtadaFlavorNames.some(allowedName => 
-            (flavor.name || '').toLowerCase().includes(allowedName))
-    );
+    // Se usa normalizeText para eliminar acentos y asegurar una comparación correcta.
+    const flavorsToShow = allFrappes.filter(flavor => {
+        const normalizedFlavorName = normalizeText(flavor.name);
+        return allowedYogurtadaFlavorNames.some(allowedName => normalizedFlavorName.includes(allowedName));
+    });
 
     if (flavorsToShow.length === 0) {
         yogurtadaBaseFlavorGrid.innerHTML = '<p class="no-products-message">No hay sabores base disponibles para la Yogurtada en este momento.</p>';
