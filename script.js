@@ -197,6 +197,7 @@ async function loadProductsFromFirestore() {
             milkFrappes: [],
             hotDrinks: [],
             toppings: [],
+            specialties: [],
             promotions: []
         };
 
@@ -255,7 +256,99 @@ function renderMenuSections() {
     renderProducts(productsData.milkFrappes, milkFrappesGrid);
     renderProducts(productsData.hotDrinks, hotDrinksGrid);
     renderProducts(productsData.toppings, toppingsGrid); // Renderiza toppings en su sección
-    renderPromotions(productsData.promotions, promotionsGrid); // Renderiza promociones
+    renderComplexItems(productsData.specialties, specialtiesGrid); // Renderiza especialidades
+    renderComplexItems(productsData.promotions, promotionsGrid); // Renderiza promociones
+}
+
+/**
+ * Renderiza productos complejos como Especialidades y Promociones.
+ * @param {Array} items - Array de objetos de item (especialidad o promoción).
+ * @param {HTMLElement} container - El elemento DOM donde se renderizarán los items.
+ */
+function renderComplexItems(items, container) {
+    container.innerHTML = ''; // Limpiar el contenedor
+    if (!items || items.length === 0) {
+        const message = container.id === 'specialtiesGrid' 
+            ? 'No hay especialidades disponibles en este momento.' 
+            : 'No hay promociones disponibles en este momento.';
+        container.innerHTML = `<p class="no-products-message">${message}</p>`;
+        container.style.display = 'block';
+        return;
+    }
+
+    items.forEach(item => {
+        const itemCard = document.createElement('article');
+        itemCard.className = 'promotion-card'; // Reutilizamos el estilo de la tarjeta de promoción
+        itemCard.setAttribute('tabindex', '0');
+        itemCard.setAttribute('role', 'button');
+        itemCard.setAttribute('aria-label', `Ver detalles de: ${item.displayName || item.name}, ${item.description}, Precio: $${item.price ? item.price.toFixed(2) : '0.00'}`);
+
+        itemCard.innerHTML = `
+            <div class="promotion-info">
+                <h3 class="promotion-name">${item.displayName || item.name}</h3>
+                <p class="promotion-description">${item.description}</p>
+                <p class="promotion-price">$${item.price ? item.price.toFixed(2) : '0.00'}</p>
+            </div>
+            <button class="add-to-cart-btn" data-product-id="${item.id}" aria-label="Añadir ${item.displayName || item.name} al carrito">Añadir ➕</button>
+        `;
+        container.appendChild(itemCard);
+
+        // Event listener para abrir modal de imagen al hacer click en la tarjeta (no en el botón)
+        itemCard.addEventListener('click', (event) => {
+            if (event.target.tagName !== 'BUTTON') {
+                openFlavorImageModal(item.displayName || item.name, item.imageUrl);
+            }
+        });
+        itemCard.addEventListener('keydown', (event) => {
+            if ((event.key === 'Enter' || event.key === ' ') && event.target.tagName !== 'BUTTON') {
+                event.preventDefault();
+                openFlavorImageModal(item.displayName || item.name, item.imageUrl);
+            }
+        });
+    });
+
+    // Añadir event listeners a los botones "Añadir al Carrito"
+    container.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const productId = event.target.dataset.productId;
+            // Buscar el producto en todas las categorías de datos
+            const product = Object.values(productsData).flat().find(p => p.id === productId);
+
+            if (product) {
+                // Feedback visual al añadir
+                if (lastClickedAddButton) {
+                    lastClickedAddButton.classList.remove('added');
+                    lastClickedAddButton.textContent = 'Añadir ➕';
+                }
+                lastClickedAddButton = event.target;
+                lastClickedAddButton.classList.add('added');
+                lastClickedAddButton.textContent = '¡Añadido! 🎉';
+                setTimeout(() => {
+                    if (lastClickedAddButton) {
+                        lastClickedAddButton.classList.remove('added');
+                        lastClickedAddButton.textContent = 'Añadir ➕';
+                        lastClickedAddButton = null;
+                    }
+                }, 1500);
+
+                // Lógica para abrir modal de personalización o añadir directamente
+                const productNameLower = (product.name || '').toLowerCase();
+                if (productNameLower.includes('chamoyada')) {
+                    openChamoyadaCustomizationModal(product);
+                } else if (productNameLower.includes('yogurtada')) {
+                    openYogurtadaCustomizationModal(product);
+                } else if (product.price < 0) { // Si es un descuento (precio negativo)
+                    addToCart(product);
+                    window.showCustomAlert('Descuento Añadido', `"${product.displayName || product.name}" ha sido añadido a tu carrito.`);
+                } else {
+                    // Para otras promociones o especialidades no personalizables
+                    addToCart(product);
+                    window.showCustomAlert('Producto Añadido', `"${product.displayName || product.name}" ha sido añadido a tu carrito.`);
+                }
+            }
+        });
+    });
+    container.style.display = 'grid';
 }
 
 /**
@@ -357,103 +450,6 @@ function renderProducts(products, container) {
         });
     });
     container.style.display = 'grid'; // Mostrar el grid una vez cargado
-}
-
-/**
- * Renderiza las promociones en su contenedor específico.
- * @param {Array} promotions - Array de objetos de promoción.
- * @param {HTMLElement} container - El elemento DOM donde se renderizarán las promociones.
- */
-function renderPromotions(promotions, container) {
-    console.log(`Rendering promotions for container: ${container.id}`);
-    console.log('Promotions to render:', promotions); // Log para ver el contenido de las promociones
-
-    container.innerHTML = ''; // Limpiar el contenedor
-    if (!promotions || promotions.length === 0) {
-        container.innerHTML = '<p class="no-products-message">No hay promociones disponibles en este momento.</p>';
-        container.style.display = 'block';
-        console.log(`Container ${container.id} is empty or has no promotions.`);
-        return;
-    }
-
-    promotions.forEach(promo => {
-        const promoCard = document.createElement('article');
-        promoCard.className = 'promotion-card';
-        promoCard.setAttribute('tabindex', '0'); // Hacer la tarjeta enfocable
-        promoCard.setAttribute('role', 'button'); // Indicar que es interactiva
-        promoCard.setAttribute('aria-label', `Promoción: ${promo.displayName || promo.name}, ${promo.description}, Precio: $${promo.price ? promo.price.toFixed(2) : '0.00'}`);
-
-        // NO se incluye la imagen aquí. Solo se mostrará en el modal al hacer clic.
-        promoCard.innerHTML = `
-            <div class="promotion-info">
-                <h3 class="promotion-name">${promo.displayName || promo.name}</h3>
-                <p class="promotion-description">${promo.description}</p>
-                <p class="promotion-price">$${promo.price ? promo.price.toFixed(2) : '0.00'}</p>
-            </div>
-            <button class="add-to-cart-btn" data-product-id="${promo.id}" data-product-category="${productTypeMap[promo.type]}" aria-label="Añadir promoción ${promo.displayName || promo.name} al carrito">Añadir ➕</button>
-        `;
-        container.appendChild(promoCard);
-
-        // Event listener para abrir modal de imagen al hacer click en la tarjeta (no en el botón)
-        promoCard.addEventListener('click', (event) => {
-            if (event.target.tagName !== 'BUTTON') { // Si no se hizo clic en el botón
-                openFlavorImageModal(promo.displayName || promo.name, promo.imageUrl); // Usar imageUrl
-            }
-        });
-        // Event listener para accesibilidad con teclado
-        promoCard.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                if (event.target.tagName !== 'BUTTON') {
-                    openFlavorImageModal(promo.displayName || promo.name, promo.imageUrl); // Usar imageUrl
-                }
-            }
-        });
-    });
-
-    // Añadir event listeners a los botones "Añadir al Carrito"
-    container.querySelectorAll('.add-to-cart-btn').forEach(button => {
-        button.addEventListener('click', (event) => {
-            const productId = event.target.dataset.productId;
-            const productCategory = event.target.dataset.productCategory; // Obtener la categoría mapeada
-            // Buscar el producto en la categoría de promociones
-            const product = productsData.promotions.find(p => p.id === productId);
-            if (product) {
-                // Feedback visual al añadir
-                if (lastClickedAddButton) {
-                    lastClickedAddButton.classList.remove('added');
-                    lastClickedAddButton.textContent = 'Añadir ➕';
-                }
-                lastClickedAddButton = event.target;
-                lastClickedAddButton.classList.add('added');
-                lastClickedAddButton.textContent = '¡Añadido! 🎉';
-                setTimeout(() => {
-                    if (lastClickedAddButton) {
-                        lastClickedAddButton.classList.remove('added');
-                        lastClickedAddButton.textContent = 'Añadir ➕';
-                        lastClickedAddButton = null;
-                    }
-                }, 1500);
-
-                // Lógica para abrir modal de personalización o añadir directamente
-                if (product.name.toLowerCase().includes('chamoyada')) {
-                    // Abre el modal de personalización para cualquier producto con "chamoyada" en el nombre
-                    openChamoyadaCustomizationModal(product);
-                } else if (product.name.toLowerCase().includes('yogurtada')) {
-                    // Abre el modal de personalización para Yogurtada
-                    openYogurtadaCustomizationModal(product);
-                } else if (product.price < 0) { // Si es un descuento (precio negativo)
-                    addToCart(product); // Añadir directamente al carrito
-                    window.showCustomAlert('Descuento Añadido', `"${product.displayName || product.name}" ha sido añadido a tu carrito.`);
-                } else {
-                    // Para otras promociones (que no son descuentos ni chamoyadas), abrir modal de toppings
-                    openToppingSelectionModal(product); // Por ejemplo, un combo de bebida + postre
-                }
-            }
-        });
-    });
-    container.style.display = 'grid'; // Mostrar el grid una vez cargado
-    console.log(`Container ${container.id} innerHTML after rendering:`, container.innerHTML); // Log para ver el HTML generado
 }
 
 // --- Lógica del Carrito ---
