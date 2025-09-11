@@ -746,7 +746,7 @@ function openYogurtadaCustomizationModal(yogurtadaProduct) {
 
     // Lista de nombres de sabores permitidos para la Yogurtada (en minúsculas para comparación)
     const allowedYogurtadaFlavorNames = [
-        'mango', 'fresa', 'blueberry', 'cereza', 'banana', 'pina colada', 'pay de limon'
+        'mango', 'fresa', 'blueberry', 'cereza', 'banana', 'pina colada', 'pay de limon', 'coco'
     ];
 
     // Renderizar sabores base, buscando en AMBAS categorías (agua y leche) y filtrando por la lista permitida.
