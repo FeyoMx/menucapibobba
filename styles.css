@@ -1,6 +1,5 @@
-/* Importa las fuentes Nunito y Balsamiq Sans de Google Fonts */
-/* Se utiliza @import aquí, pero para producción, considera usar <link rel="stylesheet"> directo en el HTML */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Balsamiq+Sans:wght@700&display=swap');
+/* Las fuentes ahora se cargan desde el HTML de forma optimizada */
+/* @import removido para mejorar el rendimiento - se carga via HTML */
 
 /* Reseteo básico de CSS */
 * {
