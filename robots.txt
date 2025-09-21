@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://feyomx.github.io/menucapibobba/sitemap.xml
+
+# Allow all major search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Block access to admin and config files
+Disallow: /admin.html
+Disallow: /admin-script.js
+Disallow: /admin-styles.css
+Disallow: /firebase-config.js
+Disallow: /firebase-config.example.js
+
+# Crawl delay (1 second)
+Crawl-delay: 1
