@@ -1,0 +1,26 @@
+{
+    "name": "Menú Capibobba",
+    "short_name": "Capibobba",
+    "description": "Tu dosis diaria de felicidad y sabor. Frappés, bubble tea y especialidades únicas.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#FFE1E6",
+    "theme_color": "#FF69B4",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "https://i.imgur.com/llR0NN0.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "https://i.imgur.com/llR0NN0.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["food", "business"],
+    "lang": "es-MX"
+}
