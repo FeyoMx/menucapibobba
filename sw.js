@@ -1,11 +1,19 @@
 // Service Worker para cache de recursos
 const CACHE_NAME = 'capibobba-v1.0.0';
+// Detectar la base URL correcta
+const getBaseUrl = () => {
+    const pathname = self.location.pathname;
+    return pathname.includes('/menucapibobba/') ? '/menucapibobba/' : '/';
+};
+
+const baseUrl = getBaseUrl();
+
 const STATIC_CACHE_URLS = [
-    '/',
-    '/index.html',
-    '/styles.css',
-    '/script.js',
-    '/manifest.json',
+    baseUrl,
+    baseUrl + 'index.html',
+    baseUrl + 'styles.css',
+    baseUrl + 'script.js',
+    baseUrl + 'manifest.json',
     'https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@700&family=Nunito:wght@400;600;700;800;900&display=swap'
 ];
 
@@ -68,7 +76,7 @@ self.addEventListener('fetch', event => {
     }
 
     // Estrategia Network First para HTML
-    if (url.pathname.endsWith('.html') || url.pathname === '/') {
+    if (url.pathname.endsWith('.html') || url.pathname === '/' || url.pathname === baseUrl) {
         event.respondWith(
             fetch(event.request)
                 .then(response => {

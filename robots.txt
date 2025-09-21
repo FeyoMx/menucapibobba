@@ -4,6 +4,9 @@ Allow: /
 # Sitemap location
 Sitemap: https://feyomx.github.io/menucapibobba/sitemap.xml
 
+# Allow indexing of the main directory
+Allow: /menucapibobba/
+
 # Allow all major search engines
 User-agent: Googlebot
 Allow: /

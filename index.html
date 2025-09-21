@@ -519,9 +519,16 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                // Detectar la base URL correcta para GitHub Pages
+                const baseUrl = window.location.pathname.includes('/menucapibobba/')
+                    ? '/menucapibobba/'
+                    : '/';
+
+                navigator.serviceWorker.register(baseUrl + 'sw.js', {
+                    scope: baseUrl
+                })
                     .then(registration => {
-                        console.log('SW registrado:', registration);
+                        console.log('SW registrado exitosamente:', registration);
                     })
                     .catch(registrationError => {
                         console.log('SW falló:', registrationError);
