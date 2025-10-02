@@ -59,11 +59,12 @@
     <!-- CSS principal cargado de forma síncrona para evitar FOUC -->
     <link rel="stylesheet" href="styles.css">
     
-    <!-- Google Fonts optimizadas -->
-
-    <!-- Google Fonts: Precarga crítica con display=swap para evitar FOIT -->
+    <!-- Google Fonts optimizadas con font-display swap -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@700&family=Nunito:wght@400;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"></noscript>
+
+    <!-- Precargar imagen LCP (logo principal) -->
+    <link rel="preload" as="image" href="https://i.imgur.com/llR0NN0.png">
 
     <!-- Font Awesome para iconos - Preload para evitar render blocking -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -148,8 +149,8 @@
     <header class="menu-header">
         <div class="logo-container">
             <!-- Añadido onerror para ocultar la imagen si no carga -->
-            <img src="https://i.imgur.com/g1iRrOw.png" alt="Logo Capibobba - Menú de bebidas y frappés" class="logo-light" id="logoLight" loading="eager" decoding="async" onerror="this.style.display='none';">
-            <img src="https://i.imgur.com/llR0NN0.png" alt="Logo Capibobba versión oscura - Menú de bebidas y frappés" class="logo-dark" id="logoDark" loading="lazy" decoding="async" onerror="this.style.display='none';">
+            <img src="https://i.imgur.com/g1iRrOw.png" alt="Logo Capibobba - Menú de bebidas y frappés" class="logo-light" id="logoLight" width="200" height="200" loading="eager" decoding="async" onerror="this.style.display='none';">
+            <img src="https://i.imgur.com/llR0NN0.png" alt="Logo Capibobba versión oscura - Menú de bebidas y frappés" class="logo-dark" id="logoDark" width="200" height="200" loading="lazy" decoding="async" onerror="this.style.display='none';">
         </div>
         <h1 class="menu-title">MENÚ <span class="title-part-1">CAPI</span><span class="title-part-2">BOBBA</span></h1>
         <p class="menu-subtitle">¡Tu dosis diaria de felicidad y sabor!</p>

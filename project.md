@@ -123,8 +123,11 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 - **Lazy loading** de imágenes
 - **Service Worker** con cache estratégico
 - **CSS crítico** inline
-- **Preload/Prefetch** de recursos
+- **Preload/Prefetch** de recursos críticos (fonts, LCP image)
 - **Compresión GZIP** configurada
+- **Font-display: swap** para evitar FOIT (Flash of Invisible Text)
+- **Dimensiones de imagen** definidas para prevenir CLS (Cumulative Layout Shift)
+- **CSS síncrono** para evitar FOUC (Flash of Unstyled Content)
 
 ### SEO
 - **Meta tags** completos (Open Graph, Twitter Cards)
@@ -217,6 +220,9 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 - [x] Modo oscuro/claro
 - [x] SEO optimizado
 - [x] Despliegue automático
+- [x] Optimización de Core Web Vitals (LCP, CLS, FCP)
+- [x] Prevención de layout shifts con dimensiones de imagen
+- [x] Preload de recursos críticos (logo LCP, fuentes)
 
 ### 🔄 Posibles Mejoras Futuras
 - [ ] Notificaciones push
