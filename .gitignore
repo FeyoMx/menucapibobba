@@ -3,3 +3,7 @@ firebase-config.js
 
 # Ignorar dependencias de Node.js si se añaden en el futuro
 /node_modules
+
+# Ignorar configuración local de VS Code con tokens sensibles
+.vscode/settings.json
+.vscode/settings.local.json
