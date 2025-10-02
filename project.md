@@ -131,9 +131,12 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 
 ### SEO
 - **Meta tags** completos (Open Graph, Twitter Cards)
-- **Structured data** implícito
+- **Canonical URL** definida para evitar contenido duplicado
+- **Title optimizado** (50-60 caracteres) para mejor CTR
+- **Structured data** (JSON-LD): Restaurant + BreadcrumbList
 - **Sitemap XML** generado
 - **Robots.txt** configurado
+- **Meta description** optimizada (150-160 caracteres)
 
 ### PWA
 - **Manifest** completo
@@ -223,6 +226,8 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 - [x] Optimización de Core Web Vitals (LCP, CLS, FCP)
 - [x] Prevención de layout shifts con dimensiones de imagen
 - [x] Preload de recursos críticos (logo LCP, fuentes)
+- [x] SEO avanzado con canonical URL y breadcrumbs
+- [x] Title tag optimizado para mejor CTR en buscadores
 
 ### 🔄 Posibles Mejoras Futuras
 - [ ] Notificaciones push
