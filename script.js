@@ -216,7 +216,8 @@ async function loadProductsFromFirestore() {
             hotDrinks: [],
             toppings: [],
             specialties: [],
-            promotions: []
+            promotions: [],
+            desserts: [] // NUEVA categoría para Postres y Snacks (CapiGofre)
         };
 
         snapshot.forEach(doc => {
