@@ -43,7 +43,8 @@ const categoryMap = {
     'hotDrinks': { title: 'Bebidas Calientes', type: 'hotDrinks' },
     'toppings': { title: 'Toppings', type: 'toppings' },
     'specialties': { title: 'Especialidades', type: 'specialties' }, // NUEVO
-    'promotions': { title: 'Promociones', type: 'promotions' }
+    'promotions': { title: 'Promociones', type: 'promotions' },
+    'desserts': { title: 'Postres & Snacks', type: 'desserts' } // NUEVO
 };
 
 // NUEVO: Mapeo de tipos de producto de Firestore a las claves de productsData al LEER productos
@@ -55,6 +56,7 @@ const firestoreProductTypeMap = {
     "hot-drink": "hotDrinks",
     "yogurtada": "specialties", // Mapeo antiguo a la nueva categoría
     "chamoyada": "specialties", // Mapeo antiguo a la nueva categoría
+    "capigofre": "desserts", // CapiGofre es un postre
     "promotion": "promotions", // Otros elementos con tipo "promotion" (singular)
     "promotions": "promotions", // Mapeo para el tipo "promotions" (plural)
     "toppings": "toppings",
@@ -64,8 +66,9 @@ const firestoreProductTypeMap = {
     "milkFrappes": "milkFrappes",
     "hotDrinks": "hotDrinks",
     // "toppings" ya está arriba
-    "specialties": "specialties"
-    // "promotions" ya está arriba,
+    "specialties": "specialties",
+    // "promotions" ya está arriba
+    "desserts": "desserts" // NUEVO tipo para postres y snacks
 };
 
 // --- Funciones de Utilidad ---

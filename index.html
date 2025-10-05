@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Menú Capibobba - Tu dosis diaria de felicidad y sabor. Frappés base agua y leche, bebidas calientes, especialidades como chamoyadas y yogurtadas. ¡Ordena por WhatsApp!">
-    <meta name="keywords" content="capibobba, frappé, bubble tea, bebidas, chamoyada, yogurtada, toppings, bebidas frías, bebidas calientes, menú">
+    <meta name="description" content="Menú Capibobba - Tu dosis diaria de felicidad y sabor. Frappés base agua y leche, bebidas calientes, especialidades como chamoyadas, yogurtadas y CapiGofre. ¡Ordena por WhatsApp!">
+    <meta name="keywords" content="capibobba, frappé, bubble tea, bebidas, chamoyada, yogurtada, capigofre, gofre belga, postres, snacks, toppings, bebidas frías, bebidas calientes, menú">
     <meta name="author" content="Capibobba">
     <meta name="robots" content="index, follow">
 
@@ -243,6 +243,18 @@
             </div>
         </section>
 
+        <!-- NUEVA Sección de Postres y Snacks -->
+        <section class="menu-section desserts-section animate-on-scroll" data-animation="fade-in-up">
+            <header class="section-header">
+                <h2 class="section-title">🧇 Postres & Snacks 🧇</h2>
+                <p class="section-description">¡El complemento perfecto para tu bebida favorita!</p>
+            </header>
+            <div id="dessertsGrid" class="promotions-grid">
+                <!-- Los postres (CapiGofre, etc.) se cargarán aquí -->
+                <p class="loading-message">Cargando postres...</p>
+            </div>
+        </section>
+
         <!-- Sección de Toppings -->
         <section class="menu-section animate-on-scroll" data-animation="fade-in-up">
             <header class="section-header">
@@ -441,6 +453,37 @@
         </div>
     </div>
     <!-- FIN NUEVO: Modal de Personalización de Yogurtada -->
+
+    <!-- NUEVO: Modal de Personalización de CapiGofre -->
+    <div id="capigofreCustomizationOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="capigofreModalTitle">
+        <div class="modal-content capigofre-modal-content">
+            <header class="section-header">
+                <h2 id="capigofreModalTitle" class="section-title">🧇 ¡Personaliza tu CapiGofre! 🧇</h2>
+                <p class="section-description">Elige tu cama y añade toppings irresistibles.</p>
+            </header>
+
+            <div class="capigofre-cama-selection">
+                <h3 class="flavor-selection-title">Escoge tu Cama</h3>
+                <div id="capigofreBaseCamaGrid" class="flavor-grid-small">
+                    <!-- Las opciones de cama (Chocolate/Lechera) se cargarán aquí dinámicamente por JS -->
+                </div>
+            </div>
+
+            <div class="capigofre-topping-selection">
+                <h3 class="topping-selection-title">Añade Toppings (Opcional)</h3>
+                <div id="capigofreToppingsGrid" class="toppings-modal-grid">
+                    <!-- Los toppings específicos se cargarán aquí dinámicamente por JS -->
+                </div>
+            </div>
+
+            <div class="topping-modal-actions">
+                <button id="confirmCapigofreButton" aria-label="Confirmar CapiGofre">Confirmar CapiGofre ✅</button>
+                <button id="cancelCapigofreButton" aria-label="Cancelar CapiGofre">Cancelar ❌</button>
+            </div>
+            <button class="close-modal-button" aria-label="Cerrar personalización de CapiGofre">✖</button>
+        </div>
+    </div>
+    <!-- FIN NUEVO: Modal de Personalización de CapiGofre -->
 
     <!-- Modal de Alerta Personalizado (Reemplaza alert()) -->
     <div id="customAlertModal" class="modal-overlay" role="alertdialog" aria-modal="true" aria-labelledby="customAlertTitle" aria-describedby="customAlertMessage">

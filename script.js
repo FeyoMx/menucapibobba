@@ -19,7 +19,8 @@ let productsData = { // Objeto para almacenar todos los datos de productos por c
     hotDrinks: [],
     toppings: [],
     specialties: [], // NUEVA categoría para Chamoyadas, Yogurtadas, etc.
-    promotions: []
+    promotions: [],
+    desserts: [] // NUEVA categoría para Postres y Snacks (CapiGofre)
 };
 let availableToppings = []; // Array para almacenar los toppings disponibles globalmente
 let cart = []; // Carrito de compras
@@ -35,6 +36,9 @@ let currentChamoyadaProduct = null; // Almacena el producto Chamoyada original a
 let yogurtadaBaseFlavor = null; // Almacena el sabor base seleccionado para la yogurtada
 let yogurtadaSelectedToppings = []; // Almacena los toppings seleccionados para la yogurtada
 let currentYogurtadaProduct = null; // Almacena el producto Yogurtada original al abrir el modal
+let capigofreBaseCama = null; // Almacena la cama seleccionada para CapiGofre (Chocolate o Lechera)
+let capigofreSelectedToppings = []; // Almacena los toppings seleccionados para CapiGofre
+let currentCapigofreProduct = null; // Almacena el producto CapiGofre original al abrir el modal
 
 // --- Mapeo de tipos de producto de Firestore a las claves de productsData ---
 // Esto es crucial para que los productos se asignen a la categoría correcta
@@ -46,6 +50,7 @@ const productTypeMap = {
     "hot-drink": "hotDrinks",
     "yogurtada": "specialties", // Yogurtada es una especialidad
     "chamoyada": "specialties", // Chamoyada es una especialidad
+    "capigofre": "desserts", // CapiGofre es un postre
     "promotion": "promotions", // Otros elementos de promoción (singular)
     "promotions": "promotions", // Mapeo para el tipo "promotions" (plural)
 
@@ -54,7 +59,8 @@ const productTypeMap = {
     "milkFrappes": "milkFrappes",
     "hotDrinks": "hotDrinks",
     "toppings": "toppings",
-    "specialties": "specialties" // NUEVO tipo para especialidades
+    "specialties": "specialties", // NUEVO tipo para especialidades
+    "desserts": "desserts" // NUEVO tipo para postres y snacks
 };
 
 
@@ -65,6 +71,7 @@ const hotDrinksGrid = document.getElementById('hotDrinksGrid');
 const toppingsGrid = document.getElementById('toppingsGrid');
 const specialtiesGrid = document.getElementById('specialtiesGrid'); // Grid para especialidades
 const promotionsGrid = document.getElementById('promotionsGrid');
+const dessertsGrid = document.getElementById('dessertsGrid'); // Grid para postres y snacks
 const cartButton = document.getElementById('cartButton');
 const cartItemCount = document.getElementById('cartItemCount');
 const cartModal = document.getElementById('cartModal');
@@ -96,6 +103,12 @@ const yogurtadaToppingsGrid = document.getElementById('yogurtadaToppingsGrid');
 const confirmYogurtadaButton = document.getElementById('confirmYogurtadaButton');
 const cancelYogurtadaButton = document.getElementById('cancelYogurtadaButton');
 const closeYogurtadaModalBtn = yogurtadaCustomizationOverlay.querySelector('.close-modal-button');
+const capigofreCustomizationOverlay = document.getElementById('capigofreCustomizationOverlay');
+const capigofreBaseCamaGrid = document.getElementById('capigofreBaseCamaGrid');
+const capigofreToppingsGrid = document.getElementById('capigofreToppingsGrid');
+const confirmCapigofreButton = document.getElementById('confirmCapigofreButton');
+const cancelCapigofreButton = document.getElementById('cancelCapigofreButton');
+const closeCapigofreModalBtn = capigofreCustomizationOverlay.querySelector('.close-modal-button');
 const loadingMessages = document.querySelectorAll('.loading-message');
 
 // --- Funciones de Utilidad ---
@@ -263,6 +276,7 @@ function renderMenuSections() {
     renderProducts(productsData.toppings, toppingsGrid); // Renderiza toppings en su sección
     renderComplexItems(productsData.specialties, specialtiesGrid); // Renderiza especialidades
     renderComplexItems(productsData.promotions, promotionsGrid); // Renderiza promociones
+    renderComplexItems(productsData.desserts, dessertsGrid); // Renderiza postres y snacks
 }
 
 /**
@@ -273,9 +287,14 @@ function renderMenuSections() {
 function renderComplexItems(items, container) {
     container.innerHTML = ''; // Limpiar el contenedor
     if (!items || items.length === 0) {
-        const message = container.id === 'specialtiesGrid' 
-            ? 'No hay especialidades disponibles en este momento.' 
-            : 'No hay promociones disponibles en este momento.';
+        let message = 'No hay productos disponibles en este momento.';
+        if (container.id === 'specialtiesGrid') {
+            message = 'No hay especialidades disponibles en este momento.';
+        } else if (container.id === 'promotionsGrid') {
+            message = 'No hay promociones disponibles en este momento.';
+        } else if (container.id === 'dessertsGrid') {
+            message = 'No hay postres disponibles en este momento.';
+        }
         container.innerHTML = `<p class="no-products-message">${message}</p>`;
         container.style.display = 'block';
         return;
@@ -342,6 +361,8 @@ function renderComplexItems(items, container) {
                     openChamoyadaCustomizationModal(product);
                 } else if (productNameLower.includes('yogurtada')) {
                     openYogurtadaCustomizationModal(product);
+                } else if (productNameLower.includes('capigofre') || productNameLower.includes('gofre')) {
+                    openCapigofreCustomizationModal(product);
                 } else if (product.price < 0) { // Si es un descuento (precio negativo)
                     addToCart(product);
                     window.showCustomAlert('Descuento Añadido', `"${product.displayName || product.name}" ha sido añadido a tu carrito.`);
@@ -803,6 +824,60 @@ function openYogurtadaCustomizationModal(yogurtadaProduct) {
     window.openModal(yogurtadaCustomizationOverlay);
 }
 
+// --- NUEVO: Manejo del Modal de Personalización de CapiGofre ---
+/**
+ * Abre el modal de personalización de CapiGofre.
+ * @param {Object} capigofreProduct - El objeto del producto CapiGofre.
+ */
+function openCapigofreCustomizationModal(capigofreProduct) {
+    currentCapigofreProduct = capigofreProduct; // Guardar el contexto del producto original
+    capigofreBaseCama = null; // Resetear selección de cama
+    capigofreSelectedToppings = []; // Resetear selección de toppings
+
+    // Opciones de cama (hardcoded ya que son específicas de CapiGofre)
+    const camaOptions = [
+        { id: 'chocolate', name: 'Chocolate', imageUrl: 'https://i.imgur.com/chocolate-icon.png' },
+        { id: 'lechera', name: 'Lechera', imageUrl: 'https://i.imgur.com/lechera-icon.png' }
+    ];
+
+    // Renderizar opciones de cama
+    capigofreBaseCamaGrid.innerHTML = '';
+    camaOptions.forEach(cama => {
+        const camaItemLabel = document.createElement('label');
+        camaItemLabel.className = 'flavor-item';
+        camaItemLabel.setAttribute('for', `capigofre-cama-${cama.id}`);
+        camaItemLabel.innerHTML = `
+            <input type="radio" id="capigofre-cama-${cama.id}" name="capigofreBaseCama" value="${cama.id}">
+            <span class="flavor-name">${cama.name}</span>
+        `;
+        capigofreBaseCamaGrid.appendChild(camaItemLabel);
+    });
+
+    // Toppings específicos para CapiGofre (hardcoded)
+    const capigofreToppingOptions = [
+        { id: 'nuez', name: 'Nuez', price: 0 },
+        { id: 'mazapan', name: 'Mazapán', price: 0 },
+        { id: 'granillo', name: 'Granillo de Chocolate', price: 0 }
+    ];
+
+    // Renderizar toppings disponibles para CapiGofre
+    capigofreToppingsGrid.innerHTML = '';
+    capigofreToppingOptions.forEach(topping => {
+        const toppingItem = document.createElement('div');
+        toppingItem.className = 'topping-item';
+        toppingItem.innerHTML = `
+            <input type="checkbox" id="capigofre-topping-${topping.id}" value="${topping.id}" data-price="${topping.price}">
+            <label for="capigofre-topping-${topping.id}">
+                <span class="topping-name">${topping.name}</span>
+                ${topping.price > 0 ? `<span class="topping-price">($${topping.price.toFixed(2)})</span>` : ''}
+            </label>
+        `;
+        capigofreToppingsGrid.appendChild(toppingItem);
+    });
+
+    window.openModal(capigofreCustomizationOverlay);
+}
+
 // Event listener for flavor selection in the Chamoyada modal using event delegation.
 // This is more efficient and reliable than attaching a listener to each item.
 chamoyadaBaseFlavorGrid.addEventListener('change', (event) => {
@@ -860,6 +935,24 @@ yogurtadaBaseFlavorGrid.addEventListener('change', (event) => {
         } else {
             console.error(`Could not find flavor with ID: ${selectedFlavorId} in all frappes`);
             yogurtadaBaseFlavor = null; // Ensure it's null if not found
+        }
+    }
+});
+
+// Event listener for cama selection in the CapiGofre modal using event delegation.
+capigofreBaseCamaGrid.addEventListener('change', (event) => {
+    if (event.target.name === 'capigofreBaseCama') {
+        const selectedCamaId = event.target.value;
+        capigofreBaseCama = selectedCamaId; // Guardar solo el ID (chocolate o lechera)
+
+        // Update visual feedback
+        capigofreBaseCamaGrid.querySelectorAll('.flavor-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+
+        const parentLabel = event.target.closest('.flavor-item');
+        if (parentLabel) {
+            parentLabel.classList.add('selected');
         }
     }
 });
@@ -1093,6 +1186,62 @@ document.addEventListener('DOMContentLoaded', () => {
     closeYogurtadaModalBtn.addEventListener('click', () => {
         window.closeModal(yogurtadaCustomizationOverlay);
         currentYogurtadaProduct = null;
+    });
+
+    // --- Manejo de Eventos del Modal de CapiGofre ---
+    confirmCapigofreButton.addEventListener('click', () => {
+        if (!currentCapigofreProduct) {
+            console.error("Error: No se encontró el producto CapiGofre original para calcular el precio.");
+            window.closeModal(capigofreCustomizationOverlay);
+            return;
+        }
+
+        if (!capigofreBaseCama) {
+            window.showCustomAlert('Selección Requerida', 'Por favor, elige una cama (Chocolate o Lechera) para tu CapiGofre.');
+            return;
+        }
+
+        // Recopilar toppings seleccionados
+        capigofreSelectedToppings = [];
+        const toppingNames = [];
+        capigofreToppingsGrid.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            const toppingId = checkbox.value;
+            const toppingName = checkbox.nextElementSibling.querySelector('.topping-name').textContent;
+            toppingNames.push(toppingName);
+            capigofreSelectedToppings.push({
+                id: toppingId,
+                name: toppingName,
+                price: parseFloat(checkbox.dataset.price || 0)
+            });
+        });
+
+        // Crear un objeto de producto para el CapiGofre personalizado
+        const customCapigofre = {
+            id: `capigofre-${capigofreBaseCama}-${Date.now()}`,
+            name: `CapiGofre con ${capigofreBaseCama === 'chocolate' ? 'Chocolate' : 'Lechera'}`,
+            displayName: `CapiGofre con ${capigofreBaseCama === 'chocolate' ? 'Chocolate' : 'Lechera'}`,
+            description: `Gofre belga con cama de ${capigofreBaseCama === 'chocolate' ? 'Chocolate' : 'Lechera'}${toppingNames.length > 0 ? ' y ' + toppingNames.join(', ') : ''}.`,
+            price: currentCapigofreProduct.price,
+            imageUrl: currentCapigofreProduct.imageUrl || 'https://i.imgur.com/capigofre-default.png',
+            type: "capigofre",
+            baseCama: capigofreBaseCama,
+            selectedToppings: capigofreSelectedToppings
+        };
+
+        addToCart(customCapigofre, capigofreSelectedToppings);
+        window.showCustomAlert('CapiGofre Añadido', `¡Tu CapiGofre con ${capigofreBaseCama === 'chocolate' ? 'Chocolate' : 'Lechera'} ha sido añadido al carrito!`);
+        window.closeModal(capigofreCustomizationOverlay);
+        currentCapigofreProduct = null;
+    });
+
+    cancelCapigofreButton.addEventListener('click', () => {
+        window.closeModal(capigofreCustomizationOverlay);
+        currentCapigofreProduct = null;
+    });
+
+    closeCapigofreModalBtn.addEventListener('click', () => {
+        window.closeModal(capigofreCustomizationOverlay);
+        currentCapigofreProduct = null;
     });
 
     // Lógica para el modo claro/oscuro

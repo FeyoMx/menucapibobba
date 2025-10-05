@@ -869,7 +869,7 @@ body.dark-mode .footer-bottom {
 }
 
 /* Estilos del modal de selección de toppings */
-.topping-modal-content, .chamoyada-modal-content {
+.topping-modal-content, .chamoyada-modal-content, .yogurtada-modal-content, .capigofre-modal-content {
     width: 500px;
 }
 
@@ -995,12 +995,14 @@ body.dark-mode .footer-bottom {
     box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
 }
 
-/* Estilos específicos para el modal de Chamoyada */
-.chamoyada-modal-content {
+/* Estilos específicos para el modal de Chamoyada, Yogurtada y CapiGofre */
+.chamoyada-modal-content, .yogurtada-modal-content, .capigofre-modal-content {
     width: 550px;
 }
 
-.chamoyada-flavor-selection, .chamoyada-topping-selection {
+.chamoyada-flavor-selection, .chamoyada-topping-selection,
+.yogurtada-flavor-selection, .yogurtada-topping-selection,
+.capigofre-cama-selection, .capigofre-topping-selection {
     margin-bottom: 1.5rem;
 }
 
@@ -1201,7 +1203,7 @@ body.data-loading .add-to-cart-btn {
     }
 
     /* Ajustar el ancho de los modales para que no sean tan grandes */
-    .cart-modal-content, .topping-modal-content, .chamoyada-modal-content {
+    .cart-modal-content, .topping-modal-content, .chamoyada-modal-content, .yogurtada-modal-content, .capigofre-modal-content {
         width: 80vw;
         max-width: 550px;
     }
@@ -1295,7 +1297,7 @@ body.data-loading .add-to-cart-btn {
         max-width: 95%;
     }
 
-    .cart-modal-content, .topping-modal-content, .chamoyada-modal-content, .flavor-image-content, .custom-alert-modal {
+    .cart-modal-content, .topping-modal-content, .chamoyada-modal-content, .yogurtada-modal-content, .capigofre-modal-content, .flavor-image-content, .custom-alert-modal {
         width: 95%; /* Ajusta el ancho para móviles */
     }
 
