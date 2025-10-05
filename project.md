@@ -70,6 +70,7 @@ menucapibobba/
   - Toppings
   - Especialidades (Chamoyadas, Yogurtadas)
   - Promociones
+  - Postres & Snacks (CapiGofre)
 - **Actualización en tiempo real**
 - **Importación/Exportación** de datos JSON
 - **Interface intuitiva** con validación
@@ -92,10 +93,10 @@ Firebase Auth      en Tiempo Real       Tiempo Real
   description: "Delicioso frappé con sabor a fresa",
   price: 45.00,
   image: "https://ejemplo.com/imagen.jpg",
-  type: "water-based-frappe", // water-based-frappe, milk-based-frappe, hot-drink, etc.
+  type: "water-based-frappe", // water-based-frappe, milk-based-frappe, hot-drink, desserts, etc.
   available: true,
   category: "waterFrappes",
-  toppings?: ["boba", "jelly"] // Para productos especiales
+  toppings?: ["boba", "jelly"] // Para productos especiales (Chamoyada, Yogurtada, CapiGofre)
 }
 ```
 
@@ -228,6 +229,9 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 - [x] Preload de recursos críticos (logo LCP, fuentes)
 - [x] SEO avanzado con canonical URL y breadcrumbs
 - [x] Title tag optimizado para mejor CTR en buscadores
+- [x] Nueva categoría de Postres & Snacks
+- [x] CapiGofre con personalización (Cama: Chocolate/Lechera, Toppings: Nuez/Mazapán/Granillo)
+- [x] Modal de personalización para CapiGofre similar a Chamoyada/Yogurtada
 
 ### 🔄 Posibles Mejoras Futuras
 - [ ] Notificaciones push
