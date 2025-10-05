@@ -136,7 +136,8 @@ async function loadProductsAndSetupListeners() {
             hotDrinks: [],
             toppings: [],
             specialties: [],
-            promotions: []
+            promotions: [],
+            desserts: [] // NUEVO: Categoría para postres y snacks
         };
 
         snapshot.forEach(doc => {
