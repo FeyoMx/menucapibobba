@@ -137,13 +137,13 @@
         page_location: window.location.href
       });
 
-      // Cargar gtag de forma diferida
-      setTimeout(() => {
+      // Cargar gtag de forma diferida y no bloqueante
+      window.addEventListener('load', () => {
         const script = document.createElement('script');
         script.async = true;
         script.src = 'https://www.googletagmanager.com/gtag/js?id=G-2YW39XNM9K';
         document.head.appendChild(script);
-      }, 3000);
+      });
     </script>
     
 </head>
