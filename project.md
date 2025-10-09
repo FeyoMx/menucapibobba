@@ -226,7 +226,7 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 - [x] Despliegue automático
 - [x] Optimización de Core Web Vitals (LCP, CLS, FCP)
 - [x] Prevención de layout shifts con dimensiones de imagen
-- [x] Preload de recursos críticos (logo LCP, fuentes)
+- [x] Preload de recursos críticos (logo LCP, fuentes, stylesheet principal)
 - [x] SEO avanzado con canonical URL y breadcrumbs
 - [x] Title tag optimizado para mejor CTR en buscadores
 - [x] Nueva categoría de Postres & Snacks
