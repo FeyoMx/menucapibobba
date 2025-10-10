@@ -1,0 +1,15 @@
+# GitHub Pages Configuration
+# Asegura que el sitemap.xml se sirva con el Content-Type correcto
+
+# Incluir archivos que empiezan con punto o guión bajo
+include:
+  - .nojekyll
+  - sitemap.xml
+  - robots.txt
+
+# MIME types para archivos específicos
+defaults:
+  - scope:
+      path: "sitemap.xml"
+    values:
+      sitemap: true
