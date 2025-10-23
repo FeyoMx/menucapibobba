@@ -175,17 +175,22 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 ### GitHub Actions Workflow
 ```yaml
 # Despliegue automático a GitHub Pages
-# Inyección de secrets de Firebase
+# Inyección de secrets de Firebase y Meta Pixel
 # Optimización de assets
 ```
 
 ### Variables de Entorno (GitHub Secrets)
+
+**Firebase:**
 - `FIREBASE_API_KEY`
 - `FIREBASE_AUTH_DOMAIN`
 - `FIREBASE_PROJECT_ID`
 - `FIREBASE_STORAGE_BUCKET`
 - `FIREBASE_MESSAGING_SENDER_ID`
 - `FIREBASE_APP_ID`
+
+**Meta Pixel:**
+- `META_PIXEL_ID` - ID del Meta Pixel (15 dígitos)
 
 ## 📱 Responsive Design
 
