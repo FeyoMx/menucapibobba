@@ -36,10 +36,12 @@ jobs:
 
       # 2b. Crea el archivo meta-pixel-config.js usando el secret
       - name: Create Meta Pixel Config File 📊
+        env:
+          PIXEL_ID: ${{ secrets.META_PIXEL_ID }}
         run: |
-          cat > meta-pixel-config.js << 'EOF'
+          cat > meta-pixel-config.js << EOF
           const metaPixelConfig = {
-            pixelId: '${{ secrets.META_PIXEL_ID }}',
+            pixelId: '${PIXEL_ID}',
             enabled: true,
             debug: false,
             advanced: {
