@@ -33,49 +33,71 @@ Meta Pixel (anteriormente conocido como Facebook Pixel) es una herramienta de an
 2. Completa la información de tu negocio
 3. Sigue los pasos de la Opción A arriba
 
-### 2️⃣ Configurar el Pixel en tu Sitio
+### 2️⃣ Configurar el Pixel ID en GitHub Secrets
 
-1. **Abre el archivo** `meta-pixel-config.js` en tu editor de código
-2. **Busca la línea** que dice:
-   ```javascript
-   pixelId: 'YOUR_PIXEL_ID_HERE',
+**⚠️ IMPORTANTE**: El archivo `meta-pixel-config.js` no está versionado (está en `.gitignore`) por seguridad. En su lugar, usa **GitHub Secrets** para configurar el Pixel ID.
+
+#### Pasos para configurar el Secret:
+
+1. **Ve a tu repositorio en GitHub**:
+   - URL: `https://github.com/TU_USUARIO/menucapibobba`
+
+2. **Accede a Settings > Secrets and variables > Actions**:
+   - Haz clic en la pestaña **"Settings"** del repositorio
+   - En el menú lateral, haz clic en **"Secrets and variables"** → **"Actions"**
+
+3. **Crea un nuevo Repository Secret**:
+   - Haz clic en **"New repository secret"**
+   - **Name**: `META_PIXEL_ID`
+   - **Secret**: Pega tu Pixel ID (ej: `1495356471713675`)
+   - Haz clic en **"Add secret"**
+
+4. **Actualizar el noscript tag en index.html**:
+   - Abre `index.html` en tu editor
+   - Busca la línea 156 (noscript tag)
+   - Reemplaza `YOUR_PIXEL_ID` con tu Pixel ID real:
+   ```html
+   <!-- Noscript fallback para Meta Pixel -->
+   <noscript>
+     <img height="1" width="1" style="display:none"
+       src="https://www.facebook.com/tr?id=1495356471713675&ev=PageView&noscript=1" />
+   </noscript>
    ```
-3. **Reemplaza** `'YOUR_PIXEL_ID_HERE'` con tu Pixel ID real:
-   ```javascript
-   pixelId: '123456789012345',  // ⚠️ Usa tu Pixel ID real de 15 dígitos
+
+5. **Haz commit y push**:
+   ```bash
+   git add index.html
+   git commit -m "fix: Actualizar Pixel ID en noscript tag"
+   git push origin main
    ```
-4. **Guarda el archivo**
 
-#### Ejemplo completo:
+6. **El despliegue automático generará el archivo**:
+   - GitHub Actions detectará el push
+   - Ejecutará el workflow `.github/workflows/deploy.yml`
+   - Generará `meta-pixel-config.js` usando el Secret `META_PIXEL_ID`
+   - Desplegará todo a GitHub Pages
 
-```javascript
-const metaPixelConfig = {
-  // Reemplaza con tu Pixel ID real (15 dígitos)
-  pixelId: '123456789012345',  // ⬅️ CAMBIAR ESTO
+#### Para desarrollo local (opcional):
 
-  // Habilitar/deshabilitar el pixel (útil para desarrollo)
-  enabled: true,
+Si quieres probar localmente:
 
-  // Configuración de debug (mostrar logs en consola)
-  debug: false,  // Cambia a true si quieres ver logs en la consola
-};
-```
+1. Copia el archivo de ejemplo:
+   ```bash
+   cp meta-pixel-config.example.js meta-pixel-config.js
+   ```
 
-### 3️⃣ Actualizar el HTML (si es necesario)
+2. Abre `meta-pixel-config.js` y configura tu Pixel ID:
+   ```javascript
+   const metaPixelConfig = {
+     pixelId: '1495356471713675',  // ⬅️ TU PIXEL ID
+     enabled: true,
+     debug: true  // Activa debug para ver logs
+   };
+   ```
 
-Si no has actualizado `index.html`, busca el noscript tag del Meta Pixel y actualiza el Pixel ID:
+3. **NO hagas commit** de `meta-pixel-config.js` (ya está en `.gitignore`)
 
-```html
-<!-- Noscript fallback para Meta Pixel -->
-<noscript>
-  <img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=TU_PIXEL_ID&ev=PageView&noscript=1" />
-</noscript>
-```
-
-Reemplaza `TU_PIXEL_ID` con tu Pixel ID real.
-
-### 4️⃣ Verificar la Instalación
+### 3️⃣ Verificar la Instalación
 
 #### A. Usando Meta Pixel Helper (Recomendado)
 
