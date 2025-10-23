@@ -34,14 +34,6 @@ jobs:
           echo "  appId: '${{ secrets.FIREBASE_APP_ID }}'" >> firebase-config.js
           echo "};" >> firebase-config.js
 
-      # 2b. Crea el archivo meta-pixel-config.js desde el template
-      - name: Create Meta Pixel Config File 📊
-        run: |
-          sed "s/PLACEHOLDER_PIXEL_ID/${{ secrets.META_PIXEL_ID }}/g" meta-pixel-config.template.js > meta-pixel-config.js
-          echo "✅ meta-pixel-config.js created"
-          ls -la meta-pixel-config.js
-          head -5 meta-pixel-config.js
-
       # 3. Despliega los archivos a la rama gh-pages
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4

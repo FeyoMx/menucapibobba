@@ -35,7 +35,7 @@ menucapibobba/
 │   ├── sw.js                         # Service Worker para cache
 │   ├── robots.txt                    # SEO y crawling
 │   ├── sitemap.xml                   # Mapa del sitio
-│   ├── meta-pixel-config.js          # Configuración de Meta Pixel (Facebook Pixel)
+│   ├── meta-pixel-config.js          # Configuración de Meta Pixel (hardcodeado, público)
 │   └── meta-pixel-config.example.js  # Plantilla de configuración de Meta Pixel
 │
 ├── 📋 Documentación y Legal
@@ -175,8 +175,8 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 ### GitHub Actions Workflow
 ```yaml
 # Despliegue automático a GitHub Pages
-# Inyección de secrets de Firebase y Meta Pixel
-# Optimización de assets
+# Inyección de secrets de Firebase únicamente
+# Meta Pixel hardcodeado (público)
 ```
 
 ### Variables de Entorno (GitHub Secrets)
@@ -190,7 +190,9 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 - `FIREBASE_APP_ID`
 
 **Meta Pixel:**
-- `META_PIXEL_ID` - ID del Meta Pixel (15 dígitos)
+- ✅ **Hardcodeado** en `meta-pixel-config.js` (público como Google Analytics)
+- No requiere GitHub Secrets
+- Pixel ID versionado en el repositorio: `1495356471713675`
 
 ## 📱 Responsive Design
 
