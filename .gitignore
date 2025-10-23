@@ -1,6 +1,9 @@
 # Ignorar el archivo de configuración de Firebase que contiene las claves secretas
 firebase-config.js
 
+# Ignorar el archivo de configuración de Meta Pixel que contiene el Pixel ID
+meta-pixel-config.js
+
 # Ignorar dependencias de Node.js si se añaden en el futuro
 /node_modules
 

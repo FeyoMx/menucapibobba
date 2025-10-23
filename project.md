@@ -34,7 +34,9 @@ menucapibobba/
 │   ├── manifest.json                 # PWA manifest
 │   ├── sw.js                         # Service Worker para cache
 │   ├── robots.txt                    # SEO y crawling
-│   └── sitemap.xml                   # Mapa del sitio
+│   ├── sitemap.xml                   # Mapa del sitio
+│   ├── meta-pixel-config.js          # Configuración de Meta Pixel (Facebook Pixel)
+│   └── meta-pixel-config.example.js  # Plantilla de configuración de Meta Pixel
 │
 ├── 📋 Documentación y Legal
 │   ├── README.md                     # Documentación principal
@@ -59,6 +61,7 @@ menucapibobba/
 - **Modo oscuro/claro** automático
 - **Design responsive** optimizado para móviles
 - **PWA** con Service Worker
+- **Meta Pixel (Facebook Pixel)** para tracking de conversiones
 
 ### 🛠️ Panel de Administración (admin.html)
 - **Autenticación segura** con Firebase Auth
@@ -143,6 +146,17 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 - **Manifest** completo
 - **Service Worker** funcional
 - **Instalable** en dispositivos móviles
+
+### Meta Pixel (Facebook Pixel)
+- **Tracking de conversiones** para campañas de Facebook/Instagram
+- **Eventos estándar** implementados:
+  - `PageView` - Vista de página (automático)
+  - `AddToCart` - Agregar productos al carrito
+  - `InitiateCheckout` - Iniciar pedido vía WhatsApp
+  - `Contact` - Contacto por WhatsApp
+- **Configuración modular** en archivo separado
+- **Debug mode** disponible para desarrollo
+- **Verificable** con Meta Pixel Helper (extensión Chrome)
 
 ## 🔐 Seguridad
 
@@ -232,6 +246,11 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 - [x] Nueva categoría de Postres & Snacks
 - [x] CapiGofre con personalización (Cama: Chocolate/Lechera, Toppings: Nuez/Mazapán/Granillo)
 - [x] Modal de personalización para CapiGofre similar a Chamoyada/Yogurtada
+- [x] Meta Pixel (Facebook Pixel) con tracking completo de eventos:
+  - [x] PageView automático
+  - [x] AddToCart (agregar productos al carrito)
+  - [x] InitiateCheckout (iniciar pedido por WhatsApp)
+  - [x] Contact (contacto vía WhatsApp desde footer y carrito)
 
 ### 🔄 Posibles Mejoras Futuras
 - [ ] Notificaciones push
