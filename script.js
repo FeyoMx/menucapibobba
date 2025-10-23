@@ -502,6 +502,11 @@ function addToCart(product, selectedToppings = []) {
         });
     }
 
+    // Track Meta Pixel AddToCart event
+    if (window.metaPixel && window.metaPixel.trackAddToCart) {
+        window.metaPixel.trackAddToCart(product, 1);
+    }
+
     // Animar el botón del carrito
     const cartButton = document.getElementById('cartButton');
     if (cartButton) {
@@ -1039,6 +1044,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // El botón de checkout ahora es un enlace <a>. Su href se actualiza dinámicamente.
     // Este listener solo añade feedback al usuario y cierra el modal.
     checkoutBtn.addEventListener('click', () => {
+        // Track Meta Pixel InitiateCheckout event
+        if (window.metaPixel && window.metaPixel.trackInitiateCheckout) {
+            const totalValue = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            window.metaPixel.trackInitiateCheckout(cart, totalValue);
+        }
+
+        // Track WhatsApp contact event
+        if (window.metaPixel && window.metaPixel.trackWhatsAppContact) {
+            window.metaPixel.trackWhatsAppContact('cart');
+        }
+
         // No se previene la acción por defecto, se deja que el enlace funcione.
         window.showCustomAlert('Redirigiendo a WhatsApp', 'Se abrirá una nueva pestaña para completar tu pedido. Tu carrito no se vaciará automáticamente.');
 
@@ -1050,6 +1066,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // IMPORTANTE: No se vacía el carrito. El usuario puede hacerlo manualmente.
         // Esto es más seguro y evita frustración si el usuario no completa el pedido.
     });
+
+    // Track WhatsApp button in footer
+    if (whatsappOrderBtn) {
+        whatsappOrderBtn.addEventListener('click', () => {
+            // Track Meta Pixel WhatsApp contact from footer
+            if (window.metaPixel && window.metaPixel.trackWhatsAppContact) {
+                window.metaPixel.trackWhatsAppContact('footer');
+            }
+        });
+    }
 
     // --- Manejo de Eventos de Modales ---
     closeFlavorImageModalBtn.addEventListener('click', () => {
