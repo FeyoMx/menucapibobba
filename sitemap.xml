@@ -6,21 +6,21 @@
     <!-- Página principal -->
     <url>
         <loc>https://capibobba.store/</loc>
-        <lastmod>2025-10-10</lastmod>
+        <lastmod>2025-01-26</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
     <!-- Política de Privacidad -->
     <url>
         <loc>https://capibobba.store/politica-de-privacidad.html</loc>
-        <lastmod>2025-10-10</lastmod>
+        <lastmod>2025-01-26</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.3</priority>
     </url>
     <!-- Términos de Uso -->
     <url>
         <loc>https://capibobba.store/terminos-de-uso.html</loc>
-        <lastmod>2025-10-10</lastmod>
+        <lastmod>2025-01-26</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.3</priority>
     </url>
