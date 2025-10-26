@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://feyomx.github.io/menucapibobba/sitemap.xml
+Sitemap: https://capibobba.store/sitemap.xml
 
 # Allow indexing of the main directory
 Allow: /
