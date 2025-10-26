@@ -5,14 +5,14 @@
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
     <!-- Página principal -->
     <url>
-        <loc>https://feyomx.github.io/menucapibobba/</loc>
+        <loc>https://capibobba.store/</loc>
         <lastmod>2025-10-10</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
     <!-- Política de Privacidad -->
     <url>
-        <loc>https://feyomx.github.io/menucapibobba/politica-de-privacidad.html</loc>
+        <loc>https://capibobba.store/politica-de-privacidad.html</loc>
         <lastmod>2025-10-10</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.3</priority>
