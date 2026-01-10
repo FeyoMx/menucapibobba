@@ -231,7 +231,8 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 1. Push a `main` branch
 2. GitHub Actions ejecuta workflow
 3. Despliegue automático a GitHub Pages
-4. URL: `https://feyomx.github.io/menucapibobba/`
+4. Dominio personalizado: `https://capibobba.store/`
+5. GitHub Pages (backup): `https://feyomx.github.io/menucapibobba/`
 
 ## 📋 Estados del Proyecto
 
@@ -297,8 +298,9 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 ## 📞 Contacto y Soporte
 
 ### URL del Proyecto
-- **Producción**: https://feyomx.github.io/menucapibobba/
-- **Admin Panel**: https://feyomx.github.io/menucapibobba/admin.html
+- **Producción**: https://capibobba.store/
+- **Admin Panel**: https://capibobba.store/admin.html
+- **GitHub Pages (legacy)**: https://feyomx.github.io/menucapibobba/
 
 ### Documentación Técnica
 - Ver `README.md` para setup detallado
@@ -342,6 +344,30 @@ Firebase Auth      en Tiempo Real       Tiempo Real
 **Archivos modificados:**
 - `sitemap.xml` - Fechas actualizadas
 - `index.html` - FAQ Schema + aria-labels mejorados
+
+---
+
+## 🔧 Configuración de Firebase para Dominio Personalizado
+
+### Autorizar capibobba.store en Firebase Authentication
+
+**Problema común:** Error `auth/requests-from-referer-<domain>-are-blocked`
+
+**Solución:**
+1. Acceder a [Firebase Console](https://console.firebase.google.com/)
+2. Seleccionar el proyecto
+3. Ir a **Authentication** → **Settings** → **Authorized domains**
+4. Agregar los siguientes dominios:
+   - `capibobba.store`
+   - `www.capibobba.store` (si aplica)
+   - `localhost` (desarrollo)
+   - `feyomx.github.io` (backup)
+
+**Verificación:**
+- Esperar 1-2 minutos después de agregar dominios
+- Limpiar caché del navegador (Ctrl + Shift + Delete)
+- Hard refresh (Ctrl + Shift + R)
+- Intentar login nuevamente en admin panel
 
 ---
 
