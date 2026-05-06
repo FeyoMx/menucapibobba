@@ -240,8 +240,27 @@
 
     <!-- Header del menú -->
     <header class="menu-header">
+        <!-- Botón toggle modo oscuro/claro -->
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Cambiar modo oscuro/claro" title="Cambiar tema">
+            <!-- Sol (modo claro) -->
+            <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+            <!-- Luna (modo oscuro) -->
+            <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+        </button>
+
         <div class="logo-container">
-            <!-- Añadido onerror para ocultar la imagen si no carga -->
             <img src="https://i.imgur.com/g1iRrOw.png" alt="Logo Capibobba - Menú de bebidas y frappés" class="logo-light" id="logoLight" width="200" height="200" loading="eager" decoding="async" onerror="this.style.display='none';">
             <img src="https://i.imgur.com/llR0NN0.png" alt="Logo Capibobba versión oscura - Menú de bebidas y frappés" class="logo-dark" id="logoDark" width="200" height="200" loading="lazy" decoding="async" onerror="this.style.display='none';">
         </div>
@@ -249,10 +268,23 @@
         <p class="menu-subtitle">¡Tu dosis diaria de felicidad y sabor!</p>
     </header>
 
+    <!-- Navegación sticky por categorías -->
+    <nav class="category-nav" id="categoryNav" aria-label="Navegar por categorías del menú">
+        <div class="category-nav-inner">
+            <button class="cat-pill" data-target="section-water">💧 Frappés Agua</button>
+            <button class="cat-pill" data-target="section-milk">🥛 Frappés Leche</button>
+            <button class="cat-pill" data-target="section-hot">☕ Calientes</button>
+            <button class="cat-pill" data-target="section-specialties">✨ Especialidades</button>
+            <button class="cat-pill" data-target="section-promotions">🎉 Promociones</button>
+            <button class="cat-pill" data-target="section-desserts">🧇 Postres</button>
+            <button class="cat-pill" data-target="section-toppings">🍡 Toppings</button>
+        </div>
+    </nav>
+
     <!-- Contenedor principal del menú -->
     <main class="menu-container">
         <!-- Sección de Frappés Base Agua -->
-        <section class="menu-section animate-on-scroll" data-animation="fade-in-up">
+        <section class="menu-section section-water animate-on-scroll" id="section-water" data-animation="fade-in-up">
             <header class="section-header">
                 <h2 class="section-title">Frappés Base Agua 💧</h2>
                 <p class="section-description">Refrescantes y llenos de sabor frutal.</p>
@@ -264,7 +296,7 @@
         </section>
 
         <!-- Sección de Frappés Base Leche -->
-        <section class="menu-section animate-on-scroll" data-animation="fade-in-up">
+        <section class="menu-section section-milk animate-on-scroll" id="section-milk" data-animation="fade-in-up">
             <header class="section-header">
                 <h2 class="section-title">Frappés Base Leche 🥛</h2>
                 <p class="section-description">Cremosos y deliciosos, perfectos para consentirte.</p>
@@ -276,7 +308,7 @@
         </section>
 
         <!-- Sección de Bebidas Calientes -->
-        <section class="menu-section animate-on-scroll" data-animation="fade-in-up">
+        <section class="menu-section section-hot animate-on-scroll" id="section-hot" data-animation="fade-in-up">
             <header class="section-header">
                 <h2 class="section-title">Bebidas Calientes ☕</h2>
                 <p class="section-description">Para esos días que necesitas un abrazo cálido.</p>
@@ -288,7 +320,7 @@
         </section>
 
         <!-- Sección de Especialidades -->
-        <section class="menu-section promotions-section animate-on-scroll" data-animation="fade-in-up">
+        <section class="menu-section section-specialties promotions-section animate-on-scroll" id="section-specialties" data-animation="fade-in-up">
             <header class="section-header">
                 <h2 class="section-title">✨ Especialidades ✨</h2>
                 <p class="section-description">¡Nuestras creaciones únicas y deliciosas!</p>
@@ -300,7 +332,7 @@
         </section>
 
         <!-- NUEVA Sección de Promociones -->
-        <section class="menu-section promotions-section animate-on-scroll" data-animation="fade-in-up">
+        <section class="menu-section section-promotions promotions-section animate-on-scroll" id="section-promotions" data-animation="fade-in-up">
             <header class="section-header">
                 <h2 class="section-title">✨ Promociones ✨</h2>
                 <p class="section-description">¡No te pierdas nuestras ofertas y descuentos especiales!</p>
@@ -312,7 +344,7 @@
         </section>
 
         <!-- NUEVA Sección de Postres y Snacks -->
-        <section class="menu-section desserts-section animate-on-scroll" data-animation="fade-in-up">
+        <section class="menu-section section-desserts desserts-section animate-on-scroll" id="section-desserts" data-animation="fade-in-up">
             <header class="section-header">
                 <h2 class="section-title">🧇 Postres & Snacks 🧇</h2>
                 <p class="section-description">¡El complemento perfecto para tu bebida favorita!</p>
@@ -324,7 +356,7 @@
         </section>
 
         <!-- Sección de Toppings -->
-        <section class="menu-section animate-on-scroll" data-animation="fade-in-up">
+        <section class="menu-section section-toppings animate-on-scroll" id="section-toppings" data-animation="fade-in-up">
             <header class="section-header">
                 <h2 class="section-title">Toppings Extra 🍡</h2>
                 <p class="section-description">¡Añade un toque extra de diversión a tu bebida!</p>
@@ -562,6 +594,9 @@
         </div>
     </div>
 
+    <!-- Contenedor de toasts (notificaciones no bloqueantes) -->
+    <div id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
     <!-- Plantillas para Renderizado Dinámico -->
     <template id="productCardTemplate">
         <article class="product-card" tabindex="0" role="button">
@@ -623,54 +658,4 @@
                 const app = initializeApp(firebaseConfig);
                 const db = getFirestore(app);
                 // const auth = getAuth(app); // No se necesita autenticación para leer el menú
-                const appId = firebaseConfig.projectId; // Usamos projectId como appId para Firestore
-
-                // --- LÓGICA SIMPLIFICADA ---
-                // Ya que las reglas de Firestore permiten la lectura pública de los datos del admin,
-                // no necesitamos iniciar sesión. Esto evita conflictos con la sesión del admin en otra pestaña.
-                
-                // Define un identificador único para el menú. Este NO es una credencial.
-                // Usaremos este ID para construir la ruta a los productos en Firestore.
-                const menuId = 'menu-capibobba'; // Puedes usar el ID del proyecto o un nombre único.
-
-                // Iniciar la lógica del menú directamente, sin autenticación.
-                if (typeof window.initMenu === 'function') {
-                    window.initMenu(db, menuId, appId);
-                } else {
-                    console.error("Error: window.initMenu no es una función. Asegúrate de que script.js se cargue correctamente como un módulo.");
-                    window.showCustomAlert('Error Interno', 'No se pudo iniciar el menú. Por favor, contacta a soporte.');
-                }
-
-            } catch (error) {
-                console.error("Error al inicializar Firebase o autenticar en el menú:", error);
-                window.showCustomAlert('Error de Conexión', 'No se pudo cargar el menú dinámicamente. Por favor, inténtalo de nuevo más tarde.');
-            }
-        }
-
-        // Asegurarse de que el DOM esté completamente cargado antes de inicializar Firebase
-        document.addEventListener('DOMContentLoaded', initializeFirebase);
-    </script>
-
-    <!-- Registrar Service Worker para cache offline -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                // Detectar la base URL correcta para GitHub Pages
-                const baseUrl = window.location.pathname.includes('/menucapibobba/')
-                    ? '/menucapibobba/'
-                    : '/';
-
-                navigator.serviceWorker.register(baseUrl + 'sw.js', {
-                    scope: baseUrl
-                })
-                    .then(registration => {
-                        console.log('SW registrado exitosamente:', registration);
-                    })
-                    .catch(registrationError => {
-                        console.log('SW falló:', registrationError);
-                    });
-            });
-        }
-    </script>
-</body>
-</html>
+                const appId = firebaseConfig.projectId; // Usamos projectId como appId para Firestore

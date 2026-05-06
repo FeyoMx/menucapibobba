@@ -8,6 +8,15 @@
     box-sizing: border-box;
 }
 
+/* Fondo del viewport completo (evita franjas blancas en pantallas anchas) */
+html {
+    background: linear-gradient(180deg, #FFE1E6 0%, #F3E8FF 25%, #E0F2FE 50%, #FFF9E6 75%, #FFE1E6 100%);
+    min-height: 100%;
+}
+html.dark-bg {
+    background: linear-gradient(180deg, #2C3E50 0%, #34495E 25%, #4A607C 50%, #34495E 75%, #2C3E50 100%);
+}
+
 /* Estilos generales del cuerpo de la página */
 body {
     font-family: 'Nunito', sans-serif;
@@ -207,8 +216,8 @@ body.dark-mode .menu-title .title-part-2 {
 }
 
 .menu-section:hover {
-    transform: translateY(-5px);
     box-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.15);
+    /* Se eliminó transform: translateY(-5px) — era distractivo en secciones grandes */
 }
 
 .section-header {
@@ -248,9 +257,9 @@ body.dark-mode .menu-title .title-part-2 {
 /* Estilos de la cuadrícula de productos */
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Columnas responsivas */
-    gap: 1rem; /* Espacio entre tarjetas */
-    justify-content: center; /* Centra los elementos en la cuadrícula */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.25rem;
+    justify-content: center;
 }
 
 /* Estilos de las tarjetas de producto */
@@ -258,14 +267,14 @@ body.dark-mode .menu-title .title-part-2 {
     background: #FFFFFF;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    padding: 1rem;
+    padding: 0; /* Padding manejado por los elementos internos */
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer; /* Indica que es clickeable */
-    overflow: hidden; /* Asegura que la imagen no se salga de los bordes redondeados */
+    cursor: pointer;
+    overflow: hidden;
 }
 
 .product-card:hover, .promotion-card:hover {
@@ -282,13 +291,24 @@ body.dark-mode .menu-title .title-part-2 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Mantiene la sombra base */
 }
 
+/* Imagen a ancho completo de la tarjeta */
 .product-image, .promotion-image {
-    width: 100px;
-    height: 100px;
-    border-radius: 0.5rem;
+    width: 100%;
+    height: 160px;
+    border-radius: 0;
     object-fit: cover;
-    margin-bottom: 0.8rem;
-    border: 2px solid #FFC0CB; /* Borde rosa claro */
+    margin-bottom: 0;
+    border: none;
+    display: block;
+}
+
+/* Contenedor de info dentro de las tarjetas */
+.product-info, .promotion-info {
+    padding: 0.8rem 0.9rem 0.4rem;
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .product-name, .promotion-name {
@@ -316,18 +336,18 @@ body.dark-mode .menu-title .title-part-2 {
 
 /* Botón Añadir al Carrito */
 .add-to-cart-btn {
-    background: linear-gradient(45deg, #87CEEB, #25D366); /* Azul claro a Verde */
+    background: linear-gradient(45deg, #87CEEB, #25D366);
     color: white;
     border: none;
-    border-radius: 0.7rem;
-    padding: 0.6rem 1.2rem;
-    font-size: 1rem;
+    border-radius: 0 0 16px 16px; /* Esquinas redondeadas solo abajo para seguir forma de tarjeta */
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.15);
-    width: 100%; /* Ocupa todo el ancho de la tarjeta */
-    margin-top: 0.5rem;
+    box-shadow: none;
+    width: 100%;
+    margin-top: auto;
 }
 
 .add-to-cart-btn:hover {
@@ -610,15 +630,15 @@ body.dark-mode .footer-bottom {
     position: absolute;
     top: -5px;
     right: -5px;
-    background-color: #FFC0CB; /* Rosa claro */
-    color: #FF69B4; /* Rosa Primario */
-    font-size: 0.9rem;
+    background-color: #FF69B4; /* Rosa primario — mejor contraste */
+    color: #ffffff;            /* Blanco — contraste WCAG AA */
+    font-size: 0.85rem;
     font-weight: 800;
     border-radius: 50%;
     padding: 0.2rem 0.5rem;
-    min-width: 25px;
+    min-width: 24px;
     text-align: center;
-    border: 1px solid white;
+    border: 2px solid white;
 }
 
 /* Modales (Base para todos los pop-ups) */
@@ -1390,5 +1410,348 @@ body.data-loading .add-to-cart-btn {
 
     .topping-modal-actions button {
         width: 100%;
+    }
+}
+
+/* ============================================================
+   MEJORAS DE DISEÑO - Nuevos componentes
+   ============================================================ */
+
+/* ----------------------------------------------------------
+   Barra de navegación sticky por categorías
+   ---------------------------------------------------------- */
+.category-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 105, 180, 0.2);
+    padding: 0.6rem 1rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+body.dark-mode .category-nav {
+    background: rgba(44, 62, 80, 0.92);
+    border-bottom-color: rgba(135, 206, 235, 0.2);
+}
+
+.category-nav-inner {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.category-nav-inner::-webkit-scrollbar {
+    display: none;
+}
+
+.cat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    border: 1.5px solid #FFC0CB;
+    background: transparent;
+    color: #9370DB;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.cat-pill:hover {
+    background: #FFF0F5;
+    border-color: #FF69B4;
+    color: #FF69B4;
+    transform: translateY(-1px);
+}
+
+.cat-pill.active {
+    background: linear-gradient(45deg, #FF69B4, #9370DB);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 3px 10px rgba(255, 105, 180, 0.4);
+}
+
+body.dark-mode .cat-pill {
+    border-color: rgba(135, 206, 235, 0.4);
+    color: #87CEEB;
+}
+
+body.dark-mode .cat-pill:hover {
+    background: rgba(135, 206, 235, 0.1);
+    border-color: #87CEEB;
+    color: #87CEEB;
+}
+
+body.dark-mode .cat-pill.active {
+    background: linear-gradient(45deg, #87CEEB, #9370DB);
+    color: white;
+}
+
+/* ----------------------------------------------------------
+   Botón toggle de tema (modo oscuro/claro)
+   ---------------------------------------------------------- */
+.theme-toggle-btn {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid #FFC0CB;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #9370DB;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 20;
+}
+
+.theme-toggle-btn:hover {
+    transform: rotate(20deg) scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: #FFF0F5;
+}
+
+body.dark-mode .theme-toggle-btn {
+    background: rgba(44, 62, 80, 0.8);
+    border-color: #87CEEB;
+    color: #87CEEB;
+}
+
+.theme-toggle-btn .icon-sun { display: block; }
+.theme-toggle-btn .icon-moon { display: none; }
+body.dark-mode .theme-toggle-btn .icon-sun { display: none; }
+body.dark-mode .theme-toggle-btn .icon-moon { display: block; }
+
+/* ----------------------------------------------------------
+   Identidad visual por sección (colores de acento únicos)
+   ---------------------------------------------------------- */
+.section-water {
+    border-left: 4px solid #85B7EB;
+}
+.section-water .section-title { color: #185FA5; }
+body.dark-mode .section-water .section-title { color: #85B7EB; }
+.section-water .section-title::after { background: linear-gradient(90deg, #85B7EB, #B5D4F4); }
+
+.section-milk {
+    border-left: 4px solid #F0997B;
+}
+.section-milk .section-title { color: #993C1D; }
+body.dark-mode .section-milk .section-title { color: #F0997B; }
+.section-milk .section-title::after { background: linear-gradient(90deg, #F0997B, #F5C4B3); }
+
+.section-hot {
+    border-left: 4px solid #EF9F27;
+}
+.section-hot .section-title { color: #854F0B; }
+body.dark-mode .section-hot .section-title { color: #FAC775; }
+.section-hot .section-title::after { background: linear-gradient(90deg, #EF9F27, #FAC775); }
+
+.section-specialties {
+    border-left: 4px solid #D4537E;
+}
+.section-specialties .section-title { color: #993556; }
+body.dark-mode .section-specialties .section-title { color: #ED93B1; }
+.section-specialties .section-title::after { background: linear-gradient(90deg, #D4537E, #ED93B1); }
+
+.section-promotions {
+    border-left: 4px solid #1D9E75;
+}
+.section-promotions .section-title { color: #0F6E56; }
+body.dark-mode .section-promotions .section-title { color: #5DCAA5; }
+.section-promotions .section-title::after { background: linear-gradient(90deg, #1D9E75, #5DCAA5); }
+
+.section-desserts {
+    border-left: 4px solid #7F77DD;
+}
+.section-desserts .section-title { color: #534AB7; }
+body.dark-mode .section-desserts .section-title { color: #AFA9EC; }
+.section-desserts .section-title::after { background: linear-gradient(90deg, #7F77DD, #CECBF6); }
+
+.section-toppings {
+    border-left: 4px solid #25D366;
+}
+.section-toppings .section-title { color: #085041; }
+body.dark-mode .section-toppings .section-title { color: #5DCAA5; }
+.section-toppings .section-title::after { background: linear-gradient(90deg, #25D366, #9FE1CB); }
+
+/* Ajuste: secciones con borde izquierdo no tienen border-radius en el lado izquierdo */
+.section-water, .section-milk, .section-hot, .section-specialties,
+.section-promotions, .section-desserts, .section-toppings {
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+}
+
+/* ----------------------------------------------------------
+   Skeleton loaders con efecto shimmer
+   ---------------------------------------------------------- */
+@keyframes shimmer-load {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+body.dark-mode .skeleton-card {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.skeleton-img {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer-load 1.4s infinite linear;
+}
+
+body.dark-mode .skeleton-img {
+    background: linear-gradient(90deg, #3a4a5a 25%, #2c3e50 50%, #3a4a5a 75%);
+    background-size: 200% 100%;
+    animation: shimmer-load 1.4s infinite linear;
+}
+
+.skeleton-body {
+    padding: 0.8rem 0.9rem;
+}
+
+.skeleton-line {
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer-load 1.4s infinite linear;
+    margin-bottom: 8px;
+}
+
+body.dark-mode .skeleton-line {
+    background: linear-gradient(90deg, #3a4a5a 25%, #2c3e50 50%, #3a4a5a 75%);
+    background-size: 200% 100%;
+    animation: shimmer-load 1.4s infinite linear;
+}
+
+.skeleton-line-short { width: 55%; }
+.skeleton-line-price { width: 35%; margin-top: 4px; }
+
+.skeleton-btn {
+    height: 36px;
+    border-radius: 0 0 16px 16px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer-load 1.4s infinite linear;
+    width: 100%;
+    margin-top: 4px;
+    border: none;
+}
+
+body.dark-mode .skeleton-btn {
+    background: linear-gradient(90deg, #3a4a5a 25%, #2c3e50 50%, #3a4a5a 75%);
+    background-size: 200% 100%;
+    animation: shimmer-load 1.4s infinite linear;
+}
+
+/* ----------------------------------------------------------
+   Toast notifications
+   ---------------------------------------------------------- */
+#toast-container {
+    position: fixed;
+    bottom: 95px;
+    left: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.toast-notification {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #27500A;
+    color: #EAF3DE;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    max-width: 280px;
+    animation: toast-slide-in 0.3s ease forwards;
+    pointer-events: auto;
+}
+
+.toast-notification.toast-out {
+    animation: toast-slide-out 0.3s ease forwards;
+}
+
+.toast-notification .toast-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+@keyframes toast-slide-in {
+    from { transform: translateX(-30px); opacity: 0; }
+    to   { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes toast-slide-out {
+    from { transform: translateX(0);     opacity: 1; }
+    to   { transform: translateX(-30px); opacity: 0; }
+}
+
+/* ----------------------------------------------------------
+   Responsive: ajustes para los nuevos componentes
+   ---------------------------------------------------------- */
+@media (max-width: 768px) {
+    .theme-toggle-btn {
+        width: 36px;
+        height: 36px;
+        top: 0.8rem;
+        right: 0.8rem;
+    }
+
+    .cat-pill {
+        font-size: 0.78rem;
+        padding: 0.3rem 0.75rem;
+    }
+
+    .product-image, .promotion-image {
+        height: 130px;
+    }
+
+    .skeleton-img {
+        height: 130px;
+    }
+
+    #toast-container {
+        left: 10px;
+        bottom: 80px;
+    }
+
+    .toast-notification {
+        font-size: 0.82rem;
+        max-width: 240px;
     }
 }
