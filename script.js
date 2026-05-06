@@ -134,36 +134,52 @@ function normalizeText(text) {
 // window.showCustomAlert ya está definido en index.html para ser global
 
 /**
- * Muestra u oculta los mensajes de carga.
- * @param {boolean} show - True para mostrar, false para ocultar.
+ * Genera el HTML de tarjetas skeleton para mostrar mientras carga Firebase.
+ * @param {number} count - Número de tarjetas skeleton a generar.
+ * @returns {string} HTML de las tarjetas skeleton.
+ */
+function generateSkeletonCards(count = 4) {
+    return Array(count).fill(0).map(() => `
+        <div class="skeleton-card" aria-hidden="true">
+            <div class="skeleton-img"></div>
+            <div class="skeleton-body">
+                <div class="skeleton-line"></div>
+                <div class="skeleton-line skeleton-line-short"></div>
+                <div class="skeleton-line skeleton-line-price"></div>
+            </div>
+            <div class="skeleton-btn"></div>
+        </div>
+    `).join('');
+}
+
+/**
+ * Muestra u oculta los skeleton loaders / mensajes de carga.
+ * @param {boolean} show - True para mostrar skeletons, false para ocultar.
  */
 function showLoadingMessages(show) {
+    // Ocultar siempre los textos de carga (se usan skeleton cards en su lugar)
     loadingMessages.forEach(msg => {
-        msg.style.display = show ? 'block' : 'none';
+        msg.style.display = 'none';
     });
 
-    // Ocultar/mostrar grids mientras carga para evitar mostrar contenido antiguo
-    // Solo si no hay productos, mostrar el mensaje de "no hay productos"
-    if (!show) {
-        // Si no hay productos en una categoría, mostrar el mensaje de "no hay productos"
-        // y asegurar que el contenedor esté visible (display: block para el p, o grid para el contenedor)
+    if (show) {
+        // Mostrar skeleton loaders en todos los grids
+        const grids = [waterFrappesGrid, milkFrappesGrid, hotDrinksGrid, toppingsGrid, specialtiesGrid, promotionsGrid, dessertsGrid];
+        grids.forEach(grid => {
+            grid.style.display = 'grid';
+            grid.innerHTML = generateSkeletonCards(4);
+        });
+    } else {
+        // Limpiar skeletons — los reemplazará renderMenuSections()
         if (productsData.waterFrappes.length === 0) { waterFrappesGrid.innerHTML = '<p class="no-products-message">No hay productos disponibles en esta sección.</p>'; waterFrappesGrid.style.display = 'block'; } else { waterFrappesGrid.style.display = 'grid'; }
         if (productsData.milkFrappes.length === 0) { milkFrappesGrid.innerHTML = '<p class="no-products-message">No hay productos disponibles en esta sección.</p>'; milkFrappesGrid.style.display = 'block'; } else { milkFrappesGrid.style.display = 'grid'; }
         if (productsData.hotDrinks.length === 0) { hotDrinksGrid.innerHTML = '<p class="no-products-message">No hay productos disponibles en esta sección.</p>'; hotDrinksGrid.style.display = 'block'; } else { hotDrinksGrid.style.display = 'grid'; }
         if (productsData.toppings.length === 0) { toppingsGrid.innerHTML = '<p class="no-products-message">No hay productos disponibles en esta sección.</p>'; toppingsGrid.style.display = 'block'; } else { toppingsGrid.style.display = 'grid'; }
         if (productsData.promotions.length === 0) { promotionsGrid.innerHTML = '<p class="no-products-message">No hay promociones disponibles en este momento.</p>'; promotionsGrid.style.display = 'block'; } else { promotionsGrid.style.display = 'grid'; }
         if (productsData.specialties.length === 0) { specialtiesGrid.innerHTML = '<p class="no-products-message">No hay especialidades disponibles en este momento.</p>'; specialtiesGrid.style.display = 'block'; } else { specialtiesGrid.style.display = 'grid'; }
-    } else {
-        // Mientras carga, ocultar los grids para evitar destellos de contenido antiguo
-        waterFrappesGrid.style.display = 'none';
-        milkFrappesGrid.style.display = 'none';
-        hotDrinksGrid.style.display = 'none';
-        toppingsGrid.style.display = 'none';
-        promotionsGrid.style.display = 'none';
-        specialtiesGrid.style.display = 'none';
     }
 
-    // Asegurarse de que las secciones padre sean visibles si estaban ocultas
+    // Asegurarse de que las secciones padre sean visibles
     document.querySelectorAll('.menu-section').forEach(section => {
         section.style.display = 'block';
     });
@@ -308,7 +324,10 @@ function renderComplexItems(items, container) {
         itemCard.setAttribute('role', 'button');
         itemCard.setAttribute('aria-label', `Ver detalles de: ${item.displayName || item.name}, ${item.description}, Precio: $${item.price ? item.price.toFixed(2) : '0.00'}`);
 
+        // Imagen a ancho completo de la tarjeta de especialidad/promoción
+        const itemImgSrc = item.imageUrl || `https://placehold.co/300x160/FFE1E6/FF69B4?text=${encodeURIComponent(item.displayName || item.name)}`;
         itemCard.innerHTML = `
+            <img src="${itemImgSrc}" alt="${item.displayName || item.name}" class="promotion-image" loading="lazy" onerror="this.src='https://placehold.co/300x160/FFE1E6/FF69B4?text=Capibobba'">
             <div class="promotion-info">
                 <h3 class="promotion-name">${item.displayName || item.name}</h3>
                 <p class="promotion-description">${item.description}</p>
@@ -366,11 +385,11 @@ function renderComplexItems(items, container) {
                     openCapigofreCustomizationModal(product);
                 } else if (product.price < 0) { // Si es un descuento (precio negativo)
                     addToCart(product);
-                    window.showCustomAlert('Descuento Añadido', `"${product.displayName || product.name}" ha sido añadido a tu carrito.`);
+                    window.showToast(`"${product.displayName || product.name}" añadido al carrito 🎉`, '🏷️');
                 } else {
                     // Para otras promociones o especialidades no personalizables
                     addToCart(product);
-                    window.showCustomAlert('Producto Añadido', `"${product.displayName || product.name}" ha sido añadido a tu carrito.`);
+                    window.showToast(`"${product.displayName || product.name}" añadido al carrito 🎉`);
                 }
             }
         });
@@ -412,8 +431,10 @@ function renderProducts(products, container) {
         
         productCard.setAttribute('aria-label', `${product.displayName || product.name}, ${product.description}, $${product.price ? product.price.toFixed(2) : '0.00'}`);
 
-        // La imagen no se muestra en la tarjeta, solo en el modal.
+        // Imagen a ancho completo de la tarjeta
+        const productImgSrc = product.imageUrl || `https://placehold.co/300x160/FFE1E6/FF69B4?text=${encodeURIComponent(product.displayName || product.name)}`;
         productCard.innerHTML = `
+            <img src="${productImgSrc}" alt="${product.displayName || product.name}" class="product-image" loading="lazy" onerror="this.src='https://placehold.co/300x160/FFE1E6/FF69B4?text=Capibobba'">
             <div class="product-info">
                 <h3 class="product-name">${product.displayName || product.name}</h3>
                 <p class="product-description">${product.description}</p>
@@ -1256,7 +1277,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         addToCart(customCapigofre, capigofreSelectedToppings);
-        window.showCustomAlert('CapiGofre Añadido', `¡Tu CapiGofre con ${capigofreBaseCama === 'chocolate' ? 'Chocolate' : 'Lechera'} ha sido añadido al carrito!`);
+        window.showToast(`CapiGofre con ${capigofreBaseCama === 'chocolate' ? 'Chocolate' : 'Lechera'} añadido 🧇`);
         window.closeModal(capigofreCustomizationOverlay);
         currentCapigofreProduct = null;
     });
@@ -1271,34 +1292,135 @@ document.addEventListener('DOMContentLoaded', () => {
         currentCapigofreProduct = null;
     });
 
-    // Lógica para el modo claro/oscuro
+    // --- Lógica para el modo claro/oscuro con localStorage ---
     const logoLight = document.getElementById('logoLight');
     const logoDark = document.getElementById('logoDark');
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
 
     function applyTheme(theme) {
         if (theme === 'dark') {
             document.body.classList.add('dark-mode');
+            document.documentElement.classList.add('dark-bg');
             if (logoLight) logoLight.style.display = 'none';
             if (logoDark) logoDark.style.display = 'inline-block';
         } else {
             document.body.classList.remove('dark-mode');
+            document.documentElement.classList.remove('dark-bg');
             if (logoLight) logoLight.style.display = 'inline-block';
             if (logoDark) logoDark.style.display = 'none';
         }
     }
 
-    // Detectar el tema preferido del sistema al cargar
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    // Leer preferencia guardada; si no existe, usar preferencia del sistema
+    const savedTheme = localStorage.getItem('capibobba-theme');
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         applyTheme('dark');
     } else {
         applyTheme('light');
     }
 
-    // Escuchar cambios en el tema del sistema
+    // Toggle manual con botón en el header
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            const isDark = document.body.classList.contains('dark-mode');
+            const newTheme = isDark ? 'light' : 'dark';
+            applyTheme(newTheme);
+            localStorage.setItem('capibobba-theme', newTheme);
+        });
+    }
+
+    // Escuchar cambios del sistema SOLO si no hay preferencia guardada
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-        applyTheme(event.matches ? 'dark' : 'light');
+        if (!localStorage.getItem('capibobba-theme')) {
+            applyTheme(event.matches ? 'dark' : 'light');
+        }
     });
+
+    // --- Inicializar navegación sticky con pills ---
+    initNavPills();
 });
+
+// --- Toast Notifications ---
+/**
+ * Muestra una notificación toast no bloqueante.
+ * @param {string} message - Texto del toast.
+ * @param {string} [icon='✅'] - Emoji o icono para el toast.
+ */
+window.showToast = function(message, icon = '✅') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.setAttribute('role', 'status');
+    toast.innerHTML = `<span class="toast-icon" aria-hidden="true">${icon}</span>${message}`;
+    container.appendChild(toast);
+
+    // Auto-cerrar después de 2.5 segundos con animación de salida
+    setTimeout(() => {
+        toast.classList.add('toast-out');
+        setTimeout(() => {
+            if (toast.parentNode) toast.remove();
+        }, 300);
+    }, 2500);
+};
+
+// --- Navegación sticky con IntersectionObserver ---
+/**
+ * Inicializa las pills de categoría: scroll suave al hacer click
+ * y resaltado automático al hacer scroll por las secciones.
+ */
+function initNavPills() {
+    const pills = document.querySelectorAll('.cat-pill');
+    if (!pills.length) return;
+
+    // Activar primera pill por defecto
+    if (pills[0]) pills[0].classList.add('active');
+
+    // Click en pill → scroll suave a la sección correspondiente
+    pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            const targetId = pill.dataset.target;
+            const targetSection = document.getElementById(targetId);
+            if (!targetSection) return;
+            const nav = document.getElementById('categoryNav');
+            const navHeight = nav ? nav.offsetHeight : 60;
+            const y = targetSection.getBoundingClientRect().top + window.scrollY - navHeight - 12;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+
+            // Actualizar pill activa inmediatamente al hacer click
+            pills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            // Scroll horizontal de la pill al centro de la nav
+            pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        });
+    });
+
+    // IntersectionObserver: resaltar la pill de la sección visible
+    const sections = document.querySelectorAll('.menu-section[id]');
+    if (!sections.length) return;
+
+    const navObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                pills.forEach(p => p.classList.remove('active'));
+                const matchingPill = document.querySelector(`.cat-pill[data-target="${entry.target.id}"]`);
+                if (matchingPill) {
+                    matchingPill.classList.add('active');
+                    matchingPill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            }
+        });
+    }, {
+        // Activa cuando la sección entra en el tercio superior-medio de la pantalla
+        rootMargin: '-80px 0px -55% 0px',
+        threshold: 0
+    });
+
+    sections.forEach(section => navObserver.observe(section));
+}
 
 // --- Funciones de Accesibilidad para Modales ---
 let activeModal = null; // Referencia al modal actualmente activo
@@ -1369,6 +1491,143 @@ window.openModal = function(modalElement) {
 /**
  * Cierra el modal activo y restaura el foco.
  * @param {HTMLElement} modalElement - El elemento del modal a cerrar.
+ */
+window.closeModal = function(modalElement) {
+    if (!modalElement || !modalElement.classList.contains('active')) return;
+    modalElement.classList.remove('active');
+    document.removeEventListener('keydown', handleModalKeydown);
+    if (previouslyFocusedElement) previouslyFocusedElement.focus();
+    activeModal = null;
+    previouslyFocusedElement = null;
+}
+
+    // Auto-cerrar después de 2.5 segundos con animación de salida
+    setTimeout(() => {
+        toast.classList.add('toast-out');
+        setTimeout(() => {
+            if (toast.parentNode) toast.remove();
+        }, 300);
+    }, 2500);
+};
+
+// --- Navegación sticky con IntersectionObserver ---
+/**
+ * Inicializa las pills de categoría: scroll suave al hacer click
+ * y resaltado automático al hacer scroll por las secciones.
+ */
+function initNavPills() {
+    const pills = document.querySelectorAll('.cat-pill');
+    if (!pills.length) return;
+
+    // Activar primera pill por defecto
+    if (pills[0]) pills[0].classList.add('active');
+
+    // Click en pill -> scroll suave a la sección correspondiente
+    pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            const targetId = pill.dataset.target;
+            const targetSection = document.getElementById(targetId);
+            if (!targetSection) return;
+            const nav = document.getElementById('categoryNav');
+            const navHeight = nav ? nav.offsetHeight : 60;
+            const y = targetSection.getBoundingClientRect().top + window.scrollY - navHeight - 12;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+
+            // Actualizar pill activa inmediatamente al hacer click
+            pills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            // Scroll horizontal de la pill al centro de la nav
+            pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        });
+    });
+
+    // IntersectionObserver: resaltar la pill de la sección visible
+    const sections = document.querySelectorAll('.menu-section[id]');
+    if (!sections.length) return;
+
+    const navObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                pills.forEach(p => p.classList.remove('active'));
+                const matchingPill = document.querySelector(`.cat-pill[data-target="${entry.target.id}"]`);
+                if (matchingPill) {
+                    matchingPill.classList.add('active');
+                    matchingPill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            }
+        });
+    }, {
+        rootMargin: '-80px 0px -55% 0px',
+        threshold: 0
+    });
+
+    sections.forEach(section => navObserver.observe(section));
+}
+
+// --- Funciones de Accesibilidad para Modales ---
+let activeModal = null;
+let previouslyFocusedElement = null;
+
+/**
+ * Atrapa el foco del teclado dentro de un elemento.
+ */
+function trapFocus(e, container) {
+    if (e.key !== 'Tab') return;
+
+    const focusableElements = Array.from(
+        container.querySelectorAll(
+            'a[href], button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+        )
+    ).filter(el => !el.disabled && el.offsetParent !== null);
+
+    if (focusableElements.length === 0) {
+        e.preventDefault();
+        return;
+    }
+
+    const firstFocusableElement = focusableElements[0];
+    const lastFocusableElement = focusableElements[focusableElements.length - 1];
+
+    if (e.shiftKey) {
+        if (document.activeElement === firstFocusableElement) {
+            lastFocusableElement.focus();
+            e.preventDefault();
+        }
+    } else {
+        if (document.activeElement === lastFocusableElement) {
+            firstFocusableElement.focus();
+            e.preventDefault();
+        }
+    }
+}
+
+/**
+ * Maneja los eventos de teclado para el modal activo (Escape y Tab).
+ */
+function handleModalKeydown(e) {
+    if (!activeModal) return;
+    if (e.key === 'Escape') {
+        window.closeModal(activeModal);
+    } else {
+        trapFocus(e, activeModal);
+    }
+}
+
+/**
+ * Abre un modal, gestiona el foco y añade listeners.
+ */
+window.openModal = function(modalElement) {
+    if (!modalElement) return;
+    previouslyFocusedElement = document.activeElement;
+    activeModal = modalElement;
+    modalElement.classList.add('active');
+    const firstFocusable = modalElement.querySelector('button, input, [href], select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (firstFocusable) firstFocusable.focus();
+    document.addEventListener('keydown', handleModalKeydown);
+}
+
+/**
+ * Cierra el modal activo y restaura el foco.
  */
 window.closeModal = function(modalElement) {
     if (!modalElement || !modalElement.classList.contains('active')) return;
