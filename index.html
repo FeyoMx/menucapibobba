@@ -658,4 +658,54 @@
                 const app = initializeApp(firebaseConfig);
                 const db = getFirestore(app);
                 // const auth = getAuth(app); // No se necesita autenticación para leer el menú
-                const appId = firebaseConfig.projectId; // Usamos projectId como appId para Firestore
+                const appId = firebaseConfig.projectId; // Usamos projectId como appId para Firestore
+
+                // --- LÓGICA SIMPLIFICADA ---
+                // Ya que las reglas de Firestore permiten la lectura pública de los datos del admin,
+                // no necesitamos iniciar sesión. Esto evita conflictos con la sesión del admin en otra pestaña.
+                
+                // Define un identificador único para el menú. Este NO es una credencial.
+                // Usaremos este ID para construir la ruta a los productos en Firestore.
+                const menuId = 'menu-capibobba'; // Puedes usar el ID del proyecto o un nombre único.
+
+                // Iniciar la lógica del menú directamente, sin autenticación.
+                if (typeof window.initMenu === 'function') {
+                    window.initMenu(db, menuId, appId);
+                } else {
+                    console.error("Error: window.initMenu no es una función. Asegúrate de que script.js se cargue correctamente como un módulo.");
+                    window.showCustomAlert('Error Interno', 'No se pudo iniciar el menú. Por favor, contacta a soporte.');
+                }
+
+            } catch (error) {
+                console.error("Error al inicializar Firebase o autenticar en el menú:", error);
+                window.showCustomAlert('Error de Conexión', 'No se pudo cargar el menú dinámicamente. Por favor, inténtalo de nuevo más tarde.');
+            }
+        }
+
+        // Asegurarse de que el DOM esté completamente cargado antes de inicializar Firebase
+        document.addEventListener('DOMContentLoaded', initializeFirebase);
+    </script>
+
+    <!-- Registrar Service Worker para cache offline -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Detectar la base URL correcta para GitHub Pages
+                const baseUrl = window.location.pathname.includes('/menucapibobba/')
+                    ? '/menucapibobba/'
+                    : '/';
+
+                navigator.serviceWorker.register(baseUrl + 'sw.js', {
+                    scope: baseUrl
+                })
+                    .then(registration => {
+                        console.log('SW registrado exitosamente:', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW falló:', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
