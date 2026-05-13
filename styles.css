@@ -130,68 +130,176 @@ body.dark-mode {
 }
 
 
-/* Estilos del Header del Menú */
-.menu-header {
-    text-align: center;
-    padding: 2rem 1rem;
-    background: rgba(255, 255, 255, 0.8); /* Fondo semitransparente */
-    border-bottom-left-radius: 2rem;
-    border-bottom-right-radius: 2rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-    margin-bottom: 1.5rem;
-    position: relative;
-    z-index: 10; /* Asegura que esté por encima de las decoraciones */
+/* ─── Staggered reveal — keyframes ─────────────────────────────── */
+@keyframes hero-fade-down {
+    from { opacity: 0; transform: translateY(-28px) scale(0.92); }
+    to   { opacity: 1; transform: translateY(0)     scale(1); }
+}
+@keyframes hero-fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes hero-pop {
+    0%   { opacity: 0; transform: scale(0.7) rotate(-6deg); }
+    70%  { transform: scale(1.08) rotate(2deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+@keyframes shimmer-move {
+    0%   { background-position: -200% center; }
+    100% { background-position:  200% center; }
+}
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 105, 180, 0); }
+    50%       { box-shadow: 0 0 24px 6px rgba(255, 105, 180, 0.25); }
 }
 
+/* ─── Hero / Header glassmorphism ───────────────────────────────── */
+.menu-header {
+    text-align: center;
+    padding: 2.8rem 1.5rem 2.2rem;
+    position: relative;
+    z-index: 10;
+    margin-bottom: 0;
+    overflow: hidden;
+
+    /* Glass */
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+    border-bottom-left-radius: 2.5rem;
+    border-bottom-right-radius: 2.5rem;
+    box-shadow:
+        0 8px 32px rgba(147, 112, 219, 0.12),
+        0 2px 8px  rgba(255, 105, 180, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+    animation: pulse-glow 5s ease-in-out infinite;
+}
+
+/* Gradient mesh overlay dentro del header */
+.menu-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+    background:
+        radial-gradient(ellipse 80% 60% at 20% 0%,  rgba(255, 182, 218, 0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 10%, rgba(192, 162, 240, 0.30) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 50% 100%, rgba(135, 206, 235, 0.20) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.menu-header > * { position: relative; z-index: 1; }
+
+body.dark-mode .menu-header {
+    background: rgba(44, 62, 80, 0.65);
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.35),
+        0 2px 8px  rgba(135, 206, 235, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .menu-header::before {
+    background:
+        radial-gradient(ellipse 80% 60% at 20% 0%,  rgba(135, 206, 235, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 10%, rgba(147, 112, 219, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 50% 100%, rgba(255, 105, 180, 0.08) 0%, transparent 60%);
+}
+
+/* ─── Logo — stagger step 1 ─────────────────────────────────────── */
 .logo-container {
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
+    animation: hero-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation-delay: 0.05s;
 }
 
 .logo-light, .logo-dark {
-    max-width: 120px;
-    width: 120px;
-    height: 120px;
-    transition: opacity 0.5s ease;
+    max-width: 140px;
+    width: 140px;
+    height: 140px;
+    transition: opacity 0.5s ease, transform 0.3s ease;
+    filter: drop-shadow(0 6px 18px rgba(255, 105, 180, 0.30));
 }
 
-/* Por defecto, muestra el logo claro. El JS maneja la visibilidad del oscuro. */
-body.dark-mode .logo-light {
-    display: none;
-}
-body.dark-mode .logo-dark {
-    display: inline-block;
-}
-body:not(.dark-mode) .logo-dark {
-    display: none;
+.logo-light:hover, .logo-dark:hover {
+    transform: rotate(-4deg) scale(1.06);
 }
 
+body.dark-mode .logo-light { display: none; }
+body.dark-mode .logo-dark  { display: inline-block; }
+body:not(.dark-mode) .logo-dark { display: none; }
 
+/* ─── Título — stagger step 2 ───────────────────────────────────── */
 .menu-title {
     font-family: 'Balsamiq Sans', cursive;
-    font-size: 2.8rem;
-    color: #FF69B4; /* Color por defecto para "MENÚ" */
-    margin-bottom: 0.5rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    margin-bottom: 0.4rem;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+
+    animation: hero-fade-down 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.3s;
+}
+
+/* "MENÚ" — shimmer animado */
+.menu-title > :not([class]) {
+    display: inline;
+    background: linear-gradient(90deg, #FF69B4 30%, #FFB3D9 50%, #FF69B4 70%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer-move 3.5s linear infinite;
+    animation-delay: 1s;
 }
 
 .menu-title .title-part-1 {
-    color: #9370DB; /* Morado Secundario, igual que en el footer */
+    color: #9370DB;
+    -webkit-text-fill-color: #9370DB;
+    background: none;
+    text-shadow: 0 2px 12px rgba(147, 112, 219, 0.35);
 }
 
 .menu-title .title-part-2 {
-    color: #FF69B4; /* Rosa Primario, igual que en el footer */
+    color: #FF69B4;
+    -webkit-text-fill-color: #FF69B4;
+    background: none;
+    text-shadow: 0 2px 12px rgba(255, 105, 180, 0.35);
 }
 
-/* Colores del título en Modo Oscuro para que coincidan con el footer. */
-/* La palabra "MENÚ" mantiene su color rosa y "CAPI" su color morado. */
 body.dark-mode .menu-title .title-part-2 {
-    color: #87CEEB; /* Azul acento */
+    color: #87CEEB;
+    -webkit-text-fill-color: #87CEEB;
+    text-shadow: 0 2px 12px rgba(135, 206, 235, 0.40);
 }
 
+/* ─── Subtítulo — stagger step 3 ────────────────────────────────── */
 .menu-subtitle {
-    font-size: 1.2rem;
-    color: #9370DB; /* Morado Secundario */
-    font-weight: 600;
+    font-size: 1.1rem;
+    color: #9370DB;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+
+    /* Pill decorativa */
+    display: inline-block;
+    padding: 0.35rem 1.2rem;
+    background: rgba(147, 112, 219, 0.10);
+    border: 1px solid rgba(147, 112, 219, 0.25);
+    border-radius: 2rem;
+    backdrop-filter: blur(8px);
+
+    animation: hero-fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.55s;
+}
+
+body.dark-mode .menu-subtitle {
+    color: #C5B3F0;
+    background: rgba(147, 112, 219, 0.15);
+    border-color: rgba(197, 179, 240, 0.25);
 }
 
 /* Contenedor principal del menú */
@@ -1508,8 +1616,10 @@ body.dark-mode .cat-pill.active {
     position: absolute;
     top: 1.2rem;
     right: 1.2rem;
-    background: rgba(255, 255, 255, 0.8);
-    border: 2px solid #FFC0CB;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255, 192, 203, 0.6);
     border-radius: 50%;
     width: 42px;
     height: 42px;
@@ -1530,8 +1640,10 @@ body.dark-mode .cat-pill.active {
 }
 
 body.dark-mode .theme-toggle-btn {
-    background: rgba(44, 62, 80, 0.8);
-    border-color: #87CEEB;
+    background: rgba(44, 62, 80, 0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-color: rgba(135, 206, 235, 0.4);
     color: #87CEEB;
 }
 
