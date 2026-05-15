@@ -285,6 +285,10 @@
             <button class="cat-pill" data-target="section-promotions">🎉 Promociones</button>
             <button class="cat-pill" data-target="section-desserts">🧇 Postres</button>
             <button class="cat-pill" data-target="section-toppings">🍡 Toppings</button>
+            <!-- R05: scroll progress bar -->
+            <div class="nav-progress-wrap" aria-hidden="true">
+                <div class="nav-progress-fill" id="navProgressFill"></div>
+            </div>
         </div>
     </nav>
 
@@ -293,7 +297,14 @@
         <!-- Sección de Frappés Base Agua -->
         <section class="menu-section section-water animate-on-scroll" id="section-water" data-animation="fade-in-up">
             <header class="section-header">
-                <h2 class="section-title">Frappés Base Agua 💧</h2>
+                <div class="section-overline">
+                    <span class="section-overline-emoji" aria-hidden="true">💧</span>
+                    <span class="section-overline-label">Categoría 01 · Frappés Agua</span>
+                </div>
+                <div class="section-title-row">
+                    <h2 class="section-title">Frappés Base Agua</h2>
+                    <span class="section-product-count" id="count-water">–</span>
+                </div>
                 <p class="section-description">Refrescantes y llenos de sabor frutal.</p>
             </header>
             <div id="waterFrappesGrid" class="products-grid">
@@ -305,7 +316,14 @@
         <!-- Sección de Frappés Base Leche -->
         <section class="menu-section section-milk animate-on-scroll" id="section-milk" data-animation="fade-in-up">
             <header class="section-header">
-                <h2 class="section-title">Frappés Base Leche 🥛</h2>
+                <div class="section-overline">
+                    <span class="section-overline-emoji" aria-hidden="true">🥛</span>
+                    <span class="section-overline-label">Categoría 02 · Frappés Leche</span>
+                </div>
+                <div class="section-title-row">
+                    <h2 class="section-title">Frappés Base Leche</h2>
+                    <span class="section-product-count" id="count-milk">–</span>
+                </div>
                 <p class="section-description">Cremosos y deliciosos, perfectos para consentirte.</p>
             </header>
             <div id="milkFrappesGrid" class="products-grid">
@@ -317,7 +335,14 @@
         <!-- Sección de Bebidas Calientes -->
         <section class="menu-section section-hot animate-on-scroll" id="section-hot" data-animation="fade-in-up">
             <header class="section-header">
-                <h2 class="section-title">Bebidas Calientes ☕</h2>
+                <div class="section-overline">
+                    <span class="section-overline-emoji" aria-hidden="true">☕</span>
+                    <span class="section-overline-label">Categoría 03 · Calientes</span>
+                </div>
+                <div class="section-title-row">
+                    <h2 class="section-title">Bebidas Calientes</h2>
+                    <span class="section-product-count" id="count-hot">–</span>
+                </div>
                 <p class="section-description">Para esos días que necesitas un abrazo cálido.</p>
             </header>
             <div id="hotDrinksGrid" class="products-grid">
@@ -329,7 +354,14 @@
         <!-- Sección de Especialidades -->
         <section class="menu-section section-specialties promotions-section animate-on-scroll" id="section-specialties" data-animation="fade-in-up">
             <header class="section-header">
-                <h2 class="section-title">✨ Especialidades ✨</h2>
+                <div class="section-overline">
+                    <span class="section-overline-emoji" aria-hidden="true">✨</span>
+                    <span class="section-overline-label">Categoría 04 · Especialidades</span>
+                </div>
+                <div class="section-title-row">
+                    <h2 class="section-title">Especialidades</h2>
+                    <span class="section-product-count" id="count-specialties">–</span>
+                </div>
                 <p class="section-description">¡Nuestras creaciones únicas y deliciosas!</p>
             </header>
             <div id="specialtiesGrid" class="promotions-grid">
@@ -341,7 +373,14 @@
         <!-- NUEVA Sección de Promociones -->
         <section class="menu-section section-promotions promotions-section animate-on-scroll" id="section-promotions" data-animation="fade-in-up">
             <header class="section-header">
-                <h2 class="section-title">✨ Promociones ✨</h2>
+                <div class="section-overline">
+                    <span class="section-overline-emoji" aria-hidden="true">🎉</span>
+                    <span class="section-overline-label">Categoría 05 · Promociones</span>
+                </div>
+                <div class="section-title-row">
+                    <h2 class="section-title">Promociones</h2>
+                    <span class="section-product-count" id="count-promotions">–</span>
+                </div>
                 <p class="section-description">¡No te pierdas nuestras ofertas y descuentos especiales!</p>
             </header>
             <div id="promotionsGrid" class="promotions-grid">
@@ -353,7 +392,14 @@
         <!-- NUEVA Sección de Postres y Snacks -->
         <section class="menu-section section-desserts desserts-section animate-on-scroll" id="section-desserts" data-animation="fade-in-up">
             <header class="section-header">
-                <h2 class="section-title">🧇 Postres & Snacks 🧇</h2>
+                <div class="section-overline">
+                    <span class="section-overline-emoji" aria-hidden="true">🧇</span>
+                    <span class="section-overline-label">Categoría 06 · Postres</span>
+                </div>
+                <div class="section-title-row">
+                    <h2 class="section-title">Postres &amp; Snacks</h2>
+                    <span class="section-product-count" id="count-desserts">–</span>
+                </div>
                 <p class="section-description">¡El complemento perfecto para tu bebida favorita!</p>
             </header>
             <div id="dessertsGrid" class="promotions-grid">
@@ -365,7 +411,14 @@
         <!-- Sección de Toppings -->
         <section class="menu-section section-toppings animate-on-scroll" id="section-toppings" data-animation="fade-in-up">
             <header class="section-header">
-                <h2 class="section-title">Toppings Extra 🍡</h2>
+                <div class="section-overline">
+                    <span class="section-overline-emoji" aria-hidden="true">🍡</span>
+                    <span class="section-overline-label">Categoría 07 · Toppings</span>
+                </div>
+                <div class="section-title-row">
+                    <h2 class="section-title">Toppings Extra</h2>
+                    <span class="section-product-count" id="count-toppings">–</span>
+                </div>
                 <p class="section-description">¡Añade un toque extra de diversión a tu bebida!</p>
             </header>
             <div id="toppingsGrid" class="products-grid toppings-grid">
@@ -451,9 +504,17 @@
         </div>
     </footer>
 
-    <!-- Carrito de compras flotante -->
-    <div id="cartButton" class="cart-button" role="button" aria-label="Ver carrito de compras" tabindex="0">
-        🛒 <span id="cartItemCount" class="cart-item-count">0</span>
+    <!-- Carrito de compras flotante (R03: pill) -->
+    <div id="cartButton" class="cart-button" role="button" tabindex="0">
+        <div class="cart-button-left">
+            <span class="cart-button-icon" aria-hidden="true">🛒</span>
+            <div class="cart-button-label">
+                <span class="cart-button-primary">Tu carrito</span>
+                <span class="cart-button-secondary" id="cartButtonSecondary">0 productos · WhatsApp ✅</span>
+            </div>
+        </div>
+        <span class="cart-button-total" id="cartButtonTotal">$0</span>
+        <span id="cartItemCount" class="cart-item-count" aria-hidden="true">0</span>
     </div>
 
     <!-- Modal del Carrito de Compras -->
