@@ -1,5 +1,5 @@
 // Service Worker para cache de recursos
-const CACHE_NAME = 'capibobba-v1.0.1';
+const CACHE_NAME = 'capibobba-v1.0.2';
 // Detectar la base URL correcta
 const getBaseUrl = () => {
     const pathname = self.location.pathname;
