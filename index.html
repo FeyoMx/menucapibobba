@@ -763,11 +763,9 @@
                 navigator.serviceWorker.register(baseUrl + 'sw.js', {
                     scope: baseUrl
                 })
-                    .then(registration => {
-                        console.log('SW registrado exitosamente:', registration);
-                    })
+                    .then(() => {})
                     .catch(registrationError => {
-                        console.log('SW falló:', registrationError);
+                        console.warn('SW falló:', registrationError);
                     });
             });
         }
