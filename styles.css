@@ -1,6 +1,28 @@
 /* Las fuentes ahora se cargan desde el HTML de forma optimizada */
 /* @import removido para mejorar el rendimiento - se carga via HTML */
 
+/* ─── Design Tokens ─────────────────────────────────────────── */
+:root {
+    --capi-pink:        #FF69B4;
+    --capi-pink-soft:   #FFC0CB;
+    --capi-purple:      #9370DB;
+    --capi-plum:        #DDA0DD;
+    --capi-sky:         #87CEEB;
+    --capi-green:       #25D366;
+    --capi-tomato:      #FF6347;
+    --capi-grad-bubblegum: linear-gradient(90deg, #FF69B4, #9370DB);
+    --capi-grad-sky-mint:  linear-gradient(90deg, #87CEEB, #25D366);
+    --ink:              #2a1f3d;
+    --ink-soft:         #5b5070;
+    --shadow-card:      0 4px 12px rgba(0,0,0,0.08);
+    --shadow-card-hover:0 10px 24px rgba(0,0,0,0.12);
+    --shadow-pink:      0 6px 20px rgba(255,105,180,0.25);
+    --r-sm:             0.5rem;
+    --r-md:             0.75rem;
+    --r-lg:             1rem;
+    --r-xl:             1.5rem;
+}
+
 /* Reseteo básico de CSS */
 * {
     margin: 0;
@@ -328,39 +350,87 @@ body.dark-mode .menu-subtitle {
     /* Se eliminó transform: translateY(-5px) — era distractivo en secciones grandes */
 }
 
+/* ── R02: Section header */
 .section-header {
-    text-align: center;
+    text-align: left;
     margin-bottom: 1.5rem;
+}
+
+/* Overline row */
+.section-overline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.section-overline-emoji {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    background: #ffe6f1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.section-overline-label {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--capi-purple);
+}
+
+/* Title row */
+.section-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--capi-pink-soft);
+    margin-bottom: 0.75rem;
 }
 
 .section-title {
     font-family: 'Balsamiq Sans', cursive;
-    font-size: 2.2rem;
-    color: #FF69B4; /* Rosa Primario */
-    position: relative; /* Necesario para el pseudo-elemento ::after */
-    padding-bottom: 12px; /* Espacio para el subrayado */
-    margin-bottom: 1rem;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.08);
+    font-size: 2rem;
+    color: var(--ink);
+    margin: 0;
+    line-height: 1.05;
+    text-shadow: none;
+    position: static;
+    padding-bottom: 0;
 }
 
-.section-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%); /* Centra el subrayado */
-    width: 80px; /* Ancho del subrayado */
-    height: 4px; /* Grosor del subrayado */
-    
-    /* ¡Usa los colores de tu marca! Este es un ejemplo. */
-    background: linear-gradient(90deg, #ff85a2, #a2d2ff); 
-    
-    border-radius: 2px;
+/* Remove the old gradient underline pseudo-element */
+.section-title::after { display: none; }
+
+.section-product-count {
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--capi-pink);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
+
 .section-description {
-    font-size: 1rem;
-    color: #6C757D; /* Gris oscuro */
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    max-width: 36ch;
 }
+
+body.dark-mode .section-title { color: #F8F9FA; }
+body.dark-mode .section-overline-emoji { background: rgba(255,230,241,0.15); }
+body.dark-mode .section-description { color: #adb5bd; }
 
 /* Estilos de la cuadrícula de productos */
 .products-grid {
@@ -373,46 +443,92 @@ body.dark-mode .menu-subtitle {
 /* Estilos de las tarjetas de producto */
 .product-card, .promotion-card {
     background: #FFFFFF;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    padding: 0; /* Padding manejado por los elementos internos */
-    text-align: center;
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-card);
+    padding: 0;
+    text-align: left;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    align-items: stretch;
+    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s cubic-bezier(0.22,1,0.36,1);
     cursor: pointer;
     overflow: hidden;
 }
 
 .product-card:hover, .promotion-card:hover {
-    transform: translateY(-8px); /* La tarjeta se eleva ligeramente */
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-card-hover);
 }
 
 .product-card.info-only {
-    cursor: default; /* Cambia el cursor para indicar que no es clickeable */
+    cursor: default;
 }
 
 .product-card.info-only:hover {
-    transform: none; /* Elimina el efecto de "levantarse" al pasar el cursor */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Mantiene la sombra base */
+    transform: none;
+    box-shadow: var(--shadow-card);
 }
 
-/* Imagen a ancho completo de la tarjeta */
+/* ── R01: Image area (4:3 aspect ratio, edge-to-edge) */
+.product-card-img-wrap {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+}
+
 .product-image, .promotion-image {
     width: 100%;
-    height: 160px;
+    height: 100%;
     border-radius: 0;
     object-fit: cover;
-    margin-bottom: 0;
-    border: none;
     display: block;
+}
+
+/* Promotion cards (specialties/promotions/desserts) don't use the img-wrap */
+.promotion-card .promotion-image {
+    height: 160px;
+    width: 100%;
+}
+
+.product-card-img-placeholder {
+    width: 100%;
+    height: 100%;
+    background:
+        repeating-linear-gradient(45deg,
+            rgba(147,112,219,0.08) 0 10px,
+            rgba(147,112,219,0.16) 10px 20px),
+        #ffe6f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(42,31,61,0.45);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+/* ── R01: Kicker pill */
+.product-kicker {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(147,112,219,0.12);
+    color: var(--capi-purple);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
 }
 
 /* Contenedor de info dentro de las tarjetas */
 .product-info, .promotion-info {
-    padding: 0.8rem 0.9rem 0.4rem;
+    padding: 0.75rem 0.875rem 0.5rem;
     width: 100%;
     flex: 1;
     display: flex;
@@ -422,56 +538,138 @@ body.dark-mode .menu-subtitle {
 .product-name, .promotion-name {
     font-family: 'Balsamiq Sans', cursive;
     font-size: 1.2rem;
-    color: #FF69B4;
-    margin-bottom: 0.4rem;
-    word-break: break-word; /* Rompe palabras largas */
+    color: var(--ink);
+    margin: 0 0 4px;
+    line-height: 1.1;
+    word-break: break-word;
 }
 
+/* ── R01: Clamped description */
 .product-description, .promotion-description {
-    font-size: 0.9rem;
-    color: #6C757D;
-    margin-bottom: 0.6rem;
-    flex-grow: 1; /* Permite que la descripción ocupe espacio si es más larga */
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+    margin-bottom: 0;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
+.product-description.expanded, .promotion-description.expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+}
+
+.show-more-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-top: 4px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--capi-pink);
+    text-decoration: underline dotted;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+/* ── R01: Price + CTA row */
+.product-cta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0.5rem 0.875rem 0.875rem;
+    margin-top: auto;
+}
+
+.product-price-block {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.product-price-amount {
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+}
+
+.product-price-amount .cents {
+    font-size: 1rem;
+    color: var(--ink-soft);
+}
+
+.product-price-currency {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+}
+
+/* Legacy price elements (for promotion cards not yet refactored) */
 .product-price, .promotion-price {
     font-size: 1.1rem;
     font-weight: 800;
     color: #9370DB;
-    margin-top: auto; /* Empuja el precio hacia abajo */
+    margin-top: auto;
     margin-bottom: 0.8rem;
 }
 
 /* Botón Añadir al Carrito */
 .add-to-cart-btn {
-    background: linear-gradient(45deg, #87CEEB, #25D366);
+    background: var(--capi-grad-sky-mint);
     color: white;
     border: none;
-    border-radius: 0 0 16px 16px; /* Esquinas redondeadas solo abajo para seguir forma de tarjeta */
-    padding: 0.65rem 1rem;
-    font-size: 0.95rem;
-    font-weight: 700;
+    border-radius: 999px;
+    padding: 12px 18px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 800;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: none;
-    width: 100%;
-    margin-top: auto;
+    transition: box-shadow 0.3s cubic-bezier(0.22,1,0.36,1), transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(37,211,102,0.25);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.add-to-cart-btn .add-glyph {
+    width: 18px;
+    height: 18px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1;
 }
 
 .add-to-cart-btn:hover {
-    transform: scale(1.05); /* El botón se hace un poco más grande */
-    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
-    background: linear-gradient(45deg, #25D366, #87CEEB); /* Invierte el gradiente al pasar el mouse */
+    transform: scale(1.04);
+    box-shadow: 0 6px 16px rgba(37,211,102,0.35);
 }
 
 .add-to-cart-btn.added {
-    background: #25D366; /* Verde de éxito */
-    animation: bounce-in 0.5s forwards;
+    background: #25D366;
+    animation: bounce-in 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
 }
 
 @keyframes bounce-in {
-    0% { transform: scale(0.8); opacity: 0; }
-    50% { transform: scale(1.1); opacity: 1; }
+    0%   { transform: scale(0.8); opacity: 0; }
+    50%  { transform: scale(1.1); opacity: 1; }
     100% { transform: scale(1); }
 }
 
@@ -695,59 +893,122 @@ body.dark-mode .footer-bottom {
     color: #adb5bd;
 }
 
-/* Carrito de compras flotante */
+/* ── R03: Cart FAB → horizontal pill */
 .cart-button {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: linear-gradient(45deg, #FF69B4, #9370DB); /* Rosa a Morado */
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    background: var(--capi-grad-bubblegum);
     color: white;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
+    border-radius: 999px;
+    padding: 12px 16px;
+    display: none; /* hidden when empty */
     align-items: center;
-    font-size: 1.8rem;
-    box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.25);
+    justify-content: space-between;
+    gap: 10px;
+    box-shadow: var(--shadow-pink);
     cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 100; /* Asegura que esté por encima de todo */
-    border: 3px solid white;
+    transition: box-shadow 0.3s cubic-bezier(0.22,1,0.36,1), transform 0.3s cubic-bezier(0.22,1,0.36,1);
+    z-index: 100;
+    border: none;
+    max-width: 100%;
 }
 
-/* Animación para cuando se añade un item al carrito */
+.cart-button.cart-visible {
+    display: flex;
+}
+
+@media (min-width: 640px) {
+    .cart-button {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        max-width: 420px;
+        width: calc(100% - 28px);
+    }
+    .cart-button:hover {
+        transform: translateX(-50%) scale(1.02);
+        box-shadow: 0 8px 28px rgba(255,105,180,0.35);
+    }
+}
+
+@media (max-width: 639px) {
+    .cart-button:hover {
+        box-shadow: 0 8px 28px rgba(255,105,180,0.35);
+    }
+}
+
 .cart-button.item-added-animation {
-    animation: cart-bounce 0.6s ease;
+    animation: cart-bounce 0.6s cubic-bezier(0.34,1.56,0.64,1);
 }
 
 @keyframes cart-bounce {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.25);
-    }
-}
-.cart-button:hover {
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.35);
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.05); }
 }
 
-.cart-item-count {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: #FF69B4; /* Rosa primario — mejor contraste */
-    color: #ffffff;            /* Blanco — contraste WCAG AA */
-    font-size: 0.85rem;
-    font-weight: 800;
-    border-radius: 50%;
-    padding: 0.2rem 0.5rem;
-    min-width: 24px;
-    text-align: center;
-    border: 2px solid white;
+@media (min-width: 640px) {
+    @keyframes cart-bounce {
+        0%, 100% { transform: translateX(-50%) scale(1); }
+        50%       { transform: translateX(-50%) scale(1.05); }
+    }
 }
+
+.cart-button-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cart-button-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(255,255,255,0.22);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.cart-button-label {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.cart-button-primary {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.875rem;
+    color: white;
+}
+
+.cart-button-secondary {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+    color: white;
+}
+
+.cart-button-total {
+    background: white;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--ink);
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* Legacy badge hidden now (pill has its own total) */
+.cart-item-count { display: none; }
 
 /* Modales (Base para todos los pop-ups) */
 .modal-overlay {
@@ -1361,12 +1622,7 @@ body.data-loading .add-to-cart-btn {
     }
 
     .product-card, .promotion-card {
-        padding: 1rem; /* Mantener un padding generoso para el área de toque */
-    }
-
-    .product-image, .promotion-image {
-        width: 80px;
-        height: 80px;
+        padding: 0;
     }
 
     .product-name, .promotion-name {
@@ -1374,7 +1630,7 @@ body.data-loading .add-to-cart-btn {
     }
 
     .product-description, .promotion-description {
-        font-size: 0.875rem; /* Ligeramente más grande para legibilidad */
+        font-size: 0.82rem;
     }
 
     .product-price, .promotion-price {
@@ -1658,51 +1914,34 @@ body.dark-mode .theme-toggle-btn .icon-moon { display: block; }
 .section-water {
     border-left: 4px solid #85B7EB;
 }
-.section-water .section-title { color: #185FA5; }
-body.dark-mode .section-water .section-title { color: #85B7EB; }
-.section-water .section-title::after { background: linear-gradient(90deg, #85B7EB, #B5D4F4); }
+/* Section accent overlines — section-title is now --ink, overline label takes section color */
+.section-water .section-overline-label { color: #185FA5; }
+body.dark-mode .section-water .section-overline-label { color: #85B7EB; }
+.section-water .section-overline-emoji { background: #E8F3FC; }
 
-.section-milk {
-    border-left: 4px solid #F0997B;
-}
-.section-milk .section-title { color: #993C1D; }
-body.dark-mode .section-milk .section-title { color: #F0997B; }
-.section-milk .section-title::after { background: linear-gradient(90deg, #F0997B, #F5C4B3); }
+.section-milk .section-overline-label { color: #993C1D; }
+body.dark-mode .section-milk .section-overline-label { color: #F0997B; }
+.section-milk .section-overline-emoji { background: #FDF0EB; }
 
-.section-hot {
-    border-left: 4px solid #EF9F27;
-}
-.section-hot .section-title { color: #854F0B; }
-body.dark-mode .section-hot .section-title { color: #FAC775; }
-.section-hot .section-title::after { background: linear-gradient(90deg, #EF9F27, #FAC775); }
+.section-hot .section-overline-label { color: #854F0B; }
+body.dark-mode .section-hot .section-overline-label { color: #FAC775; }
+.section-hot .section-overline-emoji { background: #FDF4E3; }
 
-.section-specialties {
-    border-left: 4px solid #D4537E;
-}
-.section-specialties .section-title { color: #993556; }
-body.dark-mode .section-specialties .section-title { color: #ED93B1; }
-.section-specialties .section-title::after { background: linear-gradient(90deg, #D4537E, #ED93B1); }
+.section-specialties .section-overline-label { color: #993556; }
+body.dark-mode .section-specialties .section-overline-label { color: #ED93B1; }
+.section-specialties .section-overline-emoji { background: #FDEEF4; }
 
-.section-promotions {
-    border-left: 4px solid #1D9E75;
-}
-.section-promotions .section-title { color: #0F6E56; }
-body.dark-mode .section-promotions .section-title { color: #5DCAA5; }
-.section-promotions .section-title::after { background: linear-gradient(90deg, #1D9E75, #5DCAA5); }
+.section-promotions .section-overline-label { color: #0F6E56; }
+body.dark-mode .section-promotions .section-overline-label { color: #5DCAA5; }
+.section-promotions .section-overline-emoji { background: #E6F6F1; }
 
-.section-desserts {
-    border-left: 4px solid #7F77DD;
-}
-.section-desserts .section-title { color: #534AB7; }
-body.dark-mode .section-desserts .section-title { color: #AFA9EC; }
-.section-desserts .section-title::after { background: linear-gradient(90deg, #7F77DD, #CECBF6); }
+.section-desserts .section-overline-label { color: #534AB7; }
+body.dark-mode .section-desserts .section-overline-label { color: #AFA9EC; }
+.section-desserts .section-overline-emoji { background: #EEEDF9; }
 
-.section-toppings {
-    border-left: 4px solid #25D366;
-}
-.section-toppings .section-title { color: #085041; }
-body.dark-mode .section-toppings .section-title { color: #5DCAA5; }
-.section-toppings .section-title::after { background: linear-gradient(90deg, #25D366, #9FE1CB); }
+.section-toppings .section-overline-label { color: #085041; }
+body.dark-mode .section-toppings .section-overline-label { color: #5DCAA5; }
+.section-toppings .section-overline-emoji { background: #E3F8F0; }
 
 /* Ajuste: secciones con borde izquierdo no tienen border-radius en el lado izquierdo */
 .section-water, .section-milk, .section-hot, .section-specialties,
@@ -1833,6 +2072,231 @@ body.dark-mode .skeleton-btn {
     to   { transform: translateX(-30px); opacity: 0; }
 }
 
+/* ── R04: Empty cart state */
+.empty-cart-state {
+    text-align: center;
+    padding: 28px 22px;
+}
+
+.empty-cart-mascot {
+    width: 72px;
+    height: 72px;
+    background: #ffe6f1;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    margin-bottom: 16px;
+}
+
+.empty-cart-heading {
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 4px;
+}
+
+.empty-cart-subhead {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+    margin: 0 0 16px;
+    line-height: 1.5;
+}
+
+.empty-cart-chips {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.empty-cart-chip {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px dashed;
+    transition: transform 0.15s, box-shadow 0.15s;
+    background: none;
+}
+
+.empty-cart-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.empty-cart-chip.chip-pink {
+    background: #ffe6f1;
+    border-color: var(--capi-pink);
+    color: var(--ink);
+}
+
+.empty-cart-chip.chip-sky {
+    background: rgba(135,206,235,0.18);
+    border-color: var(--capi-sky);
+    color: var(--ink);
+}
+
+.empty-cart-chip.chip-plum {
+    background: rgba(147,112,219,0.14);
+    border-color: var(--capi-plum);
+    color: var(--ink);
+}
+
+body.dark-mode .empty-cart-heading { color: #F8F9FA; }
+body.dark-mode .empty-cart-mascot  { background: rgba(255,230,241,0.15); }
+body.dark-mode .empty-cart-chip.chip-pink  { background: rgba(255,105,180,0.15); color: #F8F9FA; }
+body.dark-mode .empty-cart-chip.chip-sky   { background: rgba(135,206,235,0.1);  color: #F8F9FA; }
+body.dark-mode .empty-cart-chip.chip-plum  { background: rgba(147,112,219,0.15); color: #F8F9FA; }
+
+/* ── R05: Active nav pill — pink tint ring (replace bubblegum gradient) */
+.cat-pill.active {
+    background: #ffe6f1;
+    border-color: transparent;
+    color: var(--capi-pink);
+    box-shadow: inset 0 0 0 1.5px var(--capi-pink);
+}
+
+body.dark-mode .cat-pill.active {
+    background: rgba(255,105,180,0.15);
+    color: var(--capi-pink);
+    box-shadow: inset 0 0 0 1.5px var(--capi-pink);
+}
+
+/* ── R05: Scroll progress bar in category nav */
+.nav-progress-wrap {
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(147,112,219,0.12);
+    flex: 1;
+    margin: 0 10px;
+    align-self: center;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    min-width: 32px;
+}
+
+.nav-progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: var(--capi-grad-bubblegum);
+    border-radius: 999px;
+    transition: width 0.1s linear;
+}
+
+/* ── R06: Dense topping rows */
+.topping-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-card);
+    padding: 14px 16px;
+    transition: box-shadow 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+
+.topping-row:hover {
+    box-shadow: var(--shadow-card-hover);
+}
+
+.topping-row + .topping-row { margin-top: 10px; }
+
+.topping-row .thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--r-md);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.topping-row .thumb-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--r-md);
+    background:
+        repeating-linear-gradient(45deg,
+            rgba(147,112,219,0.08) 0 6px,
+            rgba(147,112,219,0.16) 6px 12px),
+        #ffe6f1;
+    flex-shrink: 0;
+}
+
+.topping-row-info { overflow: hidden; }
+
+.topping-row .name {
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 1.1rem;
+    color: var(--ink);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.topping-row .sub {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin: 0;
+}
+
+.topping-row .right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.topping-row .price {
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 1.25rem;
+    color: var(--ink);
+    white-space: nowrap;
+}
+
+.topping-row .mini-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--capi-grad-sky-mint);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.1rem;
+    box-shadow: 0 3px 8px rgba(37,211,102,0.3);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    border: none;
+    flex-shrink: 0;
+}
+
+.topping-row .mini-btn:active { transform: scale(0.95); }
+.topping-row .mini-btn:hover  { box-shadow: 0 5px 12px rgba(37,211,102,0.4); }
+
+/* Dark mode for new components */
+body.dark-mode .topping-row {
+    background: rgba(44,62,80,0.7);
+}
+body.dark-mode .topping-row .name,
+body.dark-mode .topping-row .price { color: #F8F9FA; }
+body.dark-mode .topping-row .sub   { color: #adb5bd; }
+
+/* ── Update toast position to clear new pill FAB */
+#toast-container {
+    bottom: 95px;
+}
+
 /* ----------------------------------------------------------
    Responsive: ajustes para los nuevos componentes
    ---------------------------------------------------------- */
@@ -1849,21 +2313,51 @@ body.dark-mode .skeleton-btn {
         padding: 0.3rem 0.75rem;
     }
 
-    .product-image, .promotion-image {
-        height: 130px;
-    }
-
-    .skeleton-img {
-        height: 130px;
-    }
-
     #toast-container {
         left: 10px;
-        bottom: 80px;
+        bottom: 84px;
     }
 
     .toast-notification {
         font-size: 0.82rem;
         max-width: 240px;
     }
+}
+
+/* Dark mode: toppings kicker alpha boost */
+body.dark-mode .product-kicker {
+    background: rgba(147,112,219,0.20);
+}
+
+/* Dark mode: product card */
+body.dark-mode .product-card,
+body.dark-mode .promotion-card {
+    background: rgba(44,62,80,0.75);
+}
+
+body.dark-mode .product-name,
+body.dark-mode .promotion-name { color: #F8F9FA; }
+
+body.dark-mode .product-description,
+body.dark-mode .promotion-description { color: #adb5bd; }
+
+body.dark-mode .product-price-amount { color: #F8F9FA; }
+body.dark-mode .product-price-currency,
+body.dark-mode .product-price-amount .cents { color: #adb5bd; }
+
+body.dark-mode .product-card-img-placeholder {
+    background:
+        repeating-linear-gradient(45deg,
+            rgba(147,112,219,0.12) 0 10px,
+            rgba(147,112,219,0.20) 10px 20px),
+        rgba(44,62,80,0.9);
+    color: rgba(248,249,250,0.45);
+}
+
+/* prefers-reduced-motion: kill loop animations, keep one-shots */
+@media (prefers-reduced-motion: reduce) {
+    .bubble { animation: none; }
+    .menu-title > :not([class]) { animation: none; }
+    .nav-progress-fill { transition: none; }
+    @keyframes cart-bounce { 0%, 100% { transform: scale(1); } }
 }

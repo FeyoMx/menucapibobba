@@ -290,10 +290,19 @@ function renderMenuSections() {
     renderProducts(productsData.waterFrappes, waterFrappesGrid);
     renderProducts(productsData.milkFrappes, milkFrappesGrid);
     renderProducts(productsData.hotDrinks, hotDrinksGrid);
-    renderProducts(productsData.toppings, toppingsGrid); // Renderiza toppings en su sección
-    renderComplexItems(productsData.specialties, specialtiesGrid); // Renderiza especialidades
-    renderComplexItems(productsData.promotions, promotionsGrid); // Renderiza promociones
-    renderComplexItems(productsData.desserts, dessertsGrid); // Renderiza postres y snacks
+    renderProducts(productsData.toppings, toppingsGrid);
+    renderComplexItems(productsData.specialties, specialtiesGrid);
+    renderComplexItems(productsData.promotions, promotionsGrid);
+    renderComplexItems(productsData.desserts, dessertsGrid);
+
+    // Update section product counts (R02)
+    updateSectionCount('count-water',       productsData.waterFrappes.length);
+    updateSectionCount('count-milk',        productsData.milkFrappes.length);
+    updateSectionCount('count-hot',         productsData.hotDrinks.length);
+    updateSectionCount('count-toppings',    productsData.toppings.length);
+    updateSectionCount('count-specialties', productsData.specialties.length);
+    updateSectionCount('count-promotions',  productsData.promotions.length);
+    updateSectionCount('count-desserts',    productsData.desserts.length);
 }
 
 /**
@@ -397,107 +406,213 @@ function renderComplexItems(items, container) {
     container.style.display = 'grid';
 }
 
+// Top-3 suggestion products for empty cart (R04) — swap names when analytics are ready
+const SUGGESTED_PRODUCT_NAMES = ['Frappé Taro', 'Matcha Latte', 'CapiGofre'];
+
+// Category kicker labels (R01)
+const CATEGORY_KICKERS = {
+    waterFrappes: '💧 Frappés',
+    milkFrappes:  '🥛 Leche',
+    hotDrinks:    '☕ Calientes',
+    toppings:     '🍡 Toppings',
+    specialties:  '✨ Especialidades',
+    promotions:   '🎉 Promos',
+    desserts:     '🧇 Postres',
+};
+
 /**
- * Renderiza una lista de productos en un contenedor específico.
- * @param {Array} products - Array de productos a renderizar.
- * @param {HTMLElement} container - El elemento DOM donde se renderizarán los productos.
+ * Formats a price into integer + cents spans.
+ * Returns the HTML string for the price block.
+ */
+function formatPriceBlock(price) {
+    const num = price || 0;
+    const pesos = Math.floor(num);
+    const cents = Math.round((num - pesos) * 100);
+    const centsHtml = cents > 0
+        ? `<span class="cents">.${String(cents).padStart(2, '0')}</span>`
+        : '';
+    return `<span class="product-price-amount">$${pesos}${centsHtml}</span>
+            <span class="product-price-currency">MXN</span>`;
+}
+
+/**
+ * Updates the section product-count badge.
+ */
+function updateSectionCount(countId, count) {
+    const el = document.getElementById(countId);
+    if (!el) return;
+    el.textContent = count === 1 ? '1 producto' : `${count} productos`;
+}
+
+/**
+ * Renders the topping-row dense layout (R06) for the toppings section.
+ */
+function renderToppingRows(toppings, container) {
+    container.innerHTML = '';
+    container.style.display = 'block';
+    if (!toppings || toppings.length === 0) {
+        container.innerHTML = '<p class="no-products-message">No hay toppings disponibles en esta sección.</p>';
+        return;
+    }
+
+    toppings.forEach(product => {
+        const name = product.displayName || product.name;
+        const price = product.price || 0;
+        const isWhole = Number.isInteger(price) || Math.abs(price - Math.round(price)) < 0.005;
+        const priceStr = isWhole ? `$${Math.round(price)}` : `$${price.toFixed(2)}`;
+
+        const row = document.createElement('div');
+        row.className = 'topping-row';
+
+        const imgHtml = product.imageUrl
+            ? `<img src="${product.imageUrl}" alt="${name}" class="thumb" loading="lazy" onerror="this.outerHTML='<div class=\\'thumb-placeholder\\'></div>'">`
+            : `<div class="thumb-placeholder"></div>`;
+
+        row.innerHTML = `
+            ${imgHtml}
+            <div class="topping-row-info">
+                <p class="name">${name}</p>
+                ${product.description ? `<p class="sub">${product.description}</p>` : ''}
+            </div>
+            <div class="right">
+                <span class="price">${priceStr}</span>
+                <button class="mini-btn" data-product-id="${product.id}" aria-label="Agregar ${name}">+</button>
+            </div>
+        `;
+        container.appendChild(row);
+    });
+
+    container.querySelectorAll('.mini-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const productId = btn.dataset.productId;
+            const product = productsData.toppings.find(p => p.id === productId);
+            if (product) {
+                addToCart(product, []);
+                window.showToast(`"${product.displayName || product.name}" añadido 🍡`, '🍡');
+            }
+        });
+    });
+}
+
+/**
+ * Renders a list of products (non-toppings) with the new card template.
  */
 function renderProducts(products, container) {
-    container.innerHTML = ''; // Limpiar el contenedor
+    container.innerHTML = '';
+
     if (!products || products.length === 0) {
         container.innerHTML = '<p class="no-products-message">No hay productos disponibles en esta sección.</p>';
-        container.style.display = 'block'; // Asegurarse de que el mensaje sea visible
+        container.style.display = 'block';
+        return;
+    }
+
+    // Toppings section → dense rows (R06)
+    if (container.id === 'toppingsGrid') {
+        renderToppingRows(products, container);
+        updateSectionCount('count-toppings', products.length);
         return;
     }
 
     products.forEach(product => {
+        const name = product.displayName || product.name;
+        const categoryKey = productTypeMap[product.type] || 'waterFrappes';
+        const kickerLabel = CATEGORY_KICKERS[categoryKey] || '';
+
         const productCard = document.createElement('article');
         productCard.className = 'product-card';
         productCard.setAttribute('tabindex', '0');
+        productCard.setAttribute('role', 'button');
+        productCard.setAttribute('aria-label', `${name}, ${product.description}, $${product.price ? product.price.toFixed(2) : '0.00'} MXN`);
 
-        const isToppingCard = container.id === 'toppingsGrid';
+        const imgHtml = product.imageUrl
+            ? `<img src="${product.imageUrl}" alt="${name}" class="product-image" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'product-card-img-placeholder\\'>producto · 4:3</div>'">`
+            : `<div class="product-card-img-placeholder">producto · 4:3</div>`;
 
-        // Condicionalmente crea el botón "Añadir" y ajusta los atributos de la tarjeta.
-        const buttonHtml = isToppingCard
-            ? '' // No hay botón para los toppings.
-            : `<button class="add-to-cart-btn" data-product-id="${product.id}" data-product-category="${productTypeMap[product.type]}" aria-label="Añadir ${product.displayName || product.name} al carrito">Añadir ➕</button>`;
+        const desc = product.description || '';
+        const escapedDesc = desc.replace(/"/g, '&quot;');
 
-        if (isToppingCard) {
-            productCard.classList.add('info-only'); // Añade una clase para estilos específicos.
-            productCard.setAttribute('role', 'listitem'); // Más semántico para un ítem no interactivo.
-        } else {
-            productCard.setAttribute('role', 'button'); // Es interactiva.
-        }
-        
-        productCard.setAttribute('aria-label', `${product.displayName || product.name}, ${product.description}, $${product.price ? product.price.toFixed(2) : '0.00'}`);
-
-        // Imagen a ancho completo de la tarjeta
-        const productImgSrc = product.imageUrl || `https://placehold.co/300x160/FFE1E6/FF69B4?text=${encodeURIComponent(product.displayName || product.name)}`;
         productCard.innerHTML = `
-            <img src="${productImgSrc}" alt="${product.displayName || product.name}" class="product-image" loading="lazy" onerror="this.src='https://placehold.co/300x160/FFE1E6/FF69B4?text=Capibobba'">
+            <div class="product-card-img-wrap">${imgHtml}</div>
             <div class="product-info">
-                <h3 class="product-name">${product.displayName || product.name}</h3>
-                <p class="product-description">${product.description}</p>
-                <p class="product-price">$${product.price ? product.price.toFixed(2) : '0.00'}</p>
+                <span class="product-kicker">${kickerLabel}</span>
+                <h3 class="product-name">${name}</h3>
+                <p class="product-description">${desc}</p>
+                <button class="show-more-btn" aria-expanded="false" data-full="${escapedDesc}">Ver más</button>
             </div>
-            ${buttonHtml}
+            <div class="product-cta-row">
+                <div class="product-price-block">${formatPriceBlock(product.price)}</div>
+                <button class="add-to-cart-btn" data-product-id="${product.id}" data-product-category="${categoryKey}" aria-label="Añadir ${name} al carrito">
+                    Añadir <span class="add-glyph" aria-hidden="true">+</span>
+                </button>
+            </div>
         `;
         container.appendChild(productCard);
 
-        // Solo añadir listeners de click para abrir modal de imagen si NO es un topping.
-        if (!isToppingCard) {
-            productCard.addEventListener('click', (event) => {
-                if (event.target.tagName !== 'BUTTON') {
-                    openFlavorImageModal(product.displayName || product.name, product.imageUrl); // Usar imageUrl
-                }
-            });
-            productCard.addEventListener('keydown', (event) => {
-                if ((event.key === 'Enter' || event.key === ' ') && event.target.tagName !== 'BUTTON') {
-                    event.preventDefault(); // Prevenir el scroll de la página con espacio
-                    openFlavorImageModal(product.displayName || product.name, product.imageUrl); // Usar imageUrl
-                }
-            });
-        }
-    });
+        // Show-more toggle (R01)
+        const showMoreBtn = productCard.querySelector('.show-more-btn');
+        const descEl = productCard.querySelector('.product-description');
+        showMoreBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const expanded = showMoreBtn.getAttribute('aria-expanded') === 'true';
+            descEl.classList.toggle('expanded', !expanded);
+            showMoreBtn.setAttribute('aria-expanded', String(!expanded));
+            showMoreBtn.textContent = expanded ? 'Ver más' : 'Ver menos';
+        });
 
-    // Añadir event listeners a los botones "Añadir al Carrito"
-    container.querySelectorAll('.add-to-cart-btn').forEach(button => {
-        button.addEventListener('click', (event) => {
-            const productId = event.target.dataset.productId;
-            const productCategory = event.target.dataset.productCategory; // Obtener la categoría mapeada
-            // Buscar el producto en todas las categorías
-            const product = Object.values(productsData).flat().find(p => p.id === productId);
-
-            if (product) {
-                // Feedback visual al añadir (antes de abrir modal o añadir directamente)
-                if (lastClickedAddButton) {
-                    lastClickedAddButton.classList.remove('added');
-                    lastClickedAddButton.textContent = 'Añadir ➕';
-                }
-                lastClickedAddButton = event.target;
-                lastClickedAddButton.classList.add('added');
-                lastClickedAddButton.textContent = '¡Añadido! 🎉';
-                setTimeout(() => {
-                    if (lastClickedAddButton) {
-                        lastClickedAddButton.classList.remove('added');
-                        lastClickedAddButton.textContent = 'Añadir ➕';
-                        lastClickedAddButton = null;
-                    }
-                }, 1500);
-
-                // Lógica para abrir modal de toppings o añadir directamente
-                if (productCategory === "waterFrappes" || productCategory === "milkFrappes" || productCategory === "hotDrinks") {
-                    openToppingSelectionModal(product); // Abre modal de toppings para bebidas normales
-                } else if (product.isChamoyada) { // NUEVA LÓGICA: Usar el flag 'isChamoyada'
-                    openChamoyadaCustomizationModal(product); // Abre modal de personalización de Chamoyada
-                } else {
-                    // Para productos que no son bebidas ni chamoyadas (como toppings), abrir modal de toppings
-                    openToppingSelectionModal(product);
-                }
+        // Click on card → image modal
+        productCard.addEventListener('click', (event) => {
+            if (event.target.tagName !== 'BUTTON') {
+                openFlavorImageModal(name, product.imageUrl);
+            }
+        });
+        productCard.addEventListener('keydown', (event) => {
+            if ((event.key === 'Enter' || event.key === ' ') && event.target.tagName !== 'BUTTON') {
+                event.preventDefault();
+                openFlavorImageModal(name, product.imageUrl);
             }
         });
     });
-    container.style.display = 'grid'; // Mostrar el grid una vez cargado
+
+    // Add-to-cart listeners
+    container.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const productId = button.dataset.productId;
+            const productCategory = button.dataset.productCategory;
+            const product = Object.values(productsData).flat().find(p => p.id === productId);
+            if (!product) return;
+
+            // Button feedback
+            if (lastClickedAddButton) {
+                lastClickedAddButton.classList.remove('added');
+                resetAddButton(lastClickedAddButton);
+            }
+            lastClickedAddButton = button;
+            button.classList.add('added');
+            button.innerHTML = '¡Añadido! 🎉';
+            setTimeout(() => {
+                if (lastClickedAddButton === button) {
+                    button.classList.remove('added');
+                    resetAddButton(button);
+                    lastClickedAddButton = null;
+                }
+            }, 1500);
+
+            if (productCategory === 'waterFrappes' || productCategory === 'milkFrappes' || productCategory === 'hotDrinks') {
+                openToppingSelectionModal(product);
+            } else if (product.isChamoyada) {
+                openChamoyadaCustomizationModal(product);
+            } else {
+                openToppingSelectionModal(product);
+            }
+        });
+    });
+
+    container.style.display = 'grid';
+}
+
+function resetAddButton(btn) {
+    btn.innerHTML = 'Añadir <span class="add-glyph" aria-hidden="true">+</span>';
 }
 
 // --- Lógica del Carrito ---
@@ -528,14 +643,14 @@ function addToCart(product, selectedToppings = []) {
         window.metaPixel.trackAddToCart(product, 1);
     }
 
-    // Animar el botón del carrito
+    // Animar el botón del carrito (pill)
     const cartButton = document.getElementById('cartButton');
     if (cartButton) {
+        cartButton.classList.add('cart-visible');
         cartButton.classList.add('item-added-animation');
-        // Quita la clase después de que la animación termine para poder volver a usarla
         setTimeout(() => {
             cartButton.classList.remove('item-added-animation');
-        }, 600); // 600ms es la duración de la animación en styles.css
+        }, 600);
     }
 
     updateCartDisplay();
@@ -563,19 +678,89 @@ function removeFromCart(productId, selectedToppings = []) {
 }
 
 /**
+ * Returns the top-3 suggested products from productsData, using SUGGESTED_PRODUCT_NAMES as hints.
+ */
+function getSuggestedProducts() {
+    const allProducts = Object.values(productsData).flat();
+    const suggestions = [];
+    for (const hint of SUGGESTED_PRODUCT_NAMES) {
+        const found = allProducts.find(p =>
+            (p.displayName || p.name || '').toLowerCase().includes(hint.toLowerCase())
+        );
+        if (found && suggestions.length < 3) suggestions.push(found);
+    }
+    // Fill remaining slots with first available if needed
+    if (suggestions.length < 3) {
+        for (const p of allProducts) {
+            if (suggestions.length >= 3) break;
+            if (!suggestions.find(s => s.id === p.id)) suggestions.push(p);
+        }
+    }
+    return suggestions.slice(0, 3);
+}
+
+/**
  * Actualiza la visualización del carrito (contador, lista de ítems, total).
  */
 function updateCartDisplay() {
-    // Actualiza los enlaces de WhatsApp cada vez que cambia el carrito.
     updateWhatsAppLinks();
 
-    cartItemCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
-    cartItemsContainer.innerHTML = ''; // Limpiar la lista
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    cartItemCount.textContent = totalItems;
+    cartItemsContainer.innerHTML = '';
     let total = 0;
 
+    // R03: Update cart FAB pill
+    const cartBtn = document.getElementById('cartButton');
+    const cartButtonSecondary = document.getElementById('cartButtonSecondary');
+    const cartButtonTotal = document.getElementById('cartButtonTotal');
+
     if (cart.length === 0) {
-        cartItemsContainer.innerHTML = '<p class="empty-cart-message">Tu carrito está vacío.</p>';
+        if (cartBtn) cartBtn.classList.remove('cart-visible');
+
+        // R04: Empty cart with mascot + suggestion chips
+        const suggestions = getSuggestedProducts();
+        const chipClasses = ['chip-pink', 'chip-sky', 'chip-plum'];
+        const chipsHtml = suggestions.map((p, i) =>
+            `<button class="empty-cart-chip ${chipClasses[i] || 'chip-pink'}" data-product-id="${p.id}">${p.displayName || p.name}</button>`
+        ).join('');
+
+        cartItemsContainer.innerHTML = `
+            <div class="empty-cart-state">
+                <div class="empty-cart-mascot" aria-hidden="true">🧋</div>
+                <p class="empty-cart-heading">¡Aún no eliges nada!</p>
+                <p class="empty-cart-subhead">Te dejamos los favoritos de la semana para empezar 💖</p>
+                <div class="empty-cart-chips">${chipsHtml}</div>
+            </div>
+        `;
+
+        cartItemsContainer.querySelectorAll('.empty-cart-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const productId = chip.dataset.productId;
+                const product = Object.values(productsData).flat().find(p => p.id === productId);
+                if (product) {
+                    addToCart(product, []);
+                    updateCartDisplay();
+                }
+            });
+        });
     } else {
+        if (cartBtn) {
+            cartBtn.classList.add('cart-visible');
+            const productLabel = totalItems === 1 ? '1 producto' : `${totalItems} productos`;
+            if (cartButtonSecondary) cartButtonSecondary.textContent = `${productLabel} · WhatsApp ✅`;
+            cartBtn.setAttribute('aria-label', `Tu carrito, ${productLabel}, abrir`);
+        }
+
+        // Calculate total for pill (pre-items loop)
+        let runningTotal = 0;
+        cart.forEach(item => {
+            const toppingsCost = item.selectedToppings ? item.selectedToppings.reduce((s, t) => s + t.price, 0) : 0;
+            runningTotal += (item.price + toppingsCost) * item.quantity;
+        });
+        if (cartButtonTotal) cartButtonTotal.textContent = `$${Math.round(runningTotal)}`;
+
+        // Render cart items
         cart.forEach(item => {
             const itemPrice = item.price;
             const toppingsCost = item.selectedToppings ? item.selectedToppings.reduce((sum, t) => sum + t.price, 0) : 0;
@@ -1367,19 +1552,17 @@ window.showToast = function(message, icon = '✅') {
     }, 2500);
 };
 
-// --- Navegación sticky con IntersectionObserver ---
+// --- Navegación sticky con IntersectionObserver + scroll progress (R05) ---
 /**
- * Inicializa las pills de categoría: scroll suave al hacer click
- * y resaltado automático al hacer scroll por las secciones.
+ * Inicializa las pills de categoría: scroll suave al hacer click,
+ * resaltado automático al hacer scroll, y barra de progreso de scroll.
  */
 function initNavPills() {
     const pills = document.querySelectorAll('.cat-pill');
     if (!pills.length) return;
 
-    // Activar primera pill por defecto
     if (pills[0]) pills[0].classList.add('active');
 
-    // Click en pill → scroll suave a la sección correspondiente
     pills.forEach(pill => {
         pill.addEventListener('click', () => {
             const targetId = pill.dataset.target;
@@ -1390,15 +1573,12 @@ function initNavPills() {
             const y = targetSection.getBoundingClientRect().top + window.scrollY - navHeight - 12;
             window.scrollTo({ top: y, behavior: 'smooth' });
 
-            // Actualizar pill activa inmediatamente al hacer click
             pills.forEach(p => p.classList.remove('active'));
             pill.classList.add('active');
-            // Scroll horizontal de la pill al centro de la nav
             pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         });
     });
 
-    // IntersectionObserver: resaltar la pill de la sección visible
     const sections = document.querySelectorAll('.menu-section[id]');
     if (!sections.length) return;
 
@@ -1414,12 +1594,29 @@ function initNavPills() {
             }
         });
     }, {
-        // Activa cuando la sección entra en el tercio superior-medio de la pantalla
         rootMargin: '-80px 0px -55% 0px',
         threshold: 0
     });
 
     sections.forEach(section => navObserver.observe(section));
+
+    // R05: Scroll progress bar
+    const progressFill = document.getElementById('navProgressFill');
+    if (progressFill) {
+        let rafPending = false;
+        const updateProgress = () => {
+            const scrollable = document.body.scrollHeight - window.innerHeight;
+            const pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+            progressFill.style.width = `${Math.min(100, pct)}%`;
+            rafPending = false;
+        };
+        window.addEventListener('scroll', () => {
+            if (!rafPending) {
+                rafPending = true;
+                requestAnimationFrame(updateProgress);
+            }
+        }, { passive: true });
+    }
 }
 
 // --- Funciones de Accesibilidad para Modales ---
