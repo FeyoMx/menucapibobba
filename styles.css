@@ -1014,7 +1014,7 @@ body.dark-mode .footer-bottom {
     font-family: 'Balsamiq Sans', cursive;
     font-size: 1.375rem;
     font-weight: 700;
-    color: var(--ink);
+    color: #2a1f3d;
     flex-shrink: 0;
     white-space: nowrap;
 }
