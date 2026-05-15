@@ -44,11 +44,19 @@ const metaPixelConfig = {
   }
 };
 
+let metaPixelReady = false;
+let metaPixelLoading = false;
+const pendingMetaEvents = [];
+
 /**
  * Inicializa el Meta Pixel
  * Carga el script de Facebook y configura el pixel
  */
 function initMetaPixel() {
+  if (metaPixelReady || metaPixelLoading) {
+    return;
+  }
+
   // Verificar si el pixel está habilitado
   if (!metaPixelConfig.enabled) {
     if (metaPixelConfig.debug) {
@@ -62,6 +70,8 @@ function initMetaPixel() {
     console.warn('⚠️ Meta Pixel: Configura tu Pixel ID en meta-pixel-config.js');
     return;
   }
+
+  metaPixelLoading = true;
 
   // Base code de Meta Pixel (Facebook Pixel)
   !function(f,b,e,v,n,t,s) {
@@ -86,6 +96,17 @@ function initMetaPixel() {
 
   // Track automático de PageView
   fbq('track', 'PageView');
+  metaPixelReady = true;
+  metaPixelLoading = false;
+
+  while (pendingMetaEvents.length > 0) {
+    const event = pendingMetaEvents.shift();
+    if (event.type === 'standard') {
+      fbq('track', event.name, event.params);
+    } else {
+      fbq('trackCustom', event.name, event.params);
+    }
+  }
 
   if (metaPixelConfig.debug) {
     console.log('✅ Meta Pixel inicializado:', metaPixelConfig.pixelId);
@@ -99,7 +120,13 @@ function initMetaPixel() {
  * @param {object} params - Parámetros del evento (opcional)
  */
 function trackMetaEvent(eventName, params = {}) {
-  if (!metaPixelConfig.enabled || typeof fbq === 'undefined') {
+  if (!metaPixelConfig.enabled) {
+    return;
+  }
+
+  if (!metaPixelReady || typeof fbq === 'undefined') {
+    pendingMetaEvents.push({ type: 'standard', name: eventName, params });
+    initMetaPixel();
     return;
   }
 
@@ -121,7 +148,13 @@ function trackMetaEvent(eventName, params = {}) {
  * @param {object} params - Parámetros del evento (opcional)
  */
 function trackCustomMetaEvent(eventName, params = {}) {
-  if (!metaPixelConfig.enabled || typeof fbq === 'undefined') {
+  if (!metaPixelConfig.enabled) {
+    return;
+  }
+
+  if (!metaPixelReady || typeof fbq === 'undefined') {
+    pendingMetaEvents.push({ type: 'custom', name: eventName, params });
+    initMetaPixel();
     return;
   }
 
@@ -227,12 +260,11 @@ function trackCategorySelection(categoryName) {
   });
 }
 
-// Inicializar el pixel cuando el DOM esté listo
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initMetaPixel);
-} else {
-  initMetaPixel();
-}
+// Cargar el pixel solo cuando hay intención del usuario. Esto evita bloquear
+// la carga inicial y reduce errores de consola por bloqueadores de terceros.
+['pointerdown', 'keydown', 'touchstart'].forEach(eventName => {
+  window.addEventListener(eventName, initMetaPixel, { once: true, passive: true });
+});
 
 // Exportar funciones para uso global
 window.metaPixel = {

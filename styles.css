@@ -577,7 +577,9 @@ body.dark-mode .menu-section {
 .show-more-btn {
     background: none;
     border: none;
-    padding: 0;
+    min-width: 64px;
+    min-height: 28px;
+    padding: 4px 0;
     margin-top: 4px;
     font-family: 'Nunito', sans-serif;
     font-size: 0.82rem;
@@ -783,9 +785,18 @@ body.dark-mode .menu-section {
     background: linear-gradient(45deg, #128C7E, #25D366);
 }
 
-.whatsapp-button img, .facebook-link img {
+.social-link-icon {
     width: 24px;
     height: 24px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.22);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
 }
 
 .facebook-link {
@@ -853,18 +864,36 @@ body.dark-mode .footer-section h3 {
     margin-bottom: 0.5rem;
 }
 
+.footer-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 24px;
+    margin-right: 0.35rem;
+    border-radius: 999px;
+    background: rgba(255,105,180,0.12);
+    color: var(--primary-pink, #FF69B4);
+    font-size: 0.72rem;
+    font-weight: 900;
+}
+
 .footer-section .socials a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 40px;
     height: 40px;
-    line-height: 40px;
     text-align: center;
     border-radius: 50%;
     background-color: var(--primary-pink, #FF69B4);
     color: white;
     margin-right: 0.5rem;
     transition: all 0.3s ease;
-    font-size: 1.2rem;
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-decoration: none;
 }
 
 .footer-section .socials a:hover {

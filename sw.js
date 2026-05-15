@@ -1,5 +1,5 @@
 // Service Worker para cache de recursos
-const CACHE_NAME = 'capibobba-v1.0.2';
+const CACHE_NAME = 'capibobba-v1.0.3';
 // Detectar la base URL correcta
 const getBaseUrl = () => {
     const pathname = self.location.pathname;
@@ -17,30 +17,16 @@ const STATIC_CACHE_URLS = [
     'https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@700&family=Nunito:wght@400;600;700;800;900&display=swap'
 ];
 
-const CDN_CACHE_URLS = [
-    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'
-];
-
 // Instalar Service Worker
 self.addEventListener('install', event => {
     console.log('Service Worker: Instalando...');
     event.waitUntil(
-        Promise.all([
-            // Cache de recursos estáticos
-            caches.open(CACHE_NAME + '-static').then(cache => {
-                console.log('Service Worker: Cacheando recursos estáticos');
-                return cache.addAll(STATIC_CACHE_URLS).catch(err => {
-                    console.warn('Algunos recursos no se pudieron cachear:', err);
-                });
-            }),
-            // Cache de CDNs
-            caches.open(CACHE_NAME + '-cdn').then(cache => {
-                console.log('Service Worker: Cacheando recursos CDN');
-                return cache.addAll(CDN_CACHE_URLS).catch(err => {
-                    console.warn('Algunos CDNs no se pudieron cachear:', err);
-                });
-            })
-        ])
+        caches.open(CACHE_NAME + '-static').then(cache => {
+            console.log('Service Worker: Cacheando recursos estáticos');
+            return cache.addAll(STATIC_CACHE_URLS).catch(err => {
+                console.warn('Algunos recursos no se pudieron cachear:', err);
+            });
+        })
     );
     self.skipWaiting();
 });
