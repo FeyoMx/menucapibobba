@@ -58,14 +58,16 @@ body {
     position: relative;
     overflow-x: hidden; /* Previene el scroll horizontal */
     line-height: 1.6; /* Ligeramente más espaciado para mejor legibilidad */
-    color: #343A40; /* Color de texto oscuro por defecto */
+    color: var(--ink); /* Color de texto oscuro por defecto */
     transition: background-color 0.5s ease, color 0.5s ease; /* Transición suave para el modo oscuro */
 }
 
 /* Modo Oscuro */
 body.dark-mode {
     background: linear-gradient(180deg, #2C3E50 0%, #34495E 25%, #4A607C 50%, #34495E 75%, #2C3E50 100%);
-    color: #F8F9FA; /* Color de texto claro en modo oscuro */
+    color: var(--ink);
+    --ink:      #F8F9FA;
+    --ink-soft: #adb5bd;
 }
 
 /* Animaciones de burbujas de fondo */
@@ -437,6 +439,10 @@ body.dark-mode .menu-subtitle {
 
 /* section-title, section-description colors covered by --ink/--ink-soft token */
 body.dark-mode .section-overline-emoji { background: rgba(255,230,241,0.12); }
+
+body.dark-mode .menu-section {
+    background: rgba(30, 40, 55, 0.88);
+}
 
 /* Estilos de la cuadrícula de productos */
 .products-grid {
@@ -1672,14 +1678,6 @@ body.data-loading .add-to-cart-btn {
 
     .footer-content {
         text-align: center; /* Centrar el contenido del footer en móvil */
-    }
-
-    .cart-button {
-        width: 50px;
-        height: 50px;
-        font-size: 1.5rem;
-        bottom: 15px;
-        right: 15px;
     }
 
     .modal-content {
