@@ -174,7 +174,7 @@ function showLoadingMessages(show) {
         if (productsData.waterFrappes.length === 0) { waterFrappesGrid.innerHTML = '<p class="no-products-message">No hay productos disponibles en esta sección.</p>'; waterFrappesGrid.style.display = 'block'; } else { waterFrappesGrid.style.display = 'grid'; }
         if (productsData.milkFrappes.length === 0) { milkFrappesGrid.innerHTML = '<p class="no-products-message">No hay productos disponibles en esta sección.</p>'; milkFrappesGrid.style.display = 'block'; } else { milkFrappesGrid.style.display = 'grid'; }
         if (productsData.hotDrinks.length === 0) { hotDrinksGrid.innerHTML = '<p class="no-products-message">No hay productos disponibles en esta sección.</p>'; hotDrinksGrid.style.display = 'block'; } else { hotDrinksGrid.style.display = 'grid'; }
-        if (productsData.toppings.length === 0) { toppingsGrid.innerHTML = '<p class="no-products-message">No hay productos disponibles en esta sección.</p>'; toppingsGrid.style.display = 'block'; } else { toppingsGrid.style.display = 'grid'; }
+        if (productsData.toppings.length === 0) { toppingsGrid.innerHTML = '<p class="no-products-message">No hay productos disponibles en esta sección.</p>'; toppingsGrid.style.display = 'block'; } else { toppingsGrid.style.display = 'block'; }
         if (productsData.promotions.length === 0) { promotionsGrid.innerHTML = '<p class="no-products-message">No hay promociones disponibles en este momento.</p>'; promotionsGrid.style.display = 'block'; } else { promotionsGrid.style.display = 'grid'; }
         if (productsData.specialties.length === 0) { specialtiesGrid.innerHTML = '<p class="no-products-message">No hay especialidades disponibles en este momento.</p>'; specialtiesGrid.style.display = 'block'; } else { specialtiesGrid.style.display = 'grid'; }
     }
@@ -265,9 +265,9 @@ async function loadProductsFromFirestore() {
         // Actualizar la variable global de toppings
         availableToppings = productsData.toppings;
 
-        // Renderizar todas las secciones después de una carga completa
+        // Ocultar skeletons antes de renderizar para no sobrescribir layouts especiales
+        showLoadingMessages(false);
         renderMenuSections();
-        showLoadingMessages(false); // Ocultar mensajes de carga después de renderizar
 
         // If this is the first successful data load, remove the loading state
         if (!isInitialDataLoaded) {
@@ -716,7 +716,12 @@ function updateCartDisplay() {
     const cartButtonTotal = document.getElementById('cartButtonTotal');
 
     if (cart.length === 0) {
-        if (cartBtn) cartBtn.classList.remove('cart-visible');
+        if (cartBtn) {
+            cartBtn.classList.add('cart-visible');
+            if (cartButtonSecondary) cartButtonSecondary.textContent = '0 productos · WhatsApp ✅';
+            if (cartButtonTotal) cartButtonTotal.textContent = '$0';
+            cartBtn.setAttribute('aria-label', 'Tu carrito, 0 productos, abrir');
+        }
 
         // R04: Empty cart with mascot + suggestion chips
         const suggestions = getSuggestedProducts();
