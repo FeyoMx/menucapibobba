@@ -67,8 +67,8 @@
     </style>
 
     <!-- CSS principal cargado de forma síncrona para evitar FOUC -->
-    <link rel="preload" href="styles.css" as="style">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="preload" href="styles.css?v=20260515-perf" as="style">
+    <link rel="stylesheet" href="styles.css?v=20260515-perf">
     
     <!-- Google Fonts optimizadas con font-display swap -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@700&family=Nunito:wght@400;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -210,7 +210,7 @@
     </script>
 
     <!-- Meta Pixel (Facebook Pixel) -->
-    <script src="meta-pixel-config.js" defer></script>
+    <script src="meta-pixel-config.js?v=20260515-perf" defer></script>
 
     <!-- Noscript fallback para Meta Pixel -->
     <noscript>
@@ -686,10 +686,10 @@
     </template>
 
     <!-- Preload del script principal -->
-    <link rel="modulepreload" href="script.js">
+    <link rel="modulepreload" href="script.js?v=20260515-perf">
 
     <!-- Carga de script.js como un MÓDULO con defer -->
-    <script src="script.js" type="module" defer></script>
+    <script src="script.js?v=20260515-perf" type="module" defer></script>
 
     <!-- Carga de Firebase SDK y lógica de inicialización -->
     <script type="module">
