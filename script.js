@@ -1,5 +1,4 @@
 // script.js
-console.log("Script file loaded and executing.");
 
 // Importar funciones de Firebase directamente ya que script.js ahora es un módulo
 import { collection, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -210,7 +209,6 @@ window.initMenu = function(_db, _menuId, _appId) {
     db = _db;
     menuId = _menuId;
     appId = _appId;
-    console.log('Firebase y Menu ID inicializados en script.js');
     document.body.classList.add('data-loading'); // Add loading state to body
     loadProductsFromFirestore();
 };
@@ -247,11 +245,7 @@ async function loadProductsFromFirestore() {
             // Asegurarse de que product.type es un string y limpiarlo de espacios
             const productTypeValue = typeof product.type === 'string' ? product.type.trim() : product.type;
 
-            console.log("DEBUG: Processing product:", product.name, "Raw Type:", product.type, "Trimmed Type:", productTypeValue);
             const categoryKey = productTypeMap[productTypeValue];
-            console.log("DEBUG: Resolved categoryKey:", categoryKey);
-            console.log("DEBUG: productsData hasOwnProperty(categoryKey):", productsData.hasOwnProperty(categoryKey));
-
 
             if (categoryKey && productsData.hasOwnProperty(categoryKey)) {
                 productsData[categoryKey].push(product);
@@ -259,8 +253,6 @@ async function loadProductsFromFirestore() {
                 console.warn(`Producto con tipo desconocido o sin mapear: ${product.type}`, product);
             }
         });
-
-        console.log("Todos los datos de productos actualizados desde Firestore:", productsData);
 
         // Actualizar la variable global de toppings
         availableToppings = productsData.toppings;
@@ -273,7 +265,6 @@ async function loadProductsFromFirestore() {
         if (!isInitialDataLoaded) {
             document.body.classList.remove('data-loading');
             isInitialDataLoaded = true;
-            console.log("Initial data loaded. UI is now fully interactive.");
         }
     }, (error) => {
         console.error(`Error al escuchar la colección 'products' en Firestore:`, error);
@@ -329,14 +320,13 @@ function renderComplexItems(items, container) {
     items.forEach(item => {
         const itemCard = document.createElement('article');
         itemCard.className = 'promotion-card'; // Reutilizamos el estilo de la tarjeta de promoción
-        itemCard.setAttribute('tabindex', '0');
-        itemCard.setAttribute('role', 'button');
-        itemCard.setAttribute('aria-label', `Ver detalles de: ${item.displayName || item.name}, ${item.description}, Precio: $${item.price ? item.price.toFixed(2) : '0.00'}`);
 
         // Imagen a ancho completo de la tarjeta de especialidad/promoción
-        const itemImgSrc = item.imageUrl || `https://placehold.co/300x160/FFE1E6/FF69B4?text=${encodeURIComponent(item.displayName || item.name)}`;
+        const itemImgSrc = item.imageUrl
+            ? getOptimizedImageUrl(item.imageUrl, 'm')
+            : `https://placehold.co/300x160/FFE1E6/FF69B4?text=${encodeURIComponent(item.displayName || item.name)}`;
         itemCard.innerHTML = `
-            <img src="${itemImgSrc}" alt="${item.displayName || item.name}" class="promotion-image" loading="lazy" onerror="this.src='https://placehold.co/300x160/FFE1E6/FF69B4?text=Capibobba'">
+            <img src="${itemImgSrc}" alt="${item.displayName || item.name}" class="promotion-image" width="300" height="160" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/300x160/FFE1E6/FF69B4?text=Capibobba'">
             <div class="promotion-info">
                 <h3 class="promotion-name">${item.displayName || item.name}</h3>
                 <p class="promotion-description">${item.description}</p>
@@ -436,6 +426,15 @@ function formatPriceBlock(price) {
 }
 
 /**
+ * Requests smaller Imgur variants for card-sized images.
+ * Imgur supports size suffixes before the extension (m = medium, t = thumb).
+ */
+function getOptimizedImageUrl(url, size = 'm') {
+    if (typeof url !== 'string') return url;
+    return url.replace(/^(https:\/\/i\.imgur\.com\/[A-Za-z0-9]+)(\.(?:jpe?g|png|webp))$/i, `$1${size}$2`);
+}
+
+/**
  * Updates the section product-count badge.
  */
 function updateSectionCount(countId, count) {
@@ -465,7 +464,7 @@ function renderToppingRows(toppings, container) {
         row.className = 'topping-row';
 
         const imgHtml = product.imageUrl
-            ? `<img src="${product.imageUrl}" alt="${name}" class="thumb" loading="lazy" onerror="this.outerHTML='<div class=\\'thumb-placeholder\\'></div>'">`
+            ? `<img src="${getOptimizedImageUrl(product.imageUrl, 't')}" alt="${name}" class="thumb" width="48" height="48" loading="lazy" decoding="async" onerror="this.outerHTML='<div class=\\'thumb-placeholder\\'></div>'">`
             : `<div class="thumb-placeholder"></div>`;
 
         row.innerHTML = `
@@ -520,12 +519,9 @@ function renderProducts(products, container) {
 
         const productCard = document.createElement('article');
         productCard.className = 'product-card';
-        productCard.setAttribute('tabindex', '0');
-        productCard.setAttribute('role', 'button');
-        productCard.setAttribute('aria-label', `${name}, ${product.description}, $${product.price ? product.price.toFixed(2) : '0.00'} MXN`);
 
         const imgHtml = product.imageUrl
-            ? `<img src="${product.imageUrl}" alt="${name}" class="product-image" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'product-card-img-placeholder\\'>producto · 4:3</div>'">`
+            ? `<img src="${getOptimizedImageUrl(product.imageUrl, 'm')}" alt="${name}" class="product-image" width="320" height="240" loading="lazy" decoding="async" onerror="this.parentElement.innerHTML='<div class=\\'product-card-img-placeholder\\'>producto · 4:3</div>'">`
             : `<div class="product-card-img-placeholder">producto · 4:3</div>`;
 
         const desc = product.description || '';
@@ -775,7 +771,7 @@ function updateCartDisplay() {
             const cartItemDiv = document.createElement('div');
             cartItemDiv.className = 'cart-item';
             cartItemDiv.innerHTML = `
-                <img data-src="${item.imageUrl || 'https://placehold.co/50x50/ADD8E6/000000?text=No+Image'}" alt="${item.displayName || item.name}" class="cart-item-image lazy-load">
+                <img data-src="${item.imageUrl ? getOptimizedImageUrl(item.imageUrl, 's') : 'https://placehold.co/50x50/ADD8E6/000000?text=No+Image'}" alt="${item.displayName || item.name}" class="cart-item-image lazy-load" width="50" height="50">
                 <div class="cart-item-info">
                     <span class="cart-item-name">${item.displayName || item.name}</span>
                     ${item.selectedToppings && item.selectedToppings.length > 0 ?
