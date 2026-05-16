@@ -67,8 +67,8 @@
     </style>
 
     <!-- CSS principal cargado de forma síncrona para evitar FOUC -->
-    <link rel="preload" href="styles.css?v=20260515-perf" as="style">
-    <link rel="stylesheet" href="styles.css?v=20260515-perf">
+    <link rel="preload" href="styles.css?v=20260515-rest" as="style">
+    <link rel="stylesheet" href="styles.css?v=20260515-rest">
     
     <!-- Google Fonts optimizadas con font-display swap -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@700&family=Nunito:wght@400;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -210,7 +210,7 @@
     </script>
 
     <!-- Meta Pixel (Facebook Pixel) -->
-    <script src="meta-pixel-config.js?v=20260515-perf" defer></script>
+    <script src="meta-pixel-config.js?v=20260515-rest" defer></script>
 
     <!-- Noscript fallback para Meta Pixel -->
     <noscript>
@@ -686,16 +686,13 @@
     </template>
 
     <!-- Preload del script principal -->
-    <link rel="modulepreload" href="script.js?v=20260515-perf">
+    <link rel="modulepreload" href="script.js?v=20260515-rest">
 
     <!-- Carga de script.js como un MÓDULO con defer -->
-    <script src="script.js?v=20260515-perf" type="module" defer></script>
+    <script src="script.js?v=20260515-rest" type="module" defer></script>
 
-    <!-- Carga de Firebase SDK y lógica de inicialización -->
+    <!-- Carga ligera de datos del menú por Firestore REST -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        // import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"; // Auth no es necesario para el menú público
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { firebaseConfig } from './firebase-config.js'; // Importar configuración centralizada
 
         // Función para mostrar el modal de alerta personalizado
@@ -710,19 +707,16 @@
             if (window.closeModal) window.closeModal(document.getElementById('customAlertModal'));
         });
 
-        // Inicializar Firebase y autenticar
-        async function initializeFirebase() {
+        // Inicializar el menú público sin descargar el SDK completo de Firebase
+        async function initializeMenuData() {
             // Validar que firebaseConfig no esté vacío
-            if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+            if (!firebaseConfig.projectId) {
                 console.error("Firebase config is incomplete. Please update firebaseConfig with your actual Firebase project details.");
-                window.showCustomAlert('Error de Configuración', 'La configuración de Firebase está incompleta. Por favor, edita index.html y admin.html con los detalles de tu proyecto Firebase.');
+                window.showCustomAlert('Error de Configuración', 'La configuración de Firebase está incompleta. Por favor, revisa firebase-config.js.');
                 return;
             }
 
             try {
-                const app = initializeApp(firebaseConfig);
-                const db = getFirestore(app);
-                // const auth = getAuth(app); // No se necesita autenticación para leer el menú
                 const appId = firebaseConfig.projectId; // Usamos projectId como appId para Firestore
 
                 // --- LÓGICA SIMPLIFICADA ---
@@ -735,20 +729,20 @@
 
                 // Iniciar la lógica del menú directamente, sin autenticación.
                 if (typeof window.initMenu === 'function') {
-                    window.initMenu(db, menuId, appId);
+                    window.initMenu(menuId, appId);
                 } else {
                     console.error("Error: window.initMenu no es una función. Asegúrate de que script.js se cargue correctamente como un módulo.");
                     window.showCustomAlert('Error Interno', 'No se pudo iniciar el menú. Por favor, contacta a soporte.');
                 }
 
             } catch (error) {
-                console.error("Error al inicializar Firebase o autenticar en el menú:", error);
+                console.error("Error al inicializar el menú:", error);
                 window.showCustomAlert('Error de Conexión', 'No se pudo cargar el menú dinámicamente. Por favor, inténtalo de nuevo más tarde.');
             }
         }
 
-        // Asegurarse de que el DOM esté completamente cargado antes de inicializar Firebase
-        document.addEventListener('DOMContentLoaded', initializeFirebase);
+        // Asegurarse de que el DOM esté completamente cargado antes de inicializar el menú
+        document.addEventListener('DOMContentLoaded', initializeMenuData);
     </script>
 
     <!-- Registrar Service Worker para cache offline -->
