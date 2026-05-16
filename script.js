@@ -1,13 +1,9 @@
 // script.js
 
-// Importar funciones de Firebase directamente ya que script.js ahora es un módulo
-import { collection, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
 // Declaración de currentObserver en el ámbito global
 let currentObserver = null;
 
-// --- Variables Globales para Firebase y Datos ---
-let db; // Instancia de Firestore
+// --- Variables Globales para Datos ---
 let menuId; // ID del menú para la ruta de Firestore
 let appId; // ID de la aplicación para la ruta de Firestore (será el projectId de Firebase)
 
@@ -203,55 +199,92 @@ function throttle(func, limit) {
     };
 }
 
-// --- Inicialización de Firebase (llamado desde index.html) ---
-// Hacemos initMenu global para que el script de inicialización de Firebase en index.html pueda llamarla
-window.initMenu = function(_db, _menuId, _appId) {
-    db = _db;
+// --- Inicialización de datos (llamado desde index.html) ---
+// Hacemos initMenu global para que el script de inicialización en index.html pueda llamarla
+window.initMenu = function(_menuId, _appId) {
     menuId = _menuId;
     appId = _appId;
     document.body.classList.add('data-loading'); // Add loading state to body
-    loadProductsFromFirestore();
+    loadProductsFromFirestoreRest();
 };
 
 /**
- * Carga los productos desde Firestore y configura los listeners en tiempo real.
- * Ahora escucha una única colección 'products' y filtra por tipo.
+ * Convierte los valores tipados de Firestore REST a datos JS normales.
+ * @param {object} value - Firestore REST Value.
+ * @returns {*} Valor convertido.
  */
-async function loadProductsFromFirestore() {
+function parseFirestoreValue(value) {
+    if (!value || typeof value !== 'object') return null;
+    if ('stringValue' in value) return value.stringValue;
+    if ('integerValue' in value) return Number(value.integerValue);
+    if ('doubleValue' in value) return Number(value.doubleValue);
+    if ('booleanValue' in value) return value.booleanValue;
+    if ('timestampValue' in value) return value.timestampValue;
+    if ('nullValue' in value) return null;
+    if ('arrayValue' in value) {
+        return (value.arrayValue.values || []).map(parseFirestoreValue);
+    }
+    if ('mapValue' in value) {
+        return parseFirestoreFields(value.mapValue.fields || {});
+    }
+    return null;
+}
+
+/**
+ * Convierte los campos de un documento Firestore REST a un objeto JS.
+ * @param {object} fields - Firestore REST fields.
+ * @returns {object} Objeto convertido.
+ */
+function parseFirestoreFields(fields = {}) {
+    return Object.fromEntries(
+        Object.entries(fields).map(([key, value]) => [key, parseFirestoreValue(value)])
+    );
+}
+
+function resetProductsData() {
+    productsData = {
+        waterFrappes: [],
+        milkFrappes: [],
+        hotDrinks: [],
+        toppings: [],
+        specialties: [],
+        promotions: [],
+        desserts: []
+    };
+}
+
+function ingestProduct(product) {
+    if (product.isActive === false) return;
+
+    const productTypeValue = typeof product.type === 'string' ? product.type.trim() : product.type;
+    const categoryKey = productTypeMap[productTypeValue];
+
+    if (categoryKey && productsData.hasOwnProperty(categoryKey)) {
+        productsData[categoryKey].push(product);
+    } else {
+        console.warn(`Producto con tipo desconocido o sin mapear: ${product.type}`, product);
+    }
+}
+
+/**
+ * Carga los productos desde Firestore REST sin descargar el SDK completo.
+ */
+async function loadProductsFromFirestoreRest() {
     showLoadingMessages(true);
-    const baseCollectionPath = `artifacts/${appId}/menus/${menuId}`;
-    const productsCollectionRef = collection(db, `${baseCollectionPath}/products`);
+    const endpoint = `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(appId)}/databases/(default)/documents/artifacts/${encodeURIComponent(appId)}/menus/${encodeURIComponent(menuId)}/products?pageSize=200`;
 
-    onSnapshot(productsCollectionRef, (snapshot) => {
-        // Reiniciar todas las categorías
-        productsData = {
-            waterFrappes: [],
-            milkFrappes: [],
-            hotDrinks: [],
-            toppings: [],
-            specialties: [],
-            promotions: [],
-            desserts: [] // NUEVA categoría para Postres y Snacks (CapiGofre)
-        };
+    try {
+        const response = await fetch(endpoint, { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error(`Firestore REST respondió ${response.status}`);
+        }
 
-        snapshot.forEach(doc => {
-            const product = { id: doc.id, ...doc.data() };
+        const payload = await response.json();
+        resetProductsData();
 
-            // FILTRO: Solo procesar productos que están activos.
-            // Si `isActive` no existe (productos antiguos), se considera activo (product.isActive !== false).
-            if (product.isActive === false) {
-                return; // Saltar este producto y no mostrarlo en el menú.
-            }
-            // Asegurarse de que product.type es un string y limpiarlo de espacios
-            const productTypeValue = typeof product.type === 'string' ? product.type.trim() : product.type;
-
-            const categoryKey = productTypeMap[productTypeValue];
-
-            if (categoryKey && productsData.hasOwnProperty(categoryKey)) {
-                productsData[categoryKey].push(product);
-            } else {
-                console.warn(`Producto con tipo desconocido o sin mapear: ${product.type}`, product);
-            }
+        (payload.documents || []).forEach(doc => {
+            const id = doc.name ? doc.name.split('/').pop() : '';
+            ingestProduct({ id, ...parseFirestoreFields(doc.fields || {}) });
         });
 
         // Actualizar la variable global de toppings
@@ -266,12 +299,12 @@ async function loadProductsFromFirestore() {
             document.body.classList.remove('data-loading');
             isInitialDataLoaded = true;
         }
-    }, (error) => {
-        console.error(`Error al escuchar la colección 'products' en Firestore:`, error);
+    } catch (error) {
+        console.error('Error al cargar productos desde Firestore REST:', error);
         window.showCustomAlert('Error de Carga', `No se pudieron cargar los productos del menú.`);
         showLoadingMessages(false);
         document.body.classList.remove('data-loading'); // Ensure UI is not blocked on error
-    });
+    }
 }
 
 /**
